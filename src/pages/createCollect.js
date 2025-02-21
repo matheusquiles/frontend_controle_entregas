@@ -258,7 +258,7 @@ const CreateCollect = () => {
               startDecorator={isUpdating ? <CircularProgress variant="solid" /> : null}
               sx={{ bgcolor: MAIN_YELLOW, color: MAIN_FONT_COLLOR }} variant="contained"
             >
-              {isLoading ? 'Cadastrando...' : 'Cadastrar Processo'}
+              {isLoading ? 'Cadastrando...' : 'Cadastrar Coleta'}
             </Button>
           </Box>
         </Box>
