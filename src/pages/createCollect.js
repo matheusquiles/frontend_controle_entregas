@@ -1,82 +1,126 @@
-import React, { useEffect } from 'react';
-import { setFormData, setInvalidFields, setSelectedPedidos, resetForm, setUpdating, setNotification } from '../redux/reducers/FormSlice.js';
+import React, { useEffect, useState } from 'react';
+import { setFormData, setLoading, resetForm, setEditing, setNotification, setUpdating } from '../redux/reducers/FormSlice.js';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import * as F from '../styles/globalStyles.jsx';
 import { LoadingOverlay } from '../styles/globalStyles.jsx';
+import { FaSpinner } from 'react-icons/fa';
 
-import { CssBaseline, Box, Button, CircularProgress } from '@mui/material';
+import { CssBaseline, Box, Button, CircularProgress, IconButton } from '@mui/material';
 import NotificationSnackbar from '../components/NotificacaoSnackbar.js';
 import SelectRest from '../components/SelectRest.js';
-import LoaderComponent from '../components/LoaderComponent.js';
 import Input from '../components/input.js';
 import { API_SAVE_URL } from '../helper/Contants.js';
 import camelCase from '../helper/camelCase.js';
 import { MAIN_YELLOW, MAIN_FONT_COLLOR } from '../styles/Colors.jsx';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 
 
 const CreateCollect = () => {
   const dispatch = useDispatch();
+  const isLoading = useSelector((state) => state.form.isLoading);
   const loading = useSelector((state) => state.form.loading);
   const formData = useSelector((state) => state.form.formData);
   const invalidFields = useSelector((state) => state.form.invalidFields);
   const isUpdating = useSelector((state) => state.form.isUpdating);
+  const isEditing = useSelector((state) => state.form.isEditing);
+
+  const [items, setItems] = useState([{ collectType: '', quantity: '' }]);
 
   useEffect(() => {
     dispatch(setNotification({ message: '', severity: 'info' }));
     dispatch(resetForm());
   }, [dispatch]);
 
-  const handleChange = (e) => {
-    if (e.target && e.target.name && e.target.value !== undefined) {
-      const { name, value } = e.target;
-      dispatch(setFormData({ [name]: value }));
+  // const handleChange = (e, index) => {
+  //   const { name, value } = e.target;
+  //   const newItems = [...items];
+
+  //   if (name === 'description') {
+  //     newItems[index]['collectType'] = value; // Atualiza o collectType corretamente
+  //   } else {
+  //     newItems[index][name] = value; // Atualiza outros campos normalmente
+  //   }
+
+  //   setItems(newItems);
+  // };
+
+  const handleChange = (e, index) => {
+    const { name, value, selectedOption } = e.target;
+    const newItems = [...items];
+
+    if (name === 'description') {
+      newItems[index]['collectType'] = selectedOption ? selectedOption.id : value;
     } else {
-      console.error('Event target is missing name or value:', e.target);
+      newItems[index][name] = value;
     }
+
+    setItems(newItems);
+  };
+
+  const handleAddFields = () => {
+    setItems([...items, { collectType: '', quantity: '' }]);
+  };
+
+  const handleRemoveFields = (index) => {
+    const newItems = [...items];
+    newItems.splice(index, 1);
+    setItems(newItems);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    dispatch(setEditing(false))
     dispatch(setUpdating(true));
+    dispatch(setLoading(true));
+    setTimeout(() => {
+      dispatch(setLoading(false));
+    }, 2000);
 
     try {
       const camelCaseFormData = camelCase.convertKeysToCamelCase(formData);
       const dataToSend = {
         date: new Date().toISOString().split('T')[0], // Preenche a data atual
-        status: true, // Padrão true
+        status: true,
         userId: {
-          idUser: 6 // Padrão 24
+          idUser: 6
         },
         edress: {
-          idEdress: parseInt(camelCaseFormData.edress) // Recebendo da tela
+          idEdress: parseInt(camelCaseFormData.edress)
         },
-        itens: [
-          {
-            collectType: {
-              idCollectType: parseInt(camelCaseFormData.collectType) // Recebendo da tela
-            },
-            quantity: parseInt(camelCaseFormData.quantity), // Recebendo da tela
-            deliveryStatus: true // Padrão true
-          }
-        ]
+        itens: items.map(item => ({
+          collectType: {
+            idCollectType: parseInt(item.collectType)
+          },
+          quantity: parseInt(item.quantity),
+          deliveryStatus: true
+        }))
       };
+
+      await new Promise((resolve) => setTimeout(resolve, 3000));
 
       console.log("Dados a serem enviados:", JSON.stringify(dataToSend, null, 2));
       const response = await axios.post(`${API_SAVE_URL}`, dataToSend);
 
       if (response.data === true) {
-       dispatch(setNotification({ message: 'Coleta criada com sucesso!', severity: 'success' }));
+        dispatch(setNotification({ message: 'Coleta criada com sucesso!', severity: 'success' }));
+        dispatch(setLoading(false));
+
       } else {
         dispatch(setNotification({ message: 'Erro ao criar coleta', severity: 'error' }));
+        dispatch(setEditing(true));
+        
       }
 
     } catch (error) {
       if (error.response) {
         const msg = !error.response.data.message ? 'Erro desconhecido' : 'Erro ao criar coleta' + error.response.data.message;
         dispatch(setNotification({ message: msg, severity: 'error' }));
+        dispatch(setLoading(false));
       } else if (error.request) {
         dispatch(setNotification({ message: 'Erro: Nenhuma resposta recebida do servidor', severity: 'error' }));
+        dispatch(setLoading(false));
       } else {
         dispatch(setNotification({ message: 'Erro ao configurar a requisição: ' + error.message, severity: 'error' }));
       }
@@ -92,7 +136,11 @@ const CreateCollect = () => {
   return (
     <>
       <form onSubmit={handleSubmit} className="cadastro-coleta-form">
-        {loading && <LoaderComponent />}
+        {isLoading && (
+          <LoadingOverlay>
+            <FaSpinner className="animate-spin text-4xl text-blue-500" />
+          </LoadingOverlay>
+        )}
         <CssBaseline />
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', color: 'black' }}>
           <Box sx={{ flexGrow: 1, display: 'flex', minHeight: '100dvh' }}>
@@ -124,48 +172,61 @@ const CreateCollect = () => {
                       route='edress'
                       id='idEdress'
                       name='edress'
-                      onChange={handleChange}
+                      onChange={(e) => handleChange(e, 0)}
                       form={formData}
                       defaultValue=""
                       invalidFields={invalidFields}
                       loading={loading}
+                      disabled={isEditing}
                     />
                   </F.InputLine>
                 </Box>
 
-                <F.InputLine>
-                  <Box mb={2} width={'100%'}>
-                    <F.MediumInputLine>
-                      <SelectRest
-                        label="Tipo de Coleta"
-                        first
-                        route='collectType'
-                        id='idCollectType'
-                        name='description'
-                        onChange={handleChange}
-                        form={formData}
-                        defaultValue=""
-                        invalidFields={invalidFields}
-                        loading={loading}
-                      />
-                    </F.MediumInputLine>
+                {items.map((item, index) => (
+                  <Box key={index} mb={2} width={'100%'}>
+                    <F.InputLine>
+                      <F.MediumInputLine>
+                        <SelectRest
+                          label="Tipo de Coleta"
+                          first
+                          route='collectType'
+                          data-index={index}
+                          id='idCollectType'
+                          name='description'
+                          onChange={(e) => handleChange(e, index)}
+                          form={item}
+                          defaultValue=""
+                          invalidFields={invalidFields}
+                          loading={loading}
+                          disabled={isEditing}
+                        />
+                      </F.MediumInputLine>
+                    </F.InputLine>
+                    <F.InputLine>
+                      <F.MediumInputLine>
+                        <Input
+                          first label="Quantidade de entregas"
+                          fieldName="quantity"
+                          formData={item}
+                          setFormData={setFormData}
+                          onChange={(e) => handleChange(e, index)}
+                          invalidFields={invalidFields}
+                          disabled={isEditing}
+                        />
+                      </F.MediumInputLine>
+                    </F.InputLine>
+                    <Box display="flex" justifyContent="flex-end">
+                      <IconButton onClick={() => handleAddFields()}>
+                        <AddIcon />
+                      </IconButton>
+                      {items.length > 1 && (
+                        <IconButton onClick={() => handleRemoveFields(index)}>
+                          <RemoveIcon />
+                        </IconButton>
+                      )}
+                    </Box>
                   </Box>
-                </F.InputLine>
-
-                <F.InputLine>
-                  <Box mb={2} width={'100%'}>
-                    <F.MediumInputLine>
-                      <Input
-                        first label="Quantidade de entregas"
-                        fieldName="quantity"
-                        formData={formData}
-                        setFormData={setFormData}
-                        onChange={handleChange}
-                        invalidFields={invalidFields}
-                      />
-                    </F.MediumInputLine>
-                  </Box>
-                </F.InputLine>
+                ))}
               </F.InputLine>
             </Box>
           </Box>
@@ -182,22 +243,22 @@ const CreateCollect = () => {
             bottom: 0,
             color: 'black',
           }}>
-            <Button 
-              type="button" 
-              variant='outlined' 
+            <Button
+              type="button"
+              variant='outlined'
               onClick={handleCancelClick}
               sx={{ color: `${MAIN_YELLOW}`, borderColor: `${MAIN_YELLOW}` }}
             >
               Cancelar
             </Button>
-            <Button 
-              type="submit" 
-              onClick={handleSubmit} 
-              disabled={isUpdating} 
+            <Button
+              type="submit"
+              onClick={handleSubmit}
+              disabled={isLoading}
               startDecorator={isUpdating ? <CircularProgress variant="solid" /> : null}
               sx={{ bgcolor: MAIN_YELLOW, color: MAIN_FONT_COLLOR }} variant="contained"
             >
-              {isUpdating ? 'Cadastrando...' : 'Cadastrar Processo'}
+              {isLoading ? 'Cadastrando...' : 'Cadastrar Processo'}
             </Button>
           </Box>
         </Box>
