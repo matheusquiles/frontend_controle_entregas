@@ -13,7 +13,7 @@ const Frame = (props) => {
   return (
     <AppTheme  {...props}>
       <CssBaseline enableColorScheme />
-      <AppAppBar onMenuClick={setActiveComponent}/>
+      <AppAppBar onMenuClick={setActiveComponent} />
       <Toolbar /> {/* Adiciona espaço equivalente ao AppBar */}
       <Box
         component="main"
@@ -21,9 +21,11 @@ const Frame = (props) => {
           p: { xs: 2, md: 3 },
           maxWidth: 'lg',
           mx: 'auto',
+          // background: 'linear-gradient(135deg, rgba(255, 191, 38, 0.5) 0%, rgba(238, 224, 191, 0.96)40%,  #FFFFFF 100%)', // Gradiente de cima (#FFBF26) para baixo (branco)
+          minHeight: '100vh', // Garante que o gradiente cubra a tela inteira
         }}
       >
-        {activeComponent || "Selecione uma opção"}
+        {activeComponent || 'Selecione uma opção'}
       </Box>
     </AppTheme>
   );

@@ -5,7 +5,7 @@ export default function SiteIcon() {
 
     return (
         <Icon>
-            <img src="D:\projetos\projeto_coletas\frontend\projeto-coletas-app\public\icon.png" alt="site icon" />
+            <img src="/icon.png" alt="site icon" />
         </Icon>
     );
 

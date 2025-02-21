@@ -1,6 +1,7 @@
 //MAIN COLORS
 
 export const MAIN_YELLOW = '#FFBF26';
+export const MAIN_FONT_COLLOR = 'rgba(21, 22, 22, 0.84)' 
 
 
 // COLORS NAMES

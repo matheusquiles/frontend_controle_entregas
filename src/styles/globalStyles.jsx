@@ -13,23 +13,44 @@ export const GenericP = styled.p`
 const MARGIN = '0.5em';
 
 export const Input = styled.input`
+   color: black; 
+  box-shadow: ${BOX_SHADOW};
   background-color: ${WHITE};
   border: solid #CDD7E1 .1px !important;
   border-radius: 5px;
+  margin: ${MARGIN} 1; 
   font-size: 1em;
-  padding: 0.5m;
-  line-height: .5em;
+  padding: 0.75em;
   box-shadow: ${BOX_SHADOW};
   outline: none;
-     &:disabled {
-    background-color: #F8F8FF; 
-    color: black;  
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-around;
+  cursor: pointer;
+  width: 100%;
+  text-align: left; 
+  line-height: 2rem;
+  font-size: 1rem;
+  padding: 0.5rem 0;
+  height: 100%;
+  overflow-y: scroll;
+
+  &:disabled {
+  background-color: #F8F8FF;
+  color: black;  
   }
+
   &:focus, &:active {
   background-color: ${({ $styled }) => !$styled && WHITE};
   box-shadow: ${({ $styled }) =>
     !$styled && '0 0 4px rgba(0, 0, 0, 0.15), 0 0 8px rgba(0, 0, 0, 0.10)'};
   border-color: ${({ $styled }) => !$styled && '#ddd'};
+  }
+
+
+  ::-webkit-inner-spin-button {
+    -webkit-appearance: none;
   }
     
 `;
@@ -237,4 +258,17 @@ export const LookupButton = styled.button`
   &:focus {
     outline: none; 
   }
+`;
+
+export const LoadingOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
 `;

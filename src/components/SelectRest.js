@@ -3,9 +3,9 @@ import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { setFormData, setOptions, setLoading } from '../redux/reducers/FormSlice';
 
-import { InputLabel, StyledSelect } from '../styles/globalStyles';
+import { InputLabel, StyledSelect, GenericP } from '../styles/globalStyles';
 
-import { API_BASE_URL } from './helper/Contants';
+import { API_BASE_URL } from '../helper/Contants';
 
 export default function SelectRest({ label, first, medium, topless, small, route, id, name, defaultValue, invalidFields, disabled = false }) {
     const dispatch = useDispatch();
@@ -25,7 +25,6 @@ export default function SelectRest({ label, first, medium, topless, small, route
       try {
         const thisOptions = [];
         const { data } = await axios.get(`${API_BASE_URL}/${route}`);
-  
         data.forEach((obj) => {
           thisOptions.push({ id: obj[id], name: obj[name] });
         });
@@ -49,7 +48,7 @@ export default function SelectRest({ label, first, medium, topless, small, route
   
     return (
       <InputLabel first={first} medium={medium} topless={topless} small={small} style={{ borderColor: isInvalid ? 'red' : 'inherit' }}>
-  
+        <GenericP>{label}:</GenericP>
         <StyledSelect
           onChange={handleSelect}
           value={isLoading ? '' : (selected || '')}
