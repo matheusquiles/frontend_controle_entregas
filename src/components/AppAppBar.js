@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { styled, alpha } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -15,7 +16,6 @@ import ColorModeIconDropdown from '../styles/ColorModeIconDropdown';
 import { MAIN_FONT_COLLOR, MAIN_YELLOW } from '../styles/Colors';
 import SiteIcon from './SiteIcon';
 
-import CreatCollect from '../pages/createCollect';
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: 'flex',
@@ -35,6 +35,8 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 
 export default function AppAppBar({ onMenuClick }) {
   const [open, setOpen] = React.useState(false);
+  const navigate = useNavigate();
+
 
 
   const toggleDrawer = (newOpen) => () => {
@@ -57,7 +59,7 @@ export default function AppAppBar({ onMenuClick }) {
           <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', px: 0 }}>
             <SiteIcon />
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-              <Button variant="text" sx={{ color: MAIN_FONT_COLLOR }} size="small" onClick={() => onMenuClick(<CreatCollect />)}>
+              <Button variant="text" sx={{ color: MAIN_FONT_COLLOR }} size="small" onClick={() => onMenuClick(navigate('/coletas'))}>
                 Coletas
               </Button>
             </Box>
@@ -72,7 +74,7 @@ export default function AppAppBar({ onMenuClick }) {
             <Button sx={{ color: MAIN_YELLOW, color: MAIN_FONT_COLLOR }} variant="text" size="small">
               Sign in
             </Button>
-            <Button sx={{ bgcolor: MAIN_YELLOW, color: MAIN_FONT_COLLOR  }} variant="contained" size="small">
+            <Button sx={{ bgcolor: MAIN_YELLOW, color: MAIN_FONT_COLLOR }} variant="contained" size="small">
               Sign up
             </Button>
             <ColorModeIconDropdown />

@@ -5,6 +5,7 @@ import axios from 'axios';
 import * as F from '../styles/globalStyles.jsx';
 import { LoadingOverlay } from '../styles/globalStyles.jsx';
 import { FaSpinner } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 import { CssBaseline, Box, Button, CircularProgress, IconButton } from '@mui/material';
 import NotificationSnackbar from '../components/NotificacaoSnackbar.js';
@@ -16,9 +17,9 @@ import { MAIN_YELLOW, MAIN_FONT_COLLOR } from '../styles/Colors.jsx';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 
-
 const CreateCollect = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const isLoading = useSelector((state) => state.form.isLoading);
   const loading = useSelector((state) => state.form.loading);
   const formData = useSelector((state) => state.form.formData);
@@ -32,19 +33,6 @@ const CreateCollect = () => {
     dispatch(setNotification({ message: '', severity: 'info' }));
     dispatch(resetForm());
   }, [dispatch]);
-
-  // const handleChange = (e, index) => {
-  //   const { name, value } = e.target;
-  //   const newItems = [...items];
-
-  //   if (name === 'description') {
-  //     newItems[index]['collectType'] = value; // Atualiza o collectType corretamente
-  //   } else {
-  //     newItems[index][name] = value; // Atualiza outros campos normalmente
-  //   }
-
-  //   setItems(newItems);
-  // };
 
   const handleChange = (e, index) => {
     const { name, value, selectedOption } = e.target;
@@ -71,7 +59,7 @@ const CreateCollect = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(setEditing(false))
+    dispatch(setEditing(false));
     dispatch(setUpdating(true));
     dispatch(setLoading(true));
     setTimeout(() => {
@@ -106,11 +94,10 @@ const CreateCollect = () => {
       if (response.data === true) {
         dispatch(setNotification({ message: 'Coleta criada com sucesso!', severity: 'success' }));
         dispatch(setLoading(false));
-
+        navigate('/main'); 
       } else {
         dispatch(setNotification({ message: 'Erro ao criar coleta', severity: 'error' }));
         dispatch(setEditing(true));
-        
       }
 
     } catch (error) {
@@ -205,7 +192,7 @@ const CreateCollect = () => {
                     <F.InputLine>
                       <F.MediumInputLine>
                         <Input
-                          first label="Quantidade de entregas"
+                          first label="Quantidade de itens"
                           fieldName="quantity"
                           formData={item}
                           setFormData={setFormData}

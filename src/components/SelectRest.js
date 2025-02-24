@@ -60,16 +60,6 @@ export default function SelectRest({ label, first, medium, topless, small, route
   return (
     <InputLabel first={first} medium={medium} topless={topless} small={small} style={{ borderColor: isInvalid ? 'red' : 'inherit' }}>
       <GenericP>{label}:</GenericP>
-      {/* <StyledSelect
-          name={name}
-          onChange={handleSelect}
-          value={isLoading ? '' : (selected || '')}
-          disabled={disabled || isLoading}>
-          <option value="">{isLoading ? 'Carregando...' : 'Selecione'}</option>
-          {options.map(({ id, name }) => (
-            <option key={id} value={id}>{name}</option>
-          ))}
-        </StyledSelect> */}
       <StyledSelect
         value={selected || ''}
         onChange={handleSelect}
