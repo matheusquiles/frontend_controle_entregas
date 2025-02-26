@@ -8,13 +8,13 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
-import MenuItem from '@mui/material/MenuItem';
 import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ColorModeIconDropdown from '../styles/ColorModeIconDropdown';
 import { MAIN_FONT_COLLOR, MAIN_YELLOW } from '../styles/Colors';
 import SiteIcon from './SiteIcon';
+
 
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
@@ -33,11 +33,15 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   padding: '8px 12px',
 }));
 
+
 export default function AppAppBar({ onMenuClick }) {
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
-
-
+  
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/');
+  };
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -71,11 +75,8 @@ export default function AppAppBar({ onMenuClick }) {
               alignItems: 'center',
             }}
           >
-            <Button sx={{ color: MAIN_YELLOW, color: MAIN_FONT_COLLOR }} variant="text" size="small">
-              Sign in
-            </Button>
-            <Button sx={{ bgcolor: MAIN_YELLOW, color: MAIN_FONT_COLLOR }} variant="contained" size="small">
-              Sign up
+            <Button onClick={() => handleLogout()} sx={{ bgcolor: MAIN_YELLOW, color: MAIN_FONT_COLLOR }} variant="contained" size="small">
+              Sair
             </Button>
             <ColorModeIconDropdown />
           </Box>
@@ -107,16 +108,6 @@ export default function AppAppBar({ onMenuClick }) {
                 </Box>
 
                 <Divider sx={{ my: 3 }} />
-                <MenuItem>
-                  <Button sx={{ bgcolor: MAIN_YELLOW }} variant="contained" fullWidth>
-                    Sign up
-                  </Button>
-                </MenuItem>
-                <MenuItem>
-                  <Button sx={{ color: MAIN_YELLOW }} variant="outlined" fullWidth>
-                    Sign in
-                  </Button>
-                </MenuItem>
               </Box>
             </Drawer>
           </Box>

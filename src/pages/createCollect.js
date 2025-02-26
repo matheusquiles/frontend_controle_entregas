@@ -94,7 +94,7 @@ const CreateCollect = () => {
       if (response.data === true) {
         dispatch(setNotification({ message: 'Coleta criada com sucesso!', severity: 'success' }));
         dispatch(setLoading(false));
-        navigate('/main'); 
+        // navigate('/home'); 
       } else {
         dispatch(setNotification({ message: 'Erro ao criar coleta', severity: 'error' }));
         dispatch(setEditing(true));

@@ -12,7 +12,7 @@ import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import AppTheme from '../styles/theme/AppTheme.js';
-
+import api from '../api/api.js';
 import { API_LOGIN } from '../helper/Contants.js';
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -83,9 +83,10 @@ export default function SignIn(props) {
       userKey: data.get('login'),
       password: data.get('password'),
     };
-
+  
     try {
-      const response = await axios.post(API_LOGIN, loginData);
+      const response = await api.post('/login', loginData);
+      localStorage.setItem('token', response.data.token);
       console.log('Login bem-sucedido:', response.data);
       navigate('/home');
     } catch (error) {
