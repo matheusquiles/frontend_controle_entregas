@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { CssBaseline, Box, IconButton } from '@mui/material';
 import NotificationSnackbar from '../components/NotificacaoSnackbar.js';
 import SelectRest from '../components/SelectRest.js';
+import SelectRestCollect from '../components/SelectRestCollect.js';
 import Input from '../components/input.js';
 import { API_SAVE_URL } from '../helper/Contants.js';
 import camelCase from '../helper/camelCase.js';
@@ -71,7 +72,7 @@ const CreateCollect = () => {
     try {
       const camelCaseFormData = camelCase.convertKeysToCamelCase(formData);
       const dataToSend = {
-        date: new Date().toISOString().split('T')[0], // Preenche a data atual
+        date: new Date().toISOString().split('T')[0], 
         status: true,
         userId: {
           idUser: user?.idUser
@@ -150,19 +151,14 @@ const CreateCollect = () => {
               <F.InputLine column>
                 <Box mb={2} width={'100%'}>
                   <F.InputLine>
-                    <SelectRest
-                      label="Endereço"
-                      first
-                      route='edress'
-                      id='idEdress'
-                      name='edress'
-                      onChange={(e) => handleChange(e, 0)}
-                      form={formData}
-                      defaultValue=""
-                      invalidFields={invalidFields}
-                      loading={loading}
-                      disabled={isEditing}
-                    />
+                    <SelectRest label="Endereço" 
+                    first route='edress' 
+                    id='idEdress' 
+                    name='edress' 
+                    onChange={(e) => handleChange(e, 0)} 
+                    form={formData} defaultValue="" 
+                    invalidFields={invalidFields} loading={loading} 
+                    disabled={isEditing} />
                   </F.InputLine>
                 </Box>
 
@@ -170,7 +166,7 @@ const CreateCollect = () => {
                   <Box key={index} mb={2} width={'100%'}>
                     <F.InputLine>
                       <F.MediumInputLine>
-                        <SelectRest
+                        <SelectRestCollect
                           label="Tipo de Coleta"
                           first
                           route='collectType'
@@ -183,6 +179,7 @@ const CreateCollect = () => {
                           invalidFields={invalidFields}
                           loading={loading}
                           disabled={isEditing}
+                          index={index}
                         />
                       </F.MediumInputLine>
                     </F.InputLine>

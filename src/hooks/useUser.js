@@ -16,8 +16,6 @@ export const useUser = () => {
         }
 
         const decodedToken = jwtDecode(token);
-        console.log('Token decodificado:', decodedToken);
-
         const userKey = decodedToken.userKey || decodedToken.sub; 
 
         if (!userKey) {
@@ -27,7 +25,6 @@ export const useUser = () => {
         }
 
         const response = await api.get(`api/users/searchUser/${userKey}`);
-        console.log('Dados do usuário:', response.data);
         setUser(response.data);
       } catch (error) {
         console.error('Erro ao buscar usuário:', error);
