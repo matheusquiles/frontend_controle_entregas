@@ -7,15 +7,16 @@ import { LoadingOverlay } from '../styles/globalStyles.jsx';
 import { FaSpinner } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
-import { CssBaseline, Box, Button, CircularProgress, IconButton } from '@mui/material';
+import { CssBaseline, Box, IconButton } from '@mui/material';
 import NotificationSnackbar from '../components/NotificacaoSnackbar.js';
 import SelectRest from '../components/SelectRest.js';
 import Input from '../components/input.js';
 import { API_SAVE_URL } from '../helper/Contants.js';
 import camelCase from '../helper/camelCase.js';
-import { MAIN_YELLOW, MAIN_FONT_COLLOR } from '../styles/Colors.jsx';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import { useUser } from '../hooks/useUser';
+import FormButtons from '../components/FormButtons.js';
 
 const CreateCollect = () => {
   const dispatch = useDispatch();
@@ -26,6 +27,7 @@ const CreateCollect = () => {
   const invalidFields = useSelector((state) => state.form.invalidFields);
   const isUpdating = useSelector((state) => state.form.isUpdating);
   const isEditing = useSelector((state) => state.form.isEditing);
+  const { user } = useUser();
 
   const [items, setItems] = useState([{ collectType: '', quantity: '' }]);
 
@@ -72,7 +74,7 @@ const CreateCollect = () => {
         date: new Date().toISOString().split('T')[0], // Preenche a data atual
         status: true,
         userId: {
-          idUser: 6
+          idUser: user?.idUser
         },
         edress: {
           idEdress: parseInt(camelCaseFormData.edress)
@@ -94,7 +96,6 @@ const CreateCollect = () => {
       if (response.data === true) {
         dispatch(setNotification({ message: 'Coleta criada com sucesso!', severity: 'success' }));
         dispatch(setLoading(false));
-        // navigate('/home'); 
       } else {
         dispatch(setNotification({ message: 'Erro ao criar coleta', severity: 'error' }));
         dispatch(setEditing(true));
@@ -114,10 +115,6 @@ const CreateCollect = () => {
     } finally {
       dispatch(setUpdating(false));
     }
-  };
-
-  const handleCancelClick = () => {
-    dispatch(resetForm());
   };
 
   return (
@@ -230,23 +227,7 @@ const CreateCollect = () => {
             bottom: 0,
             color: 'black',
           }}>
-            <Button
-              type="button"
-              variant='outlined'
-              onClick={handleCancelClick}
-              sx={{ color: `${MAIN_YELLOW}`, borderColor: `${MAIN_YELLOW}` }}
-            >
-              Cancelar
-            </Button>
-            <Button
-              type="submit"
-              onClick={handleSubmit}
-              disabled={isLoading}
-              startDecorator={isUpdating ? <CircularProgress variant="solid" /> : null}
-              sx={{ bgcolor: MAIN_YELLOW, color: MAIN_FONT_COLLOR }} variant="contained"
-            >
-              {isLoading ? 'Cadastrando...' : 'Cadastrar Coleta'}
-            </Button>
+            <FormButtons handleSubmit={handleSubmit} isLoading={isLoading} isUpdating={isUpdating} />
           </Box>
         </Box>
 

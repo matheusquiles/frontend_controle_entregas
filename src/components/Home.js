@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import AppAppBar from './AppAppBar.js';
 import AppTheme from '../styles/theme/AppTheme.js';
-import { AppBar, Toolbar, Box } from '@mui/material';
+import { Toolbar, Box } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import CreateCollect from '../pages/createCollect.js';
 import { useUser } from '../hooks/useUser';
@@ -10,13 +11,16 @@ import { useUser } from '../hooks/useUser';
 const Home = (props) => {
   const [activeComponent, setActiveComponent] = useState(null);
   const { user, loading } = useUser();
+  const navigate = useNavigate();
 
-  console.log('Dados do usuário:', user); // Verifica o que está sendo retornado
+  const handleMenuClick = (path) => {
+    navigate("/coletas");
+  };
 
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
-      <AppAppBar onMenuClick={setActiveComponent} />
+      <AppAppBar onMenuClick={handleMenuClick} />
       <Toolbar />
       <Box
         component="main"

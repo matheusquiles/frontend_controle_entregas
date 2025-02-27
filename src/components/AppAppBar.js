@@ -14,8 +14,8 @@ import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ColorModeIconDropdown from '../styles/ColorModeIconDropdown';
 import { MAIN_FONT_COLLOR, MAIN_YELLOW } from '../styles/Colors';
 import SiteIcon from './SiteIcon';
-
-
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: 'flex',
@@ -36,6 +36,7 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 
 export default function AppAppBar({ onMenuClick }) {
   const [open, setOpen] = React.useState(false);
+  const [anchorEl, setAnchorEl] = React.useState(null);
   const navigate = useNavigate();
   
   const handleLogout = () => {
@@ -45,6 +46,14 @@ export default function AppAppBar({ onMenuClick }) {
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
+  };
+
+  const handleMenuClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
   };
 
   return (
@@ -66,6 +75,17 @@ export default function AppAppBar({ onMenuClick }) {
               <Button variant="text" sx={{ color: MAIN_FONT_COLLOR }} size="small" onClick={() => onMenuClick(navigate('/coletas'))}>
                 Coletas
               </Button>
+              <Button variant="text" sx={{ color: MAIN_FONT_COLLOR }} size="small" onClick={handleMenuClick}>
+                Usuários
+              </Button>
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleMenuClose}
+              >
+                <MenuItem onClick={() => { handleMenuClose(); navigate('/usuarios/novo'); }}>Novo</MenuItem>
+                <MenuItem onClick={() => { handleMenuClose(); navigate('/usuarios/editar'); }}>Editar</MenuItem>
+              </Menu>
             </Box>
           </Box>
           <Box
