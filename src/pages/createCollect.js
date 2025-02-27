@@ -7,7 +7,7 @@ import { LoadingOverlay } from '../styles/globalStyles.jsx';
 import { FaSpinner } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
-import { CssBaseline, Box, IconButton } from '@mui/material';
+import { CssBaseline, Box, IconButton, Toolbar } from '@mui/material';
 import NotificationSnackbar from '../components/NotificacaoSnackbar.js';
 import SelectRest from '../components/SelectRest.js';
 import SelectRestCollect from '../components/SelectRestCollect.js';
@@ -18,6 +18,7 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { useUser } from '../hooks/useUser';
 import FormButtons from '../components/FormButtons.js';
+import AppAppBar from '../components/AppAppBar.js';
 
 const CreateCollect = () => {
   const dispatch = useDispatch();
@@ -72,7 +73,7 @@ const CreateCollect = () => {
     try {
       const camelCaseFormData = camelCase.convertKeysToCamelCase(formData);
       const dataToSend = {
-        date: new Date().toISOString().split('T')[0], 
+        date: new Date().toISOString().split('T')[0],
         status: true,
         userId: {
           idUser: user?.idUser
@@ -127,7 +128,20 @@ const CreateCollect = () => {
           </LoadingOverlay>
         )}
         <CssBaseline />
-        <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', color: 'black' }}>
+        <AppAppBar />
+        <Toolbar />
+        <Box
+          component="main"
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            minHeight: '100vh',
+            color: 'black',
+            p: { xs: 2, md: 3 },
+            maxWidth: 'lg',
+            mx: 'auto',
+          }}
+        >
           <Box sx={{ flexGrow: 1, display: 'flex', minHeight: '100dvh' }}>
             <Box
               component="main"
@@ -151,14 +165,14 @@ const CreateCollect = () => {
               <F.InputLine column>
                 <Box mb={2} width={'100%'}>
                   <F.InputLine>
-                    <SelectRest label="Endereço" 
-                    first route='edress' 
-                    id='idEdress' 
-                    name='edress' 
-                    onChange={(e) => handleChange(e, 0)} 
-                    form={formData} defaultValue="" 
-                    invalidFields={invalidFields} loading={loading} 
-                    disabled={isEditing} />
+                    <SelectRest label="Endereço"
+                      first route='edress'
+                      id='idEdress'
+                      name='edress'
+                      onChange={(e) => handleChange(e, 0)}
+                      form={formData} defaultValue=""
+                      invalidFields={invalidFields} loading={loading}
+                      disabled={isEditing} />
                   </F.InputLine>
                 </Box>
 

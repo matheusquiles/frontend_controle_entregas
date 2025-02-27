@@ -40,7 +40,6 @@ const NovoUsuario = () => {
         }, 2000);
 
         try {
-            // const camelCaseFormData = camelCase.convertKeysToCamelCase(formData);
             const dataToSend  = formData;
             await new Promise((resolve) => setTimeout(resolve, 3000));
 
