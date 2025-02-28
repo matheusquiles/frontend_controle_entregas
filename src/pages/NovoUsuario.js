@@ -39,8 +39,6 @@ const NovoUsuario = () => {
 
         try {
             const dataToSend  = formData;
-            await new Promise((resolve) => setTimeout(resolve, 3000));
-
             console.log("Dados a serem enviados:", JSON.stringify(dataToSend, null, 2));
             const response = await api.post('api/users/save', dataToSend);
 

@@ -60,9 +60,6 @@ const SearchBar = ({onSearchComplete}) => {
                 finalDate: formatDate(filters.endDate),
                 idEdress: formData.edress ? parseInt(formData.edress) : null
             };
-
-
-            await new Promise((resolve) => setTimeout(resolve, 3000));
             console.log("Dados a serem enviados:", JSON.stringify(dataToSend, null, 2));
 
             const response = await api.post(`${API_SEARCH_COLLECTS_DTO}`, dataToSend);

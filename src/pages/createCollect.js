@@ -90,8 +90,6 @@ const CreateCollect = () => {
         }))
       };
 
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-
       console.log("Dados a serem enviados:", JSON.stringify(dataToSend, null, 2));
       const response = await axios.post(`${API_SAVE_URL}`, dataToSend);
 
