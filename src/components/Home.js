@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import CreateCollect from '../pages/createCollect.js';
 import { useUser } from '../hooks/useUser';
+import CollectTable from './CollectTable.js';
 
 const Home = (props) => {
   const [activeComponent, setActiveComponent] = useState(null);
@@ -16,6 +17,7 @@ const Home = (props) => {
   const handleMenuClick = (path) => {
     navigate("/coletas");
   };
+
 
   return (
     <AppTheme {...props}>
@@ -35,7 +37,9 @@ const Home = (props) => {
           {loading ? (
             <h1>Carregando...</h1>
           ) : (
-            <h1>Bem-vindo, {user?.name || 'Usuário'}!</h1>
+            <div>
+              <h1>Bem-vindo, {user?.name || 'Usuário'}!</h1>
+            </div>
           )}
         </header>
 

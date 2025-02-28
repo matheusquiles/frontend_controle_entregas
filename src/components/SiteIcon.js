@@ -1,12 +1,7 @@
 import * as React from 'react';
-import Icon from '@mui/material/Icon';
 
 export default function SiteIcon() {
-
     return (
-        <Icon>
-            <img src="/icon.png" alt="site icon" />
-        </Icon>
+        <img src="/favicon.ico" alt="site icon" style={{ width: 24, height: 24 }} />
     );
-
-}   
+}

@@ -1,0 +1,32 @@
+/* CollectTable.css */
+.collect-table-container {
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  .collect-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+  }
+  
+  .collect-table th,
+  .collect-table td {
+    padding: 8px;
+    text-align: left;
+    border: 1px solid #ddd;
+    font-size: 14px;
+  }
+  
+  .collect-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+  }
+  
+  .data-row {
+    background-color: #ffffff;
+  }
+  
+  .data-row:nth-child(even) {
+    background-color: #f9f9f9;
+  }

@@ -37,8 +37,9 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 export default function AppAppBar({ onMenuClick }) {
   const [open, setOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [entregasAnchorEl, setEntregasAnchorEl] = React.useState(null);
   const navigate = useNavigate();
-  
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     navigate('/');
@@ -56,6 +57,14 @@ export default function AppAppBar({ onMenuClick }) {
     setAnchorEl(null);
   };
 
+  const handleEntregasMenuClick = (event) => {
+    setEntregasAnchorEl(event.currentTarget);
+  };
+
+  const handleEntregasMenuClose = () => {
+    setEntregasAnchorEl(null);
+  };
+
   return (
     <AppBar
       position="fixed"
@@ -69,9 +78,9 @@ export default function AppAppBar({ onMenuClick }) {
     >
       <Container maxWidth="lg">
         <StyledToolbar variant="dense" disableGutters>
-          <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', px: 0 }}>
+          <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', px: 0, gap: 2 }}>
             <SiteIcon />
-            <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+            <Box sx={{ display: { xs: 'none', md: 'flex'} }}>
               <Button variant="text" sx={{ color: MAIN_FONT_COLLOR }} size="small" onClick={() => onMenuClick(navigate('/coletas'))}>
                 Coletas
               </Button>
@@ -85,6 +94,16 @@ export default function AppAppBar({ onMenuClick }) {
               >
                 <MenuItem onClick={() => { handleMenuClose(); navigate('/usuarios/novo'); }}>Novo</MenuItem>
                 <MenuItem onClick={() => { handleMenuClose(); navigate('/usuarios/editar'); }}>Editar</MenuItem>
+              </Menu>
+              <Button variant="text" sx={{ color: MAIN_FONT_COLLOR }} size="small" onClick={handleEntregasMenuClick}>
+                Entregas
+              </Button>
+              <Menu
+                anchorEl={entregasAnchorEl}
+                open={Boolean(entregasAnchorEl)}
+                onClose={handleEntregasMenuClose}
+              >
+                <MenuItem onClick={() => { handleEntregasMenuClose(); navigate('/entregas/aprovar'); }}>Aprovar</MenuItem>
               </Menu>
             </Box>
           </Box>

@@ -6,6 +6,7 @@ import SignIn from './pages/SingIn.js';
 import Home from './components/Home.js';
 import CreateCollect from './pages/createCollect.js';
 import NovoUsuario from './pages/NovoUsuario.js';
+import Deliveries from './pages/Deliveries.js';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/coletas" element={<CreateCollect />} />
           <Route path="/usuarios/novo" element={<NovoUsuario />} />
+          <Route path="/entregas/aprovar" element={<Deliveries />} />
         </Routes>
       </Router>
     </Provider>

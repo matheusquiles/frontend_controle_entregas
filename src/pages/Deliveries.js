@@ -9,10 +9,11 @@ import NotificationSnackbar from '../components/NotificacaoSnackbar.js';
 import { useUser } from '../hooks/useUser';
 import FormButtons from '../components/FormButtons.js';
 import AppAppBar from '../components/AppAppBar.js';
-import FormUsuarios from '../components/FormUsuarios.js';
 import api from '../api/api.js';
+import CollectTable from '../components/CollectTable.js';
+import SearchBar from '../components/SearchBar.js';
 
-const NovoUsuario = () => {
+const Deliveries = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const isLoading = useSelector((state) => state.form.isLoading);
@@ -23,50 +24,67 @@ const NovoUsuario = () => {
     const isEditing = useSelector((state) => state.form.isEditing);
     const { user } = useUser();
 
+    const sampleData = [
+        {
+          idCollect: 57,
+          collectKey: "26022025360",
+          collectUser: "teo",
+          edress: "Av. Frederico Ozanan, 3030",
+          edressDescription: "CD Canoas",
+          date: "2025-02-26",
+          status: true,
+          itens: [
+            {
+              collectType: "Mercado Livre SP",
+              quantity: 10,
+              deliveryStatus: true,
+              valuePerUnitCollect: 30,
+              totalToReceive: 300,
+              valueToPayPerUnit: 5,
+              totalValueToPay: 150
+            }, 
+            {
+              collectType: "Shopee",
+              quantity: 10,
+              deliveryStatus: true,
+              valuePerUnitCollect: 30,
+              totalToReceive: 300,
+              valueToPayPerUnit: 5,
+              totalValueToPay: 150
+            }
+          ]
+        },
+        {
+          idCollect: 58,
+          collectKey: "26022025361",
+          collectUser: "teo",
+          edress: "Av. Frederico Ozanan, 3030",
+          edressDescription: "CD Canoas",
+          date: "2025-02-25",
+          status: true,
+          itens: [
+            {
+              collectType: "Mercado Livre Extremo",
+              quantity: 23,
+              deliveryStatus: true,
+              valuePerUnitCollect: 10,
+              totalToReceive: 233,
+              valueToPayPerUnit: 5,
+              totalValueToPay: 100
+            }
+          ]
+        }
+      ];
+
+    const handleSubmit = async (e) => { 
+
+    };
+
     useEffect(() => {
         dispatch(setNotification({ message: '', severity: 'info' }));
         dispatch(resetForm());
     }, [dispatch]);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        dispatch(setEditing(false));
-        dispatch(setUpdating(true));
-        dispatch(setLoading(true));
-        setTimeout(() => {
-            dispatch(setLoading(false));
-        }, 2000);
-
-        try {
-            const dataToSend  = formData;
-            await new Promise((resolve) => setTimeout(resolve, 3000));
-
-            console.log("Dados a serem enviados:", JSON.stringify(dataToSend, null, 2));
-            const response = await api.post('api/users/save', dataToSend);
-
-            if (response.data === true) {
-                dispatch(setNotification({ message: 'Usuário criado com sucesso!', severity: 'success' }));
-                dispatch(setLoading(false));
-            } else {
-                dispatch(setNotification({ message: 'Erro ao criar usuário', severity: 'error' }));
-                dispatch(setEditing(true));
-            }
-
-        } catch (error) {
-            if (error.response) {
-                const msg = !error.response.data.message ? 'Erro desconhecido' : 'Erro ao criar usuário' + error.response.data.message;
-                dispatch(setNotification({ message: msg, severity: 'error' }));
-                dispatch(setLoading(false));
-            } else if (error.request) {
-                dispatch(setNotification({ message: 'Erro: Nenhuma resposta recebida do servidor', severity: 'error' }));
-                dispatch(setLoading(false));
-            } else {
-                dispatch(setNotification({ message: 'Erro ao configurar a requisição: ' + error.message, severity: 'error' }));
-            }
-        } finally {
-            dispatch(setUpdating(false));
-        }
-    };
 
     return (
         <>
@@ -111,7 +129,11 @@ const NovoUsuario = () => {
                                 color: 'black',
                             }}
                         >
-                            <FormUsuarios />
+
+                            <SearchBar />
+                            <CollectTable data={sampleData} />
+
+
                         </Box>
                     </Box>
 
@@ -136,4 +158,4 @@ const NovoUsuario = () => {
     );
 };
 
-export default NovoUsuario;
+export default Deliveries;
