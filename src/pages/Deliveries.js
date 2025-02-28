@@ -24,61 +24,16 @@ const Deliveries = () => {
     const isEditing = useSelector((state) => state.form.isEditing);
     const { user } = useUser();
 
-    const sampleData = [
-        {
-          idCollect: 57,
-          collectKey: "26022025360",
-          collectUser: "teo",
-          edress: "Av. Frederico Ozanan, 3030",
-          edressDescription: "CD Canoas",
-          date: "2025-02-26",
-          status: true,
-          itens: [
-            {
-              collectType: "Mercado Livre SP",
-              quantity: 10,
-              deliveryStatus: true,
-              valuePerUnitCollect: 30,
-              totalToReceive: 300,
-              valueToPayPerUnit: 5,
-              totalValueToPay: 150
-            }, 
-            {
-              collectType: "Shopee",
-              quantity: 10,
-              deliveryStatus: true,
-              valuePerUnitCollect: 30,
-              totalToReceive: 300,
-              valueToPayPerUnit: 5,
-              totalValueToPay: 150
-            }
-          ]
-        },
-        {
-          idCollect: 58,
-          collectKey: "26022025361",
-          collectUser: "teo",
-          edress: "Av. Frederico Ozanan, 3030",
-          edressDescription: "CD Canoas",
-          date: "2025-02-25",
-          status: true,
-          itens: [
-            {
-              collectType: "Mercado Livre Extremo",
-              quantity: 23,
-              deliveryStatus: true,
-              valuePerUnitCollect: 10,
-              totalToReceive: 233,
-              valueToPayPerUnit: 5,
-              totalValueToPay: 100
-            }
-          ]
-        }
-      ];
+    const [sampleData, setSampleData] = useState([]);
 
     const handleSubmit = async (e) => { 
 
     };
+
+    const handleSearchComplete = (data) => {
+        setSampleData(data);
+    };
+
 
     useEffect(() => {
         dispatch(setNotification({ message: '', severity: 'info' }));
@@ -99,7 +54,7 @@ const Deliveries = () => {
                     minHeight: '100vh',
                     color: 'black',
                     p: { xs: 2, md: 3 },
-                    maxWidth: 'lg',
+                    maxWidth: 'xl',
                     mx: 'auto',
                 }}
             >
@@ -130,7 +85,7 @@ const Deliveries = () => {
                             }}
                         >
 
-                            <SearchBar />
+                            <SearchBar onSearchComplete={handleSearchComplete}/>
                             <CollectTable data={sampleData} />
 
 

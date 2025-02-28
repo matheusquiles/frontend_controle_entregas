@@ -24,7 +24,6 @@ const CollectTable = ({ data }) => {
         <thead>
           <tr>
             <th>Motoboy</th>
-            <th>Supervisor</th>
             <th>Data</th>
             <th>Cliente/Endereço</th>
             <th>Tipo de Coleta</th>
@@ -45,9 +44,6 @@ const CollectTable = ({ data }) => {
                     <>
                       <td rowSpan={group.collects.reduce((sum, c) => sum + c.itens.length, 0)}>
                         {collect.collectUser}
-                      </td>
-                      <td rowSpan={group.collects.reduce((sum, c) => sum + c.itens.length, 0)}>
-                        {"Tiago"} {/* Assuming "Tiago" is a static supervisor value; adjust if dynamic */}
                       </td>
                       <td rowSpan={group.collects.reduce((sum, c) => sum + c.itens.length, 0)}>
                         {group.date}

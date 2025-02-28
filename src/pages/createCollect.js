@@ -86,7 +86,7 @@ const CreateCollect = () => {
             idCollectType: parseInt(item.collectType)
           },
           quantity: parseInt(item.quantity),
-          deliveryStatus: true
+          deliveryStatus: false
         }))
       };
 

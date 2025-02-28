@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import CreateCollect from '../pages/createCollect.js';
 import { useUser } from '../hooks/useUser';
-import CollectTable from './CollectTable.js';
 
 const Home = (props) => {
   const [activeComponent, setActiveComponent] = useState(null);
