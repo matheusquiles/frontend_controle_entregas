@@ -44,7 +44,7 @@ return (
             startDecorator={isUpdating ? <CircularProgress variant="solid" /> : null}
             sx={{ bgcolor: MAIN_YELLOW, color: MAIN_FONT_COLLOR }} variant="contained"
         >
-            {isLoading ? 'Cadastrando...' : (btEnviar || 'Cadastrar')}
+            {isLoading ? btEnviar + '...' : (btEnviar || 'Cadastrar')}
         </Button>
     </>
 );

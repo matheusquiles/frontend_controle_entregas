@@ -1,11 +1,12 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Box, TextField, Button } from '@mui/material';
+import { Box, TextField, Button, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { setFormData, setLoading, resetForm, setEditing, setNotification, setUpdating } from '../redux/reducers/FormSlice.js';
+import { setFormData, setLoading, resetForm, setNotification } from '../redux/reducers/FormSlice.js';
 import SelectRest from './SelectRest';
 import api from '../api/api.js';
+import { MAIN_YELLOW, MAIN_FONT_COLLOR } from '../styles/Colors';
 import { API_SEARCH_COLLECTS_DTO } from '../helper/Contants.js';
 
 const SearchBar = ({onSearchComplete}) => {
@@ -13,20 +14,28 @@ const SearchBar = ({onSearchComplete}) => {
     const formData = useSelector((state) => state.form.formData);
     const invalidFields = useSelector((state) => state.form.invalidFields) || [];
 
-    React.useEffect(() => {
-        dispatch(setNotification({ message: '', severity: 'info' }));
-        dispatch(resetForm());
-    }, [dispatch]);
+    const hoje = new Date();
 
     const [filters, setFilters] = React.useState({
-        startDate: null,
-        endDate: null,
+        startDate: hoje,
+        endDate: hoje,
         motoboy: '',
         supervisor: '',
         collectType: '',
-        address: ''
+        address: '',
+        status: 'todos' // Valor padrão
     });
 
+    React.useEffect(() => {
+        dispatch(setNotification({ message: '', severity: 'info' }));
+        dispatch(resetForm());
+        const hojeFormatado = hoje.toISOString().split('T')[0];
+        dispatch(setFormData({ 
+            dataInicial: hojeFormatado, 
+            dataFinal: hojeFormatado,
+            status: 'todos' // Adicionado ao formData inicial
+        }));
+    }, [dispatch]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -42,6 +51,11 @@ const SearchBar = ({onSearchComplete}) => {
             ...filters,
             [name]: date
         });
+        const dataFormatada = date ? date.toISOString().split('T')[0] : '';
+        dispatch(setFormData({ 
+            ...formData, 
+            [name === 'startDate' ? 'dataInicial' : 'dataFinal']: dataFormatada 
+        }));
     };
 
     const handleSearch = async (e) => {
@@ -58,22 +72,19 @@ const SearchBar = ({onSearchComplete}) => {
                 idUser: formData.userKey,
                 initialDate: formatDate(filters.startDate),
                 finalDate: formatDate(filters.endDate),
-                idEdress: formData.edress ? parseInt(formData.edress) : null
+                idEdress: formData.edress ? parseInt(formData.edress) : null,
+                status: formData.status 
             };
             console.log("Dados a serem enviados:", JSON.stringify(dataToSend, null, 2));
 
             const response = await api.post(`${API_SEARCH_COLLECTS_DTO}`, dataToSend);
-
             console.log("Dados recebidos:", JSON.stringify(response.data, null, 2));
             onSearchComplete(response.data);
 
         } catch (error) {
-
+            console.error("Erro na busca:", error);
         }
         dispatch(setLoading(false));
-
-        // Aqui você pode dispatch uma ação Redux ou fazer uma requisição API com dataToSend, se necessário
-        // Exemplo: dispatch(searchAction(dataToSend));
     };
 
     return (
@@ -103,9 +114,7 @@ const SearchBar = ({onSearchComplete}) => {
                         invalidFields={invalidFields}
                         required={true}
                     />
-                    <Button variant="contained" onClick={handleSearch}>
-                        Pesquisar
-                    </Button>
+
                 </Box>
 
                 <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
@@ -121,6 +130,24 @@ const SearchBar = ({onSearchComplete}) => {
                         onChange={(date) => handleDateChange('endDate', date)}
                         renderInput={(params) => <TextField {...params} />}
                     />
+                                        <FormControl sx={{ minWidth: 120 }}>
+                        <InputLabel id="status-label">Status</InputLabel>
+                        <Select
+                            labelId="status-label"
+                            name="status"
+                            value={filters.status}
+                            label="Status"
+                            onChange={handleChange}
+                        >
+                            <MenuItem value="todos">Todos</MenuItem>
+                            <MenuItem value="aprovados">Aprovados</MenuItem>
+                            <MenuItem value="pendentes">Pendentes</MenuItem>
+                            <MenuItem value="recusados">Recusados</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <Button variant="contained" onClick={handleSearch}  sx={{ bgcolor: MAIN_YELLOW, color: MAIN_FONT_COLLOR }}>
+                        Pesquisar
+                    </Button>
                 </Box>
             </Box>
         </LocalizationProvider>

@@ -34,7 +34,9 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 }));
 
 
-export default function AppAppBar({ onMenuClick }) {
+// ...existing code...
+
+export default function AppAppBar() {
   const [open, setOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [entregasAnchorEl, setEntregasAnchorEl] = React.useState(null);
@@ -65,6 +67,10 @@ export default function AppAppBar({ onMenuClick }) {
     setEntregasAnchorEl(null);
   };
 
+  const onMenuClick = (callback) => {
+    callback();
+  };
+
   return (
     <AppBar
       position="fixed"
@@ -81,7 +87,7 @@ export default function AppAppBar({ onMenuClick }) {
           <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', px: 0, gap: 2 }}>
             <SiteIcon />
             <Box sx={{ display: { xs: 'none', md: 'flex'} }}>
-              <Button variant="text" sx={{ color: MAIN_FONT_COLLOR }} size="small" onClick={() => onMenuClick(navigate('/coletas'))}>
+              <Button variant="text" sx={{ color: MAIN_FONT_COLLOR }} size="small" onClick={() => onMenuClick(() => navigate('/coletas'))}>
                 Coletas
               </Button>
               <Button variant="text" sx={{ color: MAIN_FONT_COLLOR }} size="small" onClick={handleMenuClick}>
@@ -117,7 +123,6 @@ export default function AppAppBar({ onMenuClick }) {
             <Button onClick={() => handleLogout()} sx={{ bgcolor: MAIN_YELLOW, color: MAIN_FONT_COLLOR }} variant="contained" size="small">
               Sair
             </Button>
-            <ColorModeIconDropdown />
           </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1 }}>
             <ColorModeIconDropdown size="medium" />

@@ -9,7 +9,6 @@ import NotificationSnackbar from '../components/NotificacaoSnackbar.js';
 import { useUser } from '../hooks/useUser';
 import FormButtons from '../components/FormButtons.js';
 import AppAppBar from '../components/AppAppBar.js';
-import api from '../api/api.js';
 import CollectTable from '../components/CollectTable.js';
 import SearchBar from '../components/SearchBar.js';
 
@@ -104,7 +103,7 @@ const Deliveries = () => {
                         bottom: 0,
                         color: 'black',
                     }}>
-                        <FormButtons handleSubmit={handleSubmit} isLoading={isLoading} isUpdating={isUpdating} />
+                        <FormButtons handleSubmit={handleSubmit} isLoading={isLoading} isUpdating={isUpdating} btEnviar="Salvar"/>
                     </Box>
                 </form>
                 <NotificationSnackbar />

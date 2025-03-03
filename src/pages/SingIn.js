@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -13,7 +11,9 @@ import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import AppTheme from '../styles/theme/AppTheme.js';
 import api from '../api/api.js';
-import { API_LOGIN } from '../helper/Contants.js';
+import { MAIN_YELLOW, MAIN_FONT_COLLOR } from '../styles/Colors.jsx';
+import { useNavigate } from 'react-router-dom';
+
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -186,6 +186,7 @@ export default function SignIn(props) {
               fullWidth
               variant="contained"
               onClick={validateInputs}
+               sx={{ bgcolor: MAIN_YELLOW, color: MAIN_FONT_COLLOR, mt: 2 }} 
             >
               Entrar
             </Button>

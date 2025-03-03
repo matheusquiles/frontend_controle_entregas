@@ -16,8 +16,15 @@ export const useUser = () => {
         }
 
         const decodedToken = jwtDecode(token);
-        const userKey = decodedToken.userKey || decodedToken.sub; 
+        if (!decodedToken.exp || decodedToken.exp < Date.now() / 1000) {
+          console.warn('Token expirado');
+          localStorage.removeItem('token');
+          setUser(null);
+          setLoading(false);
+          return;
+        }
 
+        const userKey = decodedToken.userKey || decodedToken.sub;
         if (!userKey) {
           console.error('userKey não encontrada no token.');
           setLoading(false);
@@ -28,6 +35,7 @@ export const useUser = () => {
         setUser(response.data);
       } catch (error) {
         console.error('Erro ao buscar usuário:', error);
+        setUser(null);
       } finally {
         setLoading(false);
       }

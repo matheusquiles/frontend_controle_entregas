@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import AppAppBar from './AppAppBar.js';
 import AppTheme from '../styles/theme/AppTheme.js';
@@ -12,11 +12,18 @@ const Home = (props) => {
   const [activeComponent, setActiveComponent] = useState(null);
   const { user, loading } = useUser();
   const navigate = useNavigate();
+  const [cachedUserName, setCachedUserName] = useState(localStorage.getItem('userName') || 'Usuário');
+
+  useEffect(() => {
+    if (user?.name) {
+      localStorage.setItem('userName', user.name);
+      setCachedUserName(user.name);
+    }
+  }, [user]);
 
   const handleMenuClick = (path) => {
     navigate("/coletas");
   };
-
 
   return (
     <AppTheme {...props}>
@@ -37,7 +44,7 @@ const Home = (props) => {
             <h1>Carregando...</h1>
           ) : (
             <div>
-              <h1>Bem-vindo, {user?.name || 'Usuário'}!</h1>
+              <h1>Bem-vindo, {cachedUserName}!</h1>
             </div>
           )}
         </header>

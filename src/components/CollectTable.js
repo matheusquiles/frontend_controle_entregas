@@ -59,7 +59,7 @@ const CollectTable = ({ data }) => {
                   <td>{item.totalToReceive ?? '-'}</td>
                   <td>{item.valueToPayPerUnit ?? '-'}</td>
                   <td>{item.totalValueToPay ?? '-'}</td>
-                  <td>{collect.status ? 'Aprovado' : 'Rejeitado'}</td>
+                  <td>{collect.status == null ? 'Pendente' : (collect.status ? 'Aprovado' : 'Rejeitado')}</td>
                 </tr>
               ))
             ))
