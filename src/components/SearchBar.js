@@ -9,7 +9,7 @@ import api from '../api/api.js';
 import { MAIN_YELLOW, MAIN_FONT_COLLOR } from '../styles/Colors';
 import { API_SEARCH_COLLECTS_DTO } from '../helper/Contants.js';
 
-const SearchBar = ({onSearchComplete}) => {
+const SearchBar = ({ onSearchComplete }) => {
     const dispatch = useDispatch();
     const formData = useSelector((state) => state.form.formData);
     const invalidFields = useSelector((state) => state.form.invalidFields) || [];
@@ -30,10 +30,10 @@ const SearchBar = ({onSearchComplete}) => {
         dispatch(setNotification({ message: '', severity: 'info' }));
         dispatch(resetForm());
         const hojeFormatado = hoje.toISOString().split('T')[0];
-        dispatch(setFormData({ 
-            dataInicial: hojeFormatado, 
+        dispatch(setFormData({
+            dataInicial: hojeFormatado,
             dataFinal: hojeFormatado,
-            status: 'todos' 
+            status: 'todos'
         }));
     }, [dispatch]);
 
@@ -52,9 +52,9 @@ const SearchBar = ({onSearchComplete}) => {
             [name]: date
         });
         const dataFormatada = date ? date.toISOString().split('T')[0] : '';
-        dispatch(setFormData({ 
-            ...formData, 
-            [name === 'startDate' ? 'dataInicial' : 'dataFinal']: dataFormatada 
+        dispatch(setFormData({
+            ...formData,
+            [name === 'startDate' ? 'dataInicial' : 'dataFinal']: dataFormatada
         }));
     };
 
@@ -73,7 +73,7 @@ const SearchBar = ({onSearchComplete}) => {
                 initialDate: formatDate(filters.startDate),
                 finalDate: formatDate(filters.endDate),
                 idEdress: formData.edress ? parseInt(formData.edress) : null,
-                deliveryStatus: formData.status 
+                deliveryStatus: formData.status
             };
             console.log("Dados a serem enviados:", JSON.stringify(dataToSend, null, 2));
 
@@ -130,22 +130,22 @@ const SearchBar = ({onSearchComplete}) => {
                         onChange={(date) => handleDateChange('endDate', date)}
                         renderInput={(params) => <TextField {...params} />}
                     />
-                                        <FormControl sx={{ minWidth: 120 }}>
+                    <FormControl sx={{ minWidth: 120 }}>
                         <InputLabel id="status-label">Status</InputLabel>
                         <Select
                             labelId="status-label"
                             name="status"
                             value={filters.status}
-                            label="Status"
+                            label="Status" F
                             onChange={handleChange}
                         >
                             <MenuItem value="todos">Todos</MenuItem>
-                            <MenuItem value="APROVADO">Aprovados</MenuItem>
-                            <MenuItem value="PENDENTE">Pendentes</MenuItem>
-                            <MenuItem value="RECUSADO">Recusados</MenuItem>
+                            <MenuItem value="Aprovado">Aprovados</MenuItem>
+                            <MenuItem value="Pendente">Pendentes</MenuItem>
+                            <MenuItem value="Recusado">Recusados</MenuItem>
                         </Select>
                     </FormControl>
-                    <Button variant="contained" onClick={handleSearch}  sx={{ bgcolor: MAIN_YELLOW, color: MAIN_FONT_COLLOR }}>
+                    <Button variant="contained" onClick={handleSearch} sx={{ bgcolor: MAIN_YELLOW, color: MAIN_FONT_COLLOR }}>
                         Pesquisar
                     </Button>
                 </Box>
