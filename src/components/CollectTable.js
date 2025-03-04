@@ -1,9 +1,12 @@
-// CollectTable.js
-import React, { useState } from 'react';
+import React from 'react';
 import '../styles/CollectTable.css';
 
-
 const CollectTable = ({ data }) => {
+  // Verifica se data é um array antes de usar reduce
+  if (!Array.isArray(data)) {
+    return <div>Dados inválidos</div>;
+  }
+
   // Group collects by date and edressDescription
   const groupedData = data.reduce((acc, collect) => {
     const key = `${collect.date}-${collect.edressDescription}`;
@@ -32,7 +35,7 @@ const CollectTable = ({ data }) => {
             <th>Valor Total a Receber</th>
             <th>Valor a Pagar por Unidade</th>
             <th>Valor Total a Pagar</th>
-            <th>Entrega Aprovada</th>
+            <th>Status da Entrega</th>
           </tr>
         </thead>
         <tbody>
@@ -59,7 +62,7 @@ const CollectTable = ({ data }) => {
                   <td>{item.totalToReceive ?? '-'}</td>
                   <td>{item.valueToPayPerUnit ?? '-'}</td>
                   <td>{item.totalValueToPay ?? '-'}</td>
-                  <td>{collect.status == null ? 'Pendente' : (collect.status ? 'Aprovado' : 'Rejeitado')}</td>
+                  <td>{item.deliveryStatus ?? '-'}</td>
                 </tr>
               ))
             ))

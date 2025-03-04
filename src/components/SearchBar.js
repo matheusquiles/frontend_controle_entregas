@@ -33,7 +33,7 @@ const SearchBar = ({onSearchComplete}) => {
         dispatch(setFormData({ 
             dataInicial: hojeFormatado, 
             dataFinal: hojeFormatado,
-            status: 'todos' // Adicionado ao formData inicial
+            status: 'todos' 
         }));
     }, [dispatch]);
 
@@ -73,7 +73,7 @@ const SearchBar = ({onSearchComplete}) => {
                 initialDate: formatDate(filters.startDate),
                 finalDate: formatDate(filters.endDate),
                 idEdress: formData.edress ? parseInt(formData.edress) : null,
-                status: formData.status 
+                deliveryStatus: formData.status 
             };
             console.log("Dados a serem enviados:", JSON.stringify(dataToSend, null, 2));
 
@@ -140,9 +140,9 @@ const SearchBar = ({onSearchComplete}) => {
                             onChange={handleChange}
                         >
                             <MenuItem value="todos">Todos</MenuItem>
-                            <MenuItem value="aprovados">Aprovados</MenuItem>
-                            <MenuItem value="pendentes">Pendentes</MenuItem>
-                            <MenuItem value="recusados">Recusados</MenuItem>
+                            <MenuItem value="APROVADO">Aprovados</MenuItem>
+                            <MenuItem value="PENDENTE">Pendentes</MenuItem>
+                            <MenuItem value="RECUSADO">Recusados</MenuItem>
                         </Select>
                     </FormControl>
                     <Button variant="contained" onClick={handleSearch}  sx={{ bgcolor: MAIN_YELLOW, color: MAIN_FONT_COLLOR }}>
