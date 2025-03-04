@@ -7,17 +7,12 @@ import { InputLabel, StyledSelect, GenericP } from '../styles/globalStyles';
 import { API_BASE_URL } from '../helper/Contants';
 import api from '../api/api';
 
-export default function SelectRest({ label, first, medium, topless, small, route, id, name, defaultValue, invalidFields, disabled = false, onChange }) {
+export default function SelectRest({ label, first, medium, topless, small, route, id, name, defaultValue, invalidFields, disabled = false, onChange, search }) {
   const dispatch = useDispatch();
   const selected = useSelector((state) => state.form.formData[route] || defaultValue);
   const options = useSelector((state) => state.form.options[route] || []);
   const isInvalid = invalidFields.includes(route);
   const [loadingDelay, setLoadingDelay] = useState(false);
-
-  // const handleSelect = (event) => {
-  //   const { value } = event.target;
-  //   dispatch(setFormData({ [route]: value }));
-  // };
 
   const handleSelect = (event) => {
     const { value, name } = event.target;
@@ -54,11 +49,10 @@ export default function SelectRest({ label, first, medium, topless, small, route
     if (!options.length) getData();
   }, [getData, options.length]);
 
-
   const isLoading = useSelector((state) => state.form.isLoading);
 
   return (
-    <InputLabel first={first} medium={medium} topless={topless} small={small} style={{ borderColor: isInvalid ? 'red' : 'inherit' }}>
+    <InputLabel first={first} medium={medium} topless={topless} small={small} search={search} style={{ borderColor: isInvalid ? 'red' : 'inherit' }}>
       <GenericP>{label}:</GenericP>
       <StyledSelect
         value={selected || ''}
@@ -66,7 +60,11 @@ export default function SelectRest({ label, first, medium, topless, small, route
         disabled={disabled}
         name={name}
       >
-        <option value="" disabled>Selecione...</option>
+        {search ? (
+          <option value="">Todos</option>
+        ) : (
+          <option value="" disabled>Selecione...</option>
+        )}
         {options.map((option) => (
           <option key={option.id} value={option.id}>
             {option.name}

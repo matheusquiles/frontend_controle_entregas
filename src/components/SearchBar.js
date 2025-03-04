@@ -102,6 +102,7 @@ const SearchBar = ({ onSearchComplete }) => {
                         defaultValue=""
                         invalidFields={invalidFields}
                         required={true}
+                        search
                     />
                     <SelectRest
                         label="Endereço"
@@ -113,6 +114,7 @@ const SearchBar = ({ onSearchComplete }) => {
                         defaultValue=""
                         invalidFields={invalidFields}
                         required={true}
+                        search
                     />
 
                 </Box>
