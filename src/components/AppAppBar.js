@@ -33,13 +33,11 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   padding: '8px 12px',
 }));
 
-
-// ...existing code...
-
 export default function AppAppBar() {
   const [open, setOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [entregasAnchorEl, setEntregasAnchorEl] = React.useState(null);
+  const [configAnchorEl, setConfigAnchorEl] = React.useState(null);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -67,6 +65,14 @@ export default function AppAppBar() {
     setEntregasAnchorEl(null);
   };
 
+  const handleConfigMenuClick = (event) => {
+    setConfigAnchorEl(event.currentTarget);
+  };
+
+  const handleConfigMenuClose = () => {
+    setConfigAnchorEl(null);
+  };
+
   const onMenuClick = (callback) => {
     callback();
   };
@@ -86,21 +92,11 @@ export default function AppAppBar() {
         <StyledToolbar variant="dense" disableGutters>
           <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', px: 0, gap: 2 }}>
             <SiteIcon />
-            <Box sx={{ display: { xs: 'none', md: 'flex'} }}>
+            <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
               <Button variant="text" sx={{ color: MAIN_FONT_COLLOR }} size="small" onClick={() => onMenuClick(() => navigate('/coletas'))}>
                 Coletas
               </Button>
-              <Button variant="text" sx={{ color: MAIN_FONT_COLLOR }} size="small" onClick={handleMenuClick}>
-                Usuários
-              </Button>
-              <Menu
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleMenuClose}
-              >
-                <MenuItem onClick={() => { handleMenuClose(); navigate('/usuarios/novo'); }}>Novo</MenuItem>
-                <MenuItem onClick={() => { handleMenuClose(); navigate('/usuarios/editar'); }}>Editar</MenuItem>
-              </Menu>
+
               <Button variant="text" sx={{ color: MAIN_FONT_COLLOR }} size="small" onClick={handleEntregasMenuClick}>
                 Entregas
               </Button>
@@ -110,6 +106,27 @@ export default function AppAppBar() {
                 onClose={handleEntregasMenuClose}
               >
                 <MenuItem onClick={() => { handleEntregasMenuClose(); navigate('/entregas/aprovar'); }}>Aprovar</MenuItem>
+              </Menu>
+
+              <Button variant="text" sx={{ color: MAIN_FONT_COLLOR }} size="small" onClick={handleConfigMenuClick}>
+                Configurações
+              </Button>
+              <Menu
+                anchorEl={configAnchorEl}
+                open={Boolean(configAnchorEl)}
+                onClose={handleConfigMenuClose}
+              >
+                <MenuItem onClick={handleMenuClick}>
+                  Usuários
+                  <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={handleMenuClose}
+                  >
+                    <MenuItem onClick={() => { handleMenuClose(); navigate('/usuarios/novo'); }}>Novo</MenuItem>
+                    <MenuItem onClick={() => { handleMenuClose(); navigate('/usuarios/editar'); }}>Editar</MenuItem>
+                  </Menu>
+                </MenuItem>
               </Menu>
             </Box>
           </Box>

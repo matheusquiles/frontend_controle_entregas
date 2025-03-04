@@ -13,7 +13,10 @@ import AppTheme from '../styles/theme/AppTheme.js';
 import api from '../api/api.js';
 import { MAIN_YELLOW, MAIN_FONT_COLLOR } from '../styles/Colors.jsx';
 import { useNavigate } from 'react-router-dom';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { setLoading } from '../redux/reducers/FormSlice.js';
+import { LoadingOverlay } from '../styles/globalStyles.jsx';
+import { FaSpinner } from 'react-icons/fa';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -64,6 +67,8 @@ export default function SignIn(props) {
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const isLoading = useSelector((state) => state.form.isLoading);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -84,6 +89,7 @@ export default function SignIn(props) {
       password: data.get('password'),
     };
   
+    dispatch(setLoading(true));
     try {
       const response = await api.post('auth/login', loginData);
       localStorage.setItem('token', response.data.token);
@@ -93,6 +99,8 @@ export default function SignIn(props) {
       console.error('Erro no login:', error);
       setLoginError(true);
       setLoginErrorMessage('Erro no login. Verifique suas credenciais.');
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 
@@ -147,6 +155,11 @@ export default function SignIn(props) {
               gap: 2,
             }}
           >
+            {isLoading && (
+              <LoadingOverlay>
+                <FaSpinner className="animate-spin text-4xl text-blue-500" />
+              </LoadingOverlay>
+            )}
             <FormControl>
               <FormLabel htmlFor="login">Usuário</FormLabel>
               <TextField
@@ -186,7 +199,7 @@ export default function SignIn(props) {
               fullWidth
               variant="contained"
               onClick={validateInputs}
-               sx={{ bgcolor: MAIN_YELLOW, color: MAIN_FONT_COLLOR, mt: 2 }} 
+              sx={{ bgcolor: MAIN_YELLOW, color: MAIN_FONT_COLLOR, mt: 2 }} 
             >
               Entrar
             </Button>
