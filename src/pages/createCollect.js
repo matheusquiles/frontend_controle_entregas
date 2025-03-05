@@ -1,17 +1,17 @@
+// CreateCollect.js
 import React, { useEffect, useState } from 'react';
 import { setFormData, setLoading, resetForm, setEditing, setNotification, setUpdating } from '../redux/reducers/FormSlice.js';
 import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios';
+import api from '../api/api.js';
 import * as F from '../styles/globalStyles.jsx';
 import { LoadingOverlay } from '../styles/globalStyles.jsx';
 import { FaSpinner } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-
 import { CssBaseline, Box, IconButton, Toolbar } from '@mui/material';
 import NotificationSnackbar from '../components/NotificacaoSnackbar.js';
 import SelectRest from '../components/SelectRest.js';
 import SelectRestCollect from '../components/SelectRestCollect.js';
-import Input from '../components/input.js';
+import Input from '../components/input.js'; // Assumindo que é TextInput
 import { API_SAVE_URL } from '../helper/Contants.js';
 import camelCase from '../helper/camelCase.js';
 import AddIcon from '@mui/icons-material/Add';
@@ -24,14 +24,13 @@ const CreateCollect = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const isLoading = useSelector((state) => state.form.isLoading);
-  const loading = useSelector((state) => state.form.loading);
   const formData = useSelector((state) => state.form.formData);
   const invalidFields = useSelector((state) => state.form.invalidFields);
-  const isUpdating = useSelector((state) => state.form.isUpdating);
   const isEditing = useSelector((state) => state.form.isEditing);
   const { user } = useUser();
 
   const [items, setItems] = useState([{ collectType: '', quantity: '' }]);
+  const [submitted, setSubmitted] = useState(false); // Estado para rastrear submissão
 
   useEffect(() => {
     dispatch(setNotification({ message: '', severity: 'info' }));
@@ -49,6 +48,9 @@ const CreateCollect = () => {
     }
 
     setItems(newItems);
+    if (name === 'edress') {
+      dispatch(setFormData({ [name]: value }));
+    }
   };
 
   const handleAddFields = () => {
@@ -63,57 +65,52 @@ const CreateCollect = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitted(true); 
+
+    const currentInvalidFields = [];
+    if (!formData.edress) {
+      currentInvalidFields.push('edress');
+    }
+    items.forEach((item, index) => {
+      if (!item.collectType) currentInvalidFields.push(`collectType-${index}`);
+      if (!item.quantity) currentInvalidFields.push(`quantity-${index}`);
+    });
+
+    if (currentInvalidFields.length > 0) {
+      dispatch(setNotification({ message: 'Preencha todos os campos obrigatórios!', severity: 'error' }));
+      return;
+    }
+
     dispatch(setEditing(false));
-    dispatch(setUpdating(true));
     dispatch(setLoading(true));
-    setTimeout(() => {
-      dispatch(setLoading(false));
-    }, 2000);
 
     try {
       const camelCaseFormData = camelCase.convertKeysToCamelCase(formData);
       const dataToSend = {
         date: new Date().toISOString().split('T')[0],
         status: true,
-        userId: {
-          idUser: user?.idUser
-        },
-        edress: {
-          idEdress: parseInt(camelCaseFormData.edress)
-        },
+        userId: { idUser: user?.idUser },
+        edress: { idEdress: parseInt(camelCaseFormData.edress) },
         itens: items.map(item => ({
-          collectType: {
-            idCollectType: parseInt(item.collectType)
-          },
+          collectType: { idCollectType: parseInt(item.collectType) },
           quantity: parseInt(item.quantity),
           deliveryStatus: false
         }))
       };
 
       console.log("Dados a serem enviados:", JSON.stringify(dataToSend, null, 2));
-      const response = await axios.post(`${API_SAVE_URL}`, dataToSend);
+      const response = await api.post(`${API_SAVE_URL}`, dataToSend);
 
       if (response.data === true) {
         dispatch(setNotification({ message: 'Coleta criada com sucesso!', severity: 'success' }));
-        dispatch(setLoading(false));
       } else {
         dispatch(setNotification({ message: 'Erro ao criar coleta', severity: 'error' }));
         dispatch(setEditing(true));
       }
-
     } catch (error) {
-      if (error.response) {
-        const msg = !error.response.data.message ? 'Erro desconhecido' : 'Erro ao criar coleta' + error.response.data.message;
-        dispatch(setNotification({ message: msg, severity: 'error' }));
-        dispatch(setLoading(false));
-      } else if (error.request) {
-        dispatch(setNotification({ message: 'Erro: Nenhuma resposta recebida do servidor', severity: 'error' }));
-        dispatch(setLoading(false));
-      } else {
-        dispatch(setNotification({ message: 'Erro ao configurar a requisição: ' + error.message, severity: 'error' }));
-      }
+      dispatch(setNotification({ message: 'Erro ao criar coleta', severity: 'error' }));
     } finally {
-      dispatch(setUpdating(false));
+      dispatch(setLoading(false));
     }
   };
 
@@ -163,14 +160,21 @@ const CreateCollect = () => {
               <F.InputLine column>
                 <Box mb={2} width={'100%'}>
                   <F.InputLine>
-                    <SelectRest label="Endereço"
-                      first route='edress'
+                    <SelectRest 
+                      label="Endereço"
+                      first 
+                      route='edress'
                       id='idEdress'
                       name='edress'
                       onChange={(e) => handleChange(e, 0)}
-                      form={formData} defaultValue=""
-                      invalidFields={invalidFields} loading={loading}
-                      disabled={isEditing} />
+                      form={formData}
+                      defaultValue=""
+                      invalidFields={invalidFields}
+                      loading={isLoading}
+                      disabled={isEditing}
+                      required={true}
+                      submitted={submitted}
+                    />
                   </F.InputLine>
                 </Box>
 
@@ -189,22 +193,26 @@ const CreateCollect = () => {
                           form={item}
                           defaultValue=""
                           invalidFields={invalidFields}
-                          loading={loading}
+                          loading={isLoading}
                           disabled={isEditing}
                           index={index}
+                          required={true}
+                          submitted={submitted}
                         />
                       </F.MediumInputLine>
                     </F.InputLine>
                     <F.InputLine>
                       <F.MediumInputLine>
                         <Input
-                          first label="Quantidade de itens"
+                          first 
+                          label="Quantidade de itens"
                           fieldName="quantity"
                           formData={item}
-                          setFormData={setFormData}
                           onChange={(e) => handleChange(e, index)}
                           invalidFields={invalidFields}
                           disabled={isEditing}
+                          required={true}
+                          submitted={submitted}
                         />
                       </F.MediumInputLine>
                     </F.InputLine>
@@ -236,12 +244,12 @@ const CreateCollect = () => {
             bottom: 0,
             color: 'black',
           }}>
-            <FormButtons handleSubmit={handleSubmit} isLoading={isLoading} isUpdating={isUpdating} />
+            <FormButtons handleSubmit={handleSubmit} isLoading={isLoading} />
           </Box>
         </Box>
 
         <NotificationSnackbar />
-      </form >
+      </form>
     </>
   );
 };

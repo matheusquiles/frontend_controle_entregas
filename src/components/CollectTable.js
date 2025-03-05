@@ -1,3 +1,4 @@
+// CollectTable.js
 import React, { useState, useEffect } from 'react';
 import '../styles/CollectTable.css';
 import { IconButton, TextField } from '@mui/material';
@@ -6,19 +7,14 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import SaveIcon from '@mui/icons-material/Save';
 
-const CollectTable = ({ data }) => {
+const CollectTable = ({ data, onDataChange }) => {
+  const [tableData, setTableData] = useState(data);
   const [editRow, setEditRow] = useState(null);
-  const [tableData, setTableData] = useState([]);
 
+  // Sincroniza os dados recebidos com o estado interno
   useEffect(() => {
-    if (Array.isArray(data)) {
-      setTableData(data);
-    }
+    setTableData(data);
   }, [data]);
-
-  if (!Array.isArray(tableData) || tableData.length === 0) {
-    return <div>Sem dados para exibir</div>;
-  }
 
   const groupedData = tableData.reduce((acc, collect) => {
     const key = `${collect.date}-${collect.edressDescription}`;
@@ -44,7 +40,7 @@ const CollectTable = ({ data }) => {
 
   const handleSave = (collectId, itemIndex) => {
     setEditRow(null);
-    // Lógica para salvar no banco pode ser adicionada aqui
+    onDataChange(tableData); // Notifica o componente pai sobre as alterações
   };
 
   const handleChange = (collectId, itemIndex, field, value) => {
@@ -52,7 +48,6 @@ const CollectTable = ({ data }) => {
       if (collect.idCollect === collectId) {
         const updatedItens = collect.itens.map((item, idx) => {
           if (idx === itemIndex) {
-            // Converte o valor para número, lidando com entradas das setas ou digitação
             const numericValue = parseFloat(value) || 0;
             const updatedItem = { ...item, [field]: numericValue };
             updatedItem.totalToReceive = updatedItem.valuePerUnitCollect * updatedItem.quantity;
@@ -66,6 +61,7 @@ const CollectTable = ({ data }) => {
       return collect;
     });
     setTableData(updatedData);
+    onDataChange(updatedData); // Notifica o componente pai imediatamente
   };
 
   const handleApprove = (collectId, itemIndex) => {
@@ -74,11 +70,12 @@ const CollectTable = ({ data }) => {
         const updatedItens = collect.itens.map((item, idx) =>
           idx === itemIndex ? { ...item, deliveryStatus: 'Aprovado' } : item
         );
-        return { ...collect, itens: updatedItens };
+        return { ...collect, itens: updatedItens, status: true }; // Define status como true para Aprovado
       }
       return collect;
     });
     setTableData(updatedData);
+    onDataChange(updatedData); // Notifica o componente pai
   };
 
   const handleReject = (collectId, itemIndex) => {
@@ -87,11 +84,12 @@ const CollectTable = ({ data }) => {
         const updatedItens = collect.itens.map((item, idx) =>
           idx === itemIndex ? { ...item, deliveryStatus: 'Reprovado' } : item
         );
-        return { ...collect, itens: updatedItens };
+        return { ...collect, itens: updatedItens, status: false }; // Define status como false para Reprovado
       }
       return collect;
     });
     setTableData(updatedData);
+    onDataChange(updatedData); // Notifica o componente pai
   };
 
   return (
@@ -104,11 +102,11 @@ const CollectTable = ({ data }) => {
             <th>Cliente/Endereço</th>
             <th>Tipo de Coleta</th>
             <th>Quantidade</th>
-            <th>R$ por Unidade</th>
-            <th>R$ Total a Receber</th>
-            <th>R$ a Pagar por Unidade</th>
-            <th>R$ Total a Pagar</th>
-            <th>Status</th>
+            <th>Valor por Unidade</th>
+            <th>Valor Total a Receber</th>
+            <th>Valor a Pagar por Unidade</th>
+            <th>Valor Total a Pagar</th>
+            <th>Entrega Aprovada</th>
             <th>Ações</th>
           </tr>
         </thead>
@@ -123,7 +121,6 @@ const CollectTable = ({ data }) => {
               collect.itens.map((item, itemIndex) => {
                 const rowKey = `${collect.idCollect}-${itemIndex}`;
                 const isEditing = editRow === rowKey;
-                const originalItem = data.find(c => c.idCollect === collect.idCollect)?.itens[itemIndex];
                 const isApproved = item.deliveryStatus === 'Aprovado';
                 const isRejected = item.deliveryStatus === 'Reprovado';
 
@@ -137,7 +134,7 @@ const CollectTable = ({ data }) => {
                       </>
                     ) : null}
                     <td>{item.collectType}</td>
-                    <td style={{ backgroundColor: isEditing && item.quantity !== originalItem?.quantity ? '#fff3e0' : '' }}>
+                    <td>
                       {isEditing ? (
                         <TextField
                           size="small"
@@ -150,7 +147,7 @@ const CollectTable = ({ data }) => {
                         item.quantity
                       )}
                     </td>
-                    <td style={{ backgroundColor: isEditing && item.valuePerUnitCollect !== originalItem?.valuePerUnitCollect ? '#fff3e0' : '' }}>
+                    <td>
                       {isEditing ? (
                         <TextField
                           size="small"
@@ -164,7 +161,7 @@ const CollectTable = ({ data }) => {
                       )}
                     </td>
                     <td>{formatCurrency(item.totalToReceive)}</td>
-                    <td style={{ backgroundColor: isEditing && item.valueToPayPerUnit !== originalItem?.valueToPayPerUnit ? '#fff3e0' : '' }}>
+                    <td>
                       {isEditing ? (
                         <TextField
                           size="small"

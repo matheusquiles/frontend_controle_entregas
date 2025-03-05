@@ -1,17 +1,16 @@
-import React, { useState } from 'react';
+// FormUsuarios.js
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Box } from '@mui/material';
-import Input from '../components/input.js';
-import { setFormData, setLoading, resetForm, setEditing, setNotification, setUpdating } from '../redux/reducers/FormSlice.js';
+import Input from '../components/input.js'; // Ajustado para TextInput
+import { setFormData } from '../redux/reducers/FormSlice';
 import SelectRest from '../components/SelectRest.js';
+import PasswordInput from '../components/PasswordInput.js';
 
-
-
-const FormUsuarios = (props) => {
+const FormUsuarios = ({ submitted }) => {
     const formData = useSelector((state) => state.form.formData);
     const invalidFields = useSelector((state) => state.form.invalidFields) || [];
-
     const dispatch = useDispatch();
 
     const handleChange = (e) => {
@@ -27,9 +26,9 @@ const FormUsuarios = (props) => {
                     label="Nome"
                     fieldName="name"
                     formData={formData}
-                    setFormData={setFormData}
                     onChange={handleChange}
                     required={true}
+                    submitted={submitted}
                 />
             </Box>
             <Box mb={2} width={'50%'}>
@@ -37,9 +36,9 @@ const FormUsuarios = (props) => {
                     label="Código do usuário"
                     fieldName="userKey"
                     formData={formData}
-                    setFormData={setFormData}
                     onChange={handleChange}
                     required={true}
+                    submitted={submitted}
                 />
             </Box>
             <Box mb={2} width={'50%'}>
@@ -47,9 +46,9 @@ const FormUsuarios = (props) => {
                     label="CPF"
                     fieldName="cpf"
                     formData={formData}
-                    setFormData={setFormData}
                     onChange={handleChange}
                     cpf
+                    submitted={submitted}
                 />
             </Box>
             <Box mb={2} width={'50%'}>
@@ -57,33 +56,35 @@ const FormUsuarios = (props) => {
                     label="E-mail"
                     fieldName="email"
                     formData={formData}
-                    setFormData={setFormData}
                     onChange={handleChange}
                     email
                     required={true}
+                    submitted={submitted}
                 />
             </Box>
             <Box mb={2} width={'50%'}>
-                <Input
+                <PasswordInput
                     label="Senha"
                     fieldName="password"
+                    confirmFieldName="confirmPassword"
                     formData={formData}
-                    setFormData={setFormData}
                     onChange={handleChange}
-                    password
+                    required={true}
+                    submitted={submitted}
                 />
             </Box>
             <Box mb={2} width={'50%'}>
                 <SelectRest
                     label="Tipo de Usuário"
-                    route='userType'
-                    id='idUserType'
-                    name='description'
-                    onChange={(e) => handleChange(e, 0)}
+                    route="userType"
+                    id="idUserType"
+                    name="description"
+                    onChange={handleChange}
                     form={formData}
                     defaultValue=""
                     invalidFields={invalidFields}
                     required={true}
+                    submitted={submitted}
                 />
             </Box>
         </>

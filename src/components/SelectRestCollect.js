@@ -1,17 +1,32 @@
+// SelectRestCollect.js
 import React, { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { setFormData, setOptions, setLoading } from '../redux/reducers/FormSlice';
-
 import { InputLabel, StyledSelect, GenericP } from '../styles/globalStyles';
-
 import { API_BASE_URL } from '../helper/Contants';
+import api from '../api/api';
 
-export default function SelectRestCollect({ label, first, medium, topless, small, route, id, name, defaultValue, invalidFields, disabled = false, onChange, index }) {
+export default function SelectRestCollect({ 
+  label, 
+  first, 
+  medium, 
+  topless, 
+  small, 
+  route, 
+  id, 
+  name, 
+  defaultValue = '', 
+  invalidFields = [], 
+  disabled = false, 
+  onChange, 
+  index, 
+  required = false, 
+  submitted = false 
+}) {
   const dispatch = useDispatch();
   const selected = useSelector((state) => state.form.formData[`${route}_${index}`] || defaultValue);
   const options = useSelector((state) => state.form.options[`${route}_${index}`] || []);
-  const isInvalid = invalidFields.includes(route);
+  const isInvalid = required && !selected && submitted; 
   const [loadingDelay, setLoadingDelay] = useState(false);
 
   const handleSelect = (event) => {
@@ -30,7 +45,7 @@ export default function SelectRestCollect({ label, first, medium, topless, small
     setLoadingDelay(true);
     try {
       const thisOptions = [];
-      const { data } = await axios.get(`${API_BASE_URL}/${route}`);
+      const { data } = await api.get(`${API_BASE_URL}/${route}`);
       data.forEach((obj) => {
         thisOptions.push({ id: obj[id], name: obj[name] });
       });
@@ -52,12 +67,18 @@ export default function SelectRestCollect({ label, first, medium, topless, small
   const isLoading = useSelector((state) => state.form.isLoading);
 
   return (
-    <InputLabel first={first} medium={medium} topless={topless} small={small} style={{ borderColor: isInvalid ? 'red' : 'inherit' }}>
-      <GenericP>{label}:</GenericP>
+    <InputLabel 
+      first={first} 
+      medium={medium} 
+      topless={topless} 
+      small={small} 
+      style={{ borderColor: isInvalid ? 'red' : 'inherit' }}
+    >
+      <GenericP>{label}{required && ' *'}:</GenericP>
       <StyledSelect
         value={selected || ''}
         onChange={handleSelect}
-        disabled={disabled}
+        disabled={disabled || isLoading}
         name={name}
       >
         <option value="" disabled>Selecione...</option>

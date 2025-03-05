@@ -40,7 +40,10 @@ const formSlice = createSlice({
       state.options[route] = options;
     },
     setInvalidFields: (state, action) => {
-      state.invalidFields = action.payload;
+      state.invalidFields = Array.isArray(action.payload) ? action.payload : [];
+    },
+    resetInvalidFields: (state) => {
+      state.invalidFields = [];
     },
     setErrorMessage: (state, action) => {
       state.errorMessage = action.payload;
@@ -66,6 +69,7 @@ export const {
   setFormData,
   setOptions,
   setInvalidFields,
+  resetInvalidFields,
   setErrorMessage,
   resetForm,
   setIsValidResponse,

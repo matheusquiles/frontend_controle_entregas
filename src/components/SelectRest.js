@@ -1,17 +1,32 @@
+// SelectRest.js
 import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setFormData, setOptions, setLoading } from '../redux/reducers/FormSlice';
-
 import { InputLabel, StyledSelect, GenericP } from '../styles/globalStyles';
-
 import { API_BASE_URL } from '../helper/Contants';
 import api from '../api/api';
 
-export default function SelectRest({ label, first, medium, topless, small, route, id, name, defaultValue, invalidFields, disabled = false, onChange, search }) {
+export default function SelectRest({ 
+  label, 
+  first, 
+  medium, 
+  topless, 
+  small, 
+  route, 
+  id, 
+  name, 
+  defaultValue = '', 
+  invalidFields = [], 
+  disabled = false, 
+  onChange, 
+  search, 
+  required = false, 
+  submitted = false 
+}) {
   const dispatch = useDispatch();
   const selected = useSelector((state) => state.form.formData[route] || defaultValue);
   const options = useSelector((state) => state.form.options[route] || []);
-  const isInvalid = invalidFields.includes(route);
+  const isInvalid = required && !selected && submitted; // Só exibe erro após submissão
   const [loadingDelay, setLoadingDelay] = useState(false);
 
   const handleSelect = (event) => {
@@ -52,12 +67,19 @@ export default function SelectRest({ label, first, medium, topless, small, route
   const isLoading = useSelector((state) => state.form.isLoading);
 
   return (
-    <InputLabel first={first} medium={medium} topless={topless} small={small} search={search} style={{ borderColor: isInvalid ? 'red' : 'inherit' }}>
-      <GenericP>{label}:</GenericP>
+    <InputLabel 
+      first={first} 
+      medium={medium} 
+      topless={topless} 
+      small={small} 
+      search={search} 
+      style={{ borderColor: isInvalid ? 'red' : 'inherit' }}
+    >
+      <GenericP>{label}{required && ' *'}:</GenericP>
       <StyledSelect
         value={selected || ''}
         onChange={handleSelect}
-        disabled={disabled}
+        disabled={disabled || isLoading}
         name={name}
       >
         {search ? (
