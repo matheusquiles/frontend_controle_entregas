@@ -1,14 +1,13 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, TextField, Button, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { ptBR } from 'date-fns/locale';
 import { setFormData, setLoading, resetForm, setNotification } from '../redux/reducers/FormSlice.js';
-import SelectRest from './SelectRest';
 import api from '../api/api.js';
 import { MAIN_YELLOW, MAIN_FONT_COLLOR } from '../styles/Colors';
-import { API_SEARCH_COLLECTS_DTO } from '../helper/Contants.js';
+import { API_BASE_URL, API_SEARCH_COLLECTS_DTO } from '../helper/Contants.js';
 
 const SearchBar = ({ onSearchComplete }) => {
   const dispatch = useDispatch();
@@ -16,26 +15,57 @@ const SearchBar = ({ onSearchComplete }) => {
   const invalidFields = useSelector((state) => state.form.invalidFields) || [];
 
   const hoje = new Date();
-  const ontem = new Date(hoje); 
-  ontem.setDate(hoje.getDate() - 1); 
+  const ontem = new Date(hoje);
+  ontem.setDate(hoje.getDate() - 1);
 
-  const [filters, setFilters] = React.useState({
-    startDate: ontem, 
+  const [filters, setFilters] = useState({
+    startDate: ontem,
     endDate: hoje,
-    motoboy: '',
-    supervisor: '',
-    collectType: '',
-    address: '',
-    status: 'todos' 
+    userKey: '',
+    edress: '',
+    status: 'todos'
   });
+  const [motoboyOptions, setMotoboyOptions] = useState([]);
+  const [edressOptions, setEdressOptions] = useState([]);
+  const [loadingMotoboys, setLoadingMotoboys] = useState(false);
+  const [loadingEdress, setLoadingEdress] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
+    const fetchMotoboys = async () => {
+      setLoadingMotoboys(true);
+      try {
+        const { data } = await api.get(`${API_BASE_URL}/users/searchMotoboy`);
+        setMotoboyOptions(data);
+      } catch (error) {
+        console.error('Erro ao carregar motoboys:', error);
+        dispatch(setNotification({ message: 'Erro ao carregar motoboys', severity: 'error' }));
+      } finally {
+        setLoadingMotoboys(false);
+      }
+    };
+
+    const fetchEdress = async () => {
+      setLoadingEdress(true);
+      try {
+        const { data } = await api.get(`${API_BASE_URL}/edress`);
+        setEdressOptions(data);
+      } catch (error) {
+        console.error('Erro ao carregar endereços:', error);
+        dispatch(setNotification({ message: 'Erro ao carregar endereços', severity: 'error' }));
+      } finally {
+        setLoadingEdress(false);
+      }
+    };
+
+    fetchMotoboys();
+    fetchEdress();
+
     dispatch(setNotification({ message: '', severity: 'info' }));
     dispatch(resetForm());
     const ontemFormatado = ontem.toISOString().split('T')[0];
     const hojeFormatado = hoje.toISOString().split('T')[0];
     dispatch(setFormData({
-      dataInicial: ontemFormatado, // D-1
+      dataInicial: ontemFormatado,
       dataFinal: hojeFormatado,
       status: 'todos'
     }));
@@ -73,63 +103,67 @@ const SearchBar = ({ onSearchComplete }) => {
       };
 
       const dataToSend = {
-        idUser: formData.userKey,
+        idUser: formData.userKey || '',
         initialDate: formatDate(filters.startDate),
         finalDate: formatDate(filters.endDate),
         idEdress: formData.edress ? parseInt(formData.edress) : null,
         deliveryStatus: formData.status
       };
+      console.log("Dados de pesquisa:", dataToSend);
       const response = await api.post(`${API_SEARCH_COLLECTS_DTO}`, dataToSend);
       onSearchComplete(response.data);
     } catch (error) {
       console.error('Erro na busca:', error);
+    } finally {
+      dispatch(setLoading(false));
     }
-    dispatch(setLoading(false));
   };
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 2 }}>
         <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
-          <SelectRest
-            label="Motoboy"
-            first
-            route="users/searchMotoboy"
-            id="idUser"
-            name="userKey"
-            onChange={(e) => handleChange(e)}
-            form={formData}
-            defaultValue=""
-            invalidFields={invalidFields}
-            search
-          />
-          <SelectRest
-            label="Endereço"
-            route="edress"
-            id="idEdress"
-            name="description"
-            onChange={(e) => handleChange(e)}
-            form={formData}
-            defaultValue=""
-            invalidFields={invalidFields}
-            search
-          />
-        </Box>
-
-        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-          <DatePicker
-            label="Data Inicial"
-            value={filters.startDate}
-            onChange={(date) => handleDateChange('startDate', date)}
-            renderInput={(params) => <TextField {...params} />}
-          />
-          <DatePicker
-            label="Data Final"
-            value={filters.endDate}
-            onChange={(date) => handleDateChange('endDate', date)}
-            renderInput={(params) => <TextField {...params} />}
-          />
-          <FormControl sx={{ minWidth: 120 }}>
+          <FormControl sx={{ width: '258px' }}>
+            <InputLabel id="motoboy-label">Motoboy</InputLabel>
+            <Select
+              labelId="motoboy-label"
+              name="userKey" // Mantido como userKey para compatibilidade com formData, mas mapeado para idUser
+              value={filters.userKey}
+              onChange={handleChange}
+              label="Motoboy"
+              variant="outlined"
+              size="small"
+              disabled={loadingMotoboys}
+            >
+              <MenuItem value="">Todos</MenuItem>
+              {motoboyOptions.map((option) => (
+                <MenuItem key={option.idUser} value={String(option.idUser)}> {/* Usa idUser como string */}
+                  {option.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl sx={{ width: '390px' }}>
+            <InputLabel id="edress-label">Endereço</InputLabel>
+            <Select
+              labelId="edress-label"
+              name="edress"
+              value={filters.edress}
+              onChange={handleChange}
+              label="Endereço"
+              variant="outlined"
+              size="small"
+              disabled={loadingEdress}
+            >
+              <MenuItem value="">Todos</MenuItem>
+              {edressOptions.map((option) => (
+                <MenuItem key={option.idEdress} value={option.idEdress}>
+                  {option.description}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl sx={{ width: '200px' }}>
             <InputLabel id="status-label">Status</InputLabel>
             <Select
               labelId="status-label"
@@ -137,6 +171,8 @@ const SearchBar = ({ onSearchComplete }) => {
               value={filters.status}
               label="Status"
               onChange={handleChange}
+              variant="outlined"
+              size="small"
             >
               <MenuItem value="todos">Todos</MenuItem>
               <MenuItem value="Aprovado">Aprovados</MenuItem>
@@ -144,7 +180,33 @@ const SearchBar = ({ onSearchComplete }) => {
               <MenuItem value="Recusado">Recusados</MenuItem>
             </Select>
           </FormControl>
-          <Button variant="contained" onClick={handleSearch} sx={{ bgcolor: MAIN_YELLOW, color: MAIN_FONT_COLLOR }}>
+        </Box>
+
+        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center', height: '40px' }}>
+          <DatePicker
+            label="Data Inicial"
+            value={filters.startDate}
+            onChange={(date) => handleDateChange('startDate', date)}
+            renderInput={(params) => <TextField {...params} size="small" sx={{ width: '200px' }} />}
+          />
+          <DatePicker
+            label="Data Final"
+            value={filters.endDate}
+            onChange={(date) => handleDateChange('endDate', date)}
+            renderInput={(params) => <TextField {...params} size="small" sx={{ width: '200px' }} />}
+          />
+
+          <Button
+            variant="contained"
+            onClick={handleSearch}
+            sx={{
+              bgcolor: MAIN_YELLOW,
+              color: MAIN_FONT_COLLOR,
+              height: '40px', 
+              padding: '0 16px', 
+              minWidth: '100px',
+            }}
+          >
             Pesquisar
           </Button>
         </Box>

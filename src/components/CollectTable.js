@@ -102,11 +102,9 @@ const CollectTable = ({ data, onDataChange }) => {
             <th>Cliente/Endereço</th>
             <th>Tipo de Coleta</th>
             <th>Quantidade</th>
-            <th>Valor por Unidade</th>
-            <th>Valor Total a Receber</th>
-            <th>Valor a Pagar por Unidade</th>
-            <th>Valor Total a Pagar</th>
-            <th>Entrega Aprovada</th>
+            <th>R$ por Unidade</th>
+            <th>R$ Total a Receber</th>
+            <th>Status</th>
             <th>Ações</th>
           </tr>
         </thead>
@@ -161,20 +159,6 @@ const CollectTable = ({ data, onDataChange }) => {
                       )}
                     </td>
                     <td>{formatCurrency(item.totalToReceive)}</td>
-                    <td>
-                      {isEditing ? (
-                        <TextField
-                          size="small"
-                          value={item.valueToPayPerUnit}
-                          onChange={(e) => handleChange(collect.idCollect, itemIndex, 'valueToPayPerUnit', e.target.value)}
-                          type="number"
-                          inputProps={{ step: '0.01' }}
-                        />
-                      ) : (
-                        formatCurrency(item.valueToPayPerUnit)
-                      )}
-                    </td>
-                    <td>{formatCurrency(item.totalValueToPay)}</td>
                     <td>{item.deliveryStatus ?? '-'}</td>
                     <td>
                       {isEditing ? (

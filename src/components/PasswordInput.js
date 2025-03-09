@@ -1,8 +1,9 @@
+// PasswordInput.js
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setFormData } from '../redux/reducers/FormSlice';
-import { Input, InputLabel, GenericP } from '../styles/globalStyles';
-import { IconButton, InputAdornment } from '@mui/material';
+import { InputLabel, GenericP } from '../styles/globalStyles'; // Mantém os estilos personalizados
+import { TextField, IconButton, InputAdornment } from '@mui/material'; // Usa TextField do MUI
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
@@ -39,36 +40,46 @@ const PasswordInput = ({
     <div>
       <InputLabel style={{ borderColor: isInvalid || passwordsMismatch ? 'red' : 'inherit' }}>
         <GenericP>{label}{required && ' *'}:</GenericP>
-        <Input
+        <TextField
           type={showPassword ? 'text' : 'password'}
           name={fieldName}
           value={password}
           onChange={handleInputChange}
-          endAdornment={
-            <InputAdornment position="end">
-              <IconButton onClick={toggleShowPassword} edge="end">
-                {showPassword ? <VisibilityOff /> : <Visibility />}
-              </IconButton>
-            </InputAdornment>
-          }
+          variant="outlined"
+          size="small"
+          fullWidth
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={toggleShowPassword} edge="end">
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            )
+          }}
         />
         {isInvalid && !password && <span style={{ color: 'red' }}>Este campo é obrigatório.</span>}
       </InputLabel>
 
       <InputLabel style={{ borderColor: isInvalid || passwordsMismatch ? 'red' : 'inherit', marginTop: '16px' }}>
         <GenericP>Confirmar Senha{required && ' *'}:</GenericP>
-        <Input
+        <TextField
           type={showConfirmPassword ? 'text' : 'password'}
           name={confirmFieldName}
           value={confirmPassword}
           onChange={handleInputChange}
-          endAdornment={
-            <InputAdornment position="end">
-              <IconButton onClick={toggleShowConfirmPassword} edge="end">
-                {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-              </IconButton>
-            </InputAdornment>
-          }
+          variant="outlined"
+          size="small"
+          fullWidth
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={toggleShowConfirmPassword} edge="end">
+                  {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            )
+          }}
         />
         {isInvalid && !confirmPassword && <span style={{ color: 'red' }}>Este campo é obrigatório.</span>}
         {passwordsMismatch && <span style={{ color: 'red' }}>As senhas não correspondem.</span>}

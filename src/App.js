@@ -6,7 +6,8 @@ import SignIn from './pages/SingIn.js';
 import Home from './components/Home.js';
 import CreateCollect from './pages/createCollect.js';
 import NovoUsuario from './pages/NovoUsuario.js';
-import Deliveries from './pages/Deliveries.js';
+import SearchUser from './pages/SearchUser.js';
+import AprovarColetas from './pages/AprovarColetas.js';
 import PrivateRoute from './routes/PrivateRoute.js';
 import UnauthorizedScreen from './pages/UnauthorizedScreen.js';
 
@@ -20,19 +21,20 @@ function App() {
           
           {/* Rotas privadas (qualquer usuário autenticado) */}
           <Route element={<PrivateRoute />}>
-            <Route path="/home" element={<Home />} />
-            <Route path="/coletas" element={<CreateCollect />} />
             <Route path="/unauthorized" element={<UnauthorizedScreen />} />
 
           </Route>
 
           {/* Rotas privadas com controle de acesso por role */}
           <Route element={<PrivateRoute allowedRoles={['ADMIN', 'LEADER']} />}>
+            <Route path="/home" element={<Home />} />
+            <Route path="/coletas/nova" element={<CreateCollect />} />
             <Route path="/usuarios/novo" element={<NovoUsuario />} />
+            <Route path="/usuarios/editar" element={<SearchUser />} />
           </Route>
 
           <Route element={<PrivateRoute allowedRoles={['ADMIN']} />}>
-            <Route path="/entregas/aprovar" element={<Deliveries />} />
+            <Route path="/coletas/aprovar" element={<AprovarColetas />} />
           </Route>
         </Routes>
       </Router>

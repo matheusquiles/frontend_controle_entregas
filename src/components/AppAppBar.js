@@ -36,6 +36,7 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 export default function AppAppBar() {
   const [open, setOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [coletasAnchorEl, setColetasAnchorEl] = React.useState(null);
   const [entregasAnchorEl, setEntregasAnchorEl] = React.useState(null);
   const [configAnchorEl, setConfigAnchorEl] = React.useState(null);
   const navigate = useNavigate();
@@ -63,6 +64,14 @@ export default function AppAppBar() {
 
   const handleEntregasMenuClose = () => {
     setEntregasAnchorEl(null);
+  };
+
+  const handleColetasMenuClick = (event) => {
+    setColetasAnchorEl(event.currentTarget);
+  };
+
+  const handleColetasMenuClose = () => {
+    setColetasAnchorEl(null);
   };
 
   const handleConfigMenuClick = (event) => {
@@ -93,9 +102,19 @@ export default function AppAppBar() {
           <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', px: 0, gap: 2 }}>
             <SiteIcon />
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-              <Button variant="text" sx={{ color: MAIN_FONT_COLLOR }} size="small" onClick={() => onMenuClick(() => navigate('/coletas'))}>
+            <Button variant="text" sx={{ color: MAIN_FONT_COLLOR }} size="small" onClick={handleColetasMenuClick}>
                 Coletas
               </Button>
+              <Menu
+                anchorEl={coletasAnchorEl}
+                open={Boolean(coletasAnchorEl)}
+                onClose={handleColetasMenuClose}
+              >
+                <MenuItem onClick={() => { handleColetasMenuClose(); navigate('/coletas/nova'); }}>Nova Coleta</MenuItem>
+                <MenuItem onClick={() => { handleColetasMenuClose(); navigate('/coletas/aprovar'); }}>Aprovar</MenuItem>
+              </Menu>
+
+
 
               <Button variant="text" sx={{ color: MAIN_FONT_COLLOR }} size="small" onClick={handleEntregasMenuClick}>
                 Entregas

@@ -1,4 +1,3 @@
-// SelectRest.js
 import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setFormData, setOptions, setLoading } from '../redux/reducers/FormSlice';

@@ -6,50 +6,26 @@ import { FaSpinner } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { CssBaseline, Box, Toolbar } from '@mui/material';
 import NotificationSnackbar from '../components/NotificacaoSnackbar.js';
-import { useUser } from '../hooks/useUser';
 import FormButtons from '../components/FormButtons.js';
 import AppAppBar from '../components/AppAppBar.js';
-import CollectTable from '../components/CollectTable.js';
-import SearchBar from '../components/SearchBar.js';
 import api from '../api/api.js';
+import SearchUserBar from '../components/SearchUserBar.js';
+import TableUsers from '../components/TableUsers.js';
 
-const Deliveries = () => {
+const SearchUser = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const isLoading = useSelector((state) => state.form.isLoading);
   const formData = useSelector((state) => state.form.formData);
   const isUpdating = useSelector((state) => state.form.isUpdating);
-  const { user } = useUser();
 
   const [sampleData, setSampleData] = useState([]);
 
-  const handleDataChange = (updatedData) => {
-    setSampleData(updatedData);
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch(setLoading(true));
 
-    console.log('Data to send', sampleData);
-
-    try {
-      const response = await api.post('api/users/save', sampleData);
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Erro ao enviar os dados para a API');
-      }
-
-      const result = await response.json();
-      dispatch(setNotification({ message: 'Dados salvos com sucesso!', severity: 'success' }));
-      console.log('Resposta da API:', result);
-    } catch (error) {
-      dispatch(setNotification({ message: error.message || 'Erro ao salvar os dados', severity: 'error' }));
-      console.error('Erro:', error);
-    } finally {
-      dispatch(setLoading(false));
-    }
   };
 
   const handleSearchComplete = (data) => {
@@ -74,7 +50,7 @@ const Deliveries = () => {
           minHeight: '100vh',
           color: 'black',
           p: { xs: 2, md: 3 },
-          maxWidth: 'xl',
+          maxWidth: 'lg',
           mx: 'auto',
         }}
       >
@@ -104,10 +80,11 @@ const Deliveries = () => {
                 color: 'black',
               }}
             >
-              <SearchBar onSearchComplete={handleSearchComplete} />
-              <CollectTable data={sampleData} onDataChange={handleDataChange} />
+                <SearchUserBar onSearchComplete={handleSearchComplete} />
             </Box>
           </Box>
+
+
 
           <Box
             sx={{
@@ -132,4 +109,4 @@ const Deliveries = () => {
   );
 };
 
-export default Deliveries;
+export default SearchUser;

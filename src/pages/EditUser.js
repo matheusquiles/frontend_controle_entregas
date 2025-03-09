@@ -10,10 +10,8 @@ import FormButtons from '../components/FormButtons.js';
 import AppAppBar from '../components/AppAppBar.js';
 import FormUsuarios from '../components/FormUsuarios.js';
 import api from '../api/api.js';
-import { useUser } from '../hooks/useUser.js';
-import { jwtDecode } from 'jwt-decode';
 
-const NovoUsuario = () => {
+const EditUser = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const isLoading = useSelector((state) => state.form.isLoading);
@@ -21,49 +19,19 @@ const NovoUsuario = () => {
   const invalidFields = useSelector((state) => state.form.invalidFields);
   const isEditing = useSelector((state) => state.form.isEditing);
 
-  const { user, token, loading: userLoading, error: userError } = useUser(); 
-  const [submitted, setSubmitted] = useState(false);
-
-  const decodedToken = token ? jwtDecode(token) : null;
-  const userRoles = Array.isArray(decodedToken?.roles) ? decodedToken.roles : [decodedToken?.role].filter(Boolean);
-  const isAdmin = userRoles.includes('ADMIN');
+  const [submitted, setSubmitted] = useState(false); 
 
   useEffect(() => {
-    if (userLoading) return;
-
-    if (!user && !token) {
-      dispatch(setNotification({ message: 'Usuário não autenticado. Faça login novamente.', severity: 'error' }));
-      navigate('/');
-      return;
-    }
-    if (userError) {
-      dispatch(setNotification({ message: userError, severity: 'error' }));
-      return;
-    }
-
     dispatch(setNotification({ message: '', severity: 'info' }));
     dispatch(resetForm());
-
-    if (!isAdmin && user) {
-      dispatch(setFormData({ 
-        ...formData, 
-        ['users/searchCoordinator']: user.idUser,
-        description: 'Motoboy',
-        idUserType: 3 // Assumindo que 3 é o idUserType para "Motoboy"
-      }));
-    }
-  }, [dispatch, user, token, userLoading, isAdmin, navigate, userError]);
+  }, [dispatch]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    setSubmitted(true); 
 
-    const requiredFields = ['nome', 'userKey', 'email', 'password', 'description'];
-    let currentInvalidFields = requiredFields.filter(field => !formData[field]);
-
-    if (isAdmin && formData.description === 'Motoboy' && !formData['users/searchCoordinator']) {
-      currentInvalidFields = [...currentInvalidFields, 'users/searchCoordinator'];
-    }
+    const requiredFields = ['name', 'userKey', 'email', 'password', 'description'];
+    const currentInvalidFields = requiredFields.filter(field => !formData[field]);
 
     const passwordsMatch = formData.password === formData.confirmPassword;
 
@@ -82,21 +50,12 @@ const NovoUsuario = () => {
 
     try {
       const dataToSend = {
-        name: formData.nome,
-        userKey: formData.userKey,
+        name: formData.name,
         cpf: formData.cpf,
         email: formData.email,
         password: formData.password,
-        userType: formData.idUserType,
-        ...(formData['users/searchCoordinator'] && {
-          hierarchy: { idUser: parseInt(formData['users/searchCoordinator']) }
-        })
+        userType: formData.description
       };
-
-      if (!isAdmin && formData.description === 'Motoboy' && !formData['users/searchCoordinator']) {
-        dataToSend.hierarchy = { idUser: user.idUser };
-      }
-
       console.log("Dados a serem enviados:", JSON.stringify(dataToSend, null, 2));
       const response = await api.post('api/users/save', dataToSend);
 
@@ -120,14 +79,6 @@ const NovoUsuario = () => {
       dispatch(setLoading(false));
     }
   };
-
-  if (userLoading) {
-    return (
-      <LoadingOverlay>
-        <FaSpinner className="animate-spin text-4xl text-blue-500" />
-      </LoadingOverlay>
-    );
-  }
 
   return (
     <>
@@ -172,7 +123,7 @@ const NovoUsuario = () => {
                 color: 'black',
               }}
             >
-              <FormUsuarios submitted={submitted} newUser={true} isAdmin={isAdmin} />
+              <FormUsuarios submitted={submitted} />
             </Box>
           </Box>
 
@@ -188,7 +139,7 @@ const NovoUsuario = () => {
             bottom: 0,
             color: 'black',
           }}>
-            <FormButtons handleSubmit={handleSubmit} isLoading={isLoading} />
+            <FormButtons handleSubmit={handleSubmit} isLoading={isLoading}  />
           </Box>
         </form>
         <NotificationSnackbar />
@@ -197,4 +148,4 @@ const NovoUsuario = () => {
   );
 };
 
-export default NovoUsuario;
+export default EditUser;
