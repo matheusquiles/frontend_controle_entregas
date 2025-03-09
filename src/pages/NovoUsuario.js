@@ -57,16 +57,16 @@ const NovoUsuario = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitted(true);
-
+  
     const requiredFields = ['nome', 'userKey', 'email', 'password', 'description'];
     let currentInvalidFields = requiredFields.filter(field => !formData[field]);
-
+  
     if (isAdmin && formData.description === 'Motoboy' && !formData['users/searchCoordinator']) {
       currentInvalidFields = [...currentInvalidFields, 'users/searchCoordinator'];
     }
-
+  
     const passwordsMatch = formData.password === formData.confirmPassword;
-
+  
     if (currentInvalidFields.length > 0 || !passwordsMatch) {
       dispatch(setNotification({
         message: currentInvalidFields.length > 0 
@@ -76,10 +76,10 @@ const NovoUsuario = () => {
       }));
       return;
     }
-
+  
     dispatch(setEditing(false));
     dispatch(setLoading(true));
-
+  
     try {
       const dataToSend = {
         name: formData.nome,
@@ -89,17 +89,17 @@ const NovoUsuario = () => {
         password: formData.password,
         userType: formData.idUserType,
         ...(formData['users/searchCoordinator'] && {
-          hierarchy: { idUser: parseInt(formData['users/searchCoordinator']) }
+          hierarchy: parseInt(formData['users/searchCoordinator']) // Envia apenas o ID como integer
         })
       };
-
+  
       if (!isAdmin && formData.description === 'Motoboy' && !formData['users/searchCoordinator']) {
-        dataToSend.hierarchy = { idUser: user.idUser };
+        dataToSend.hierarchy = user.idUser;
       }
-
+  
       console.log("Dados a serem enviados:", JSON.stringify(dataToSend, null, 2));
-      const response = await api.post('api/users/save', dataToSend);
-
+      const response = await api.post('api/users/saveUser', dataToSend);
+  
       if (response.data === true) {
         dispatch(setNotification({ message: 'Usuário criado com sucesso!', severity: 'success' }));
         dispatch(setLoading(false));

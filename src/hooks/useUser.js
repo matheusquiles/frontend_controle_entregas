@@ -6,21 +6,18 @@ export const useUser = () => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null); // Estado para armazenar erros
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchUser = async () => {
-      console.log('Iniciando fetchUser...');
       try {
         const storedToken = localStorage.getItem('token');
-        console.log('Token armazenado:', storedToken);
 
         if (!storedToken) {
           throw new Error('Nenhum token encontrado no localStorage.');
         }
 
         const decodedToken = jwtDecode(storedToken);
-        console.log('Token decodificado:', decodedToken);
 
         if (!decodedToken.exp || decodedToken.exp < Date.now() / 1000) {
           localStorage.removeItem('token');
@@ -32,9 +29,7 @@ export const useUser = () => {
           throw new Error('userKey não encontrada no token.');
         }
 
-        console.log('Buscando usuário com userKey:', userKey);
         const response = await api.get(`api/users/searchUser/${userKey}`);
-        console.log('Resposta da API:', response.data);
         setUser(response.data);
         setToken(storedToken);
       } catch (error) {
@@ -51,5 +46,5 @@ export const useUser = () => {
     fetchUser();
   }, []);
 
-  return { user, token, loading, error }; // Retorna o erro junto com os outros estados
+  return { user, token, loading, error }; 
 };
