@@ -1,0 +1,77 @@
+/* TableUsers.css */
+.table-users-container {
+    width: 100%;
+    overflow-x: auto; /* Permite rolagem horizontal em telas menores */
+  }
+  
+  .table-users {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background-color: #fff; /* Fundo branco para a tabela inteira */
+  }
+  
+  .table-users th,
+  .table-users td {
+    padding: 10px; /* Aumentei o padding para melhor legibilidade */
+    text-align: left;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    color: #333; /* Cor do texto ajustada para contraste */
+  }
+  
+  .table-users th {
+    background-color: #f4f4f4; /* Mesma cor de fundo dos cabeçalhos da CollectTable */
+    font-weight: bold;
+    text-transform: uppercase; /* Estilo opcional para destacar cabeçalhos */
+    letter-spacing: 0.5px; /* Pequeno espaçamento para sofisticação */
+  }
+  
+  .data-row {
+    background-color: #ffffff;
+    transition: background-color 0.3s ease; /* Transição suave para mudanças de cor */
+  }
+  
+  .data-row:nth-child(even) {
+    background-color: #f9f9f9; /* Alternância de cores para melhor leitura */
+  }
+  
+  .data-row.editing {
+    background-color: #fff3e0; /* Cor mais suave para edição, alinhada com MAIN_YELLOW */
+  }
+  
+  .data-row:hover {
+    background-color: #f0f0f0; /* Efeito hover para interação */
+  }
+  
+  /* Ajustes para o botão de ação */
+  .action-cell {
+    padding: 4px; /* Menor padding para o botão */
+  }
+  
+  .action-button {
+    padding: 6px;
+    background-color: #ffca28; /* Usando MAIN_YELLOW */
+    color: #fff; /* Usando MAIN_FONT_COLLOR como base (assumindo que é branco ou claro) */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .action-button:hover {
+    background-color: #ffb300; /* Tom mais escuro de MAIN_YELLOW no hover */
+  }
+  
+  /* Responsividade */
+  @media (max-width: 600px) {
+    .table-users th,
+    .table-users td {
+      font-size: 12px;
+      padding: 6px;
+    }
+  
+    .table-users th {
+      text-transform: none; /* Remove uppercase em telas pequenas */
+    }
+  }

@@ -1,16 +1,15 @@
 import React from 'react';
+import '../styles/TableUsers.css';
 import { useDispatch } from 'react-redux';
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit'; 
 import { MAIN_YELLOW, MAIN_FONT_COLLOR } from '../styles/Colors'; 
 
-const TableUsers = ({ users, onEdit }) => {
-  const dispatch = useDispatch();
-
+const TableUsers = ({ data, onEdit }) => {
   return (
     <Box sx={{ width: '100%', overflow: 'hidden' }}>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="tabela de usuários">
+      <TableContainer component={Paper} className="table-users-container">
+        <Table className="table-users" sx={{ minWidth: 650 }} aria-label="tabela de usuários">
           <TableHead>
             <TableRow>
               <TableCell>ID</TableCell>
@@ -20,28 +19,25 @@ const TableUsers = ({ users, onEdit }) => {
               <TableCell>E-mail</TableCell>
               <TableCell>Tipo de Usuário</TableCell>
               <TableCell>Status</TableCell>
-              <TableCell>Ações</TableCell> {/* Coluna para o botão Editar */}
+              <TableCell>Coordenador</TableCell>
+              <TableCell>Ações</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {users.map((user) => (
-              <TableRow key={user.idUser}>
+            {data.map((user) => (
+              <TableRow key={user.idUser} className={`data-row ${user.editing ? 'editing' : ''}`}>
                 <TableCell>{user.idUser}</TableCell>
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.userKey}</TableCell>
-                <TableCell>{user.cpf }</TableCell> 
+                <TableCell>{user.cpf}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>{user.userType}</TableCell>
-                <TableCell>
-                  {user.status ? 'Habilitado' : 'Desabilitado'} {/* Converte true/false para texto */}
-                </TableCell>
-                <TableCell>
-                  <IconButton
-                    onClick={() => onEdit(user.idUser)} 
-                    sx={{ color: MAIN_YELLOW }}
-                  >
+                <TableCell>{user.status ? 'Habilitado' : 'Desabilitado'}</TableCell>
+                <TableCell>{user.coordinator || 'Nenhum'}</TableCell>
+                <TableCell className="action-cell">
+                  <button className="action-button" onClick={() => onEdit(user.idUser)}>
                     <EditIcon />
-                  </IconButton>
+                  </button>
                 </TableCell>
               </TableRow>
             ))}

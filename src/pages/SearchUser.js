@@ -21,15 +21,21 @@ const SearchUser = () => {
 
   const [sampleData, setSampleData] = useState([]);
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch(setLoading(true));
-
+    // Lógica de submit, se necessário
+    dispatch(setLoading(false));
   };
 
   const handleSearchComplete = (data) => {
-    setSampleData(data);
+    setSampleData(data); // Atualiza os dados da tabela
+  };
+
+  const handleEdit = (idUser) => {
+    // Lógica para edição (ex.: navegar para a página de edição)
+    dispatch(setEditing(true));
+    navigate(`/usuarios/editar/${idUser}`);
   };
 
   useEffect(() => {
@@ -50,7 +56,7 @@ const SearchUser = () => {
           minHeight: '100vh',
           color: 'black',
           p: { xs: 2, md: 3 },
-          maxWidth: 'lg',
+          maxWidth: 'xl',
           mx: 'auto',
         }}
       >
@@ -80,11 +86,10 @@ const SearchUser = () => {
                 color: 'black',
               }}
             >
-                <SearchUserBar onSearchComplete={handleSearchComplete} />
+              <SearchUserBar onSearchComplete={handleSearchComplete} />
+              <TableUsers data={sampleData} onEdit={handleEdit} /> {/* Passa onEdit */}
             </Box>
           </Box>
-
-
 
           <Box
             sx={{

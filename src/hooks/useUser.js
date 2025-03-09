@@ -39,7 +39,6 @@ export const useUser = () => {
         setToken(null);
       } finally {
         setLoading(false);
-        console.log('Carregamento concluído. User:', user, 'Token:', token, 'Loading:', loading, 'Error:', error);
       }
     };
 

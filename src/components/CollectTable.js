@@ -1,4 +1,3 @@
-// CollectTable.js
 import React, { useState, useEffect } from 'react';
 import '../styles/CollectTable.css';
 import { IconButton, TextField } from '@mui/material';
@@ -11,7 +10,6 @@ const CollectTable = ({ data, onDataChange }) => {
   const [tableData, setTableData] = useState(data);
   const [editRow, setEditRow] = useState(null);
 
-  // Sincroniza os dados recebidos com o estado interno
   useEffect(() => {
     setTableData(data);
   }, [data]);

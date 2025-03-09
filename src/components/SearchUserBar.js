@@ -4,7 +4,7 @@ import { Box, TextField, Button, Checkbox, FormControlLabel, Select, MenuItem, F
 import { setFormData, setLoading, resetForm, setNotification } from '../redux/reducers/FormSlice.js';
 import api from '../api/api.js';
 import { MAIN_YELLOW, MAIN_FONT_COLLOR } from '../styles/Colors';
-import { API_BASE_URL, API_SEARCH_COLLECTS_DTO } from '../helper/Contants.js';
+import { API_BASE_URL, API_SEARCH_USERS_DTO } from '../helper/Contants.js';
 
 const SearchUserBar = ({ onSearchComplete }) => {
   const dispatch = useDispatch();
@@ -15,11 +15,11 @@ const SearchUserBar = ({ onSearchComplete }) => {
     name: '',
     userKey: '',
     cpf: '',
-    description: 'todos', 
-    status: true
+    userType: 'todos',
+    status: true,
   });
-  const [userTypeOptions, setUserTypeOptions] = useState([]); 
-  const [loadingUserTypes, setLoadingUserTypes] = useState(false); 
+  const [userTypeOptions, setUserTypeOptions] = useState([]);
+  const [loadingUserTypes, setLoadingUserTypes] = useState(false);
 
   useEffect(() => {
     const fetchUserTypes = async () => {
@@ -39,8 +39,8 @@ const SearchUserBar = ({ onSearchComplete }) => {
     dispatch(setNotification({ message: '', severity: 'info' }));
     dispatch(resetForm());
     dispatch(setFormData({
-      description: 'todos',
-      status: true
+      userType: 'todos',
+      status: true,
     }));
   }, [dispatch]);
 
@@ -50,7 +50,7 @@ const SearchUserBar = ({ onSearchComplete }) => {
     dispatch(setFormData({ ...formData, [name]: newValue }));
     setFilters((prev) => ({
       ...prev,
-      [name]: newValue
+      [name]: newValue,
     }));
   };
 
@@ -58,19 +58,27 @@ const SearchUserBar = ({ onSearchComplete }) => {
     e.preventDefault();
     dispatch(setLoading(true));
 
+    console.log("formData:", formData);
+
     try {
+      const selectedUserType = userTypeOptions.find(
+        (option) => option.description === formData.userType
+      );
+
       const dataToSend = {
         name: formData.name || null,
         userKey: formData.userKey || null,
         cpf: formData.cpf || null,
-        userType: formData.description === 'todos' ? null : formData.description, 
-        status: formData.status
+        userType: formData.userType === 'todos' ? null : (selectedUserType ? selectedUserType.idUserType : null), // Envia o idUserType
+        status: formData.status,
       };
       console.log("Dados de pesquisa:", dataToSend);
-      const response = await api.post(`${API_SEARCH_COLLECTS_DTO}`, dataToSend);
+      const response = await api.post(`${API_SEARCH_USERS_DTO}`, dataToSend);
+      console.log("Resposta da pesquisa:", response.data);
       onSearchComplete(response.data);
     } catch (error) {
       console.error('Erro na busca:', error);
+      dispatch(setNotification({ message: 'Erro na busca de usuários', severity: 'error' }));
     } finally {
       dispatch(setLoading(false));
     }
@@ -110,13 +118,13 @@ const SearchUserBar = ({ onSearchComplete }) => {
           <InputLabel id="user-type-label">Tipo de usuário</InputLabel>
           <Select
             labelId="user-type-label"
-            name="description"
-            value={filters.description}
+            name="userType"
+            value={filters.userType}
             onChange={handleChange}
             label="Tipo de usuário"
             variant="outlined"
             size="small"
-            disabled={loadingUserTypes} 
+            disabled={loadingUserTypes}
           >
             <MenuItem value="todos">Todos</MenuItem>
             {userTypeOptions.map((option) => (
@@ -137,11 +145,9 @@ const SearchUserBar = ({ onSearchComplete }) => {
           }
           label="Habilitado"
         />
-      </Box>
-      <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-        <Button 
-          variant="contained" 
-          onClick={handleSearch} 
+        <Button
+          variant="contained"
+          onClick={handleSearch}
           sx={{ bgcolor: MAIN_YELLOW, color: MAIN_FONT_COLLOR }}
         >
           Pesquisar
