@@ -23,7 +23,7 @@ const FormUsuarios = ({ submitted, newUser, isAdmin }) => {
 
             setCoordinatorsLoading(true);
             try {
-                const response = await api.get('api/users/searchCoordinator');
+                const response = await api.get('api/users/searchCordinator');
                 setCoordinators(response.data || []);
             } catch (error) {
                 console.error('Erro ao carregar coordenadores:', error);
@@ -143,11 +143,11 @@ const FormUsuarios = ({ submitted, newUser, isAdmin }) => {
             )}
             {isAdmin && (
                 <Box mb={2} width={'49%'} ml={2}>
-                    <FormControl fullWidth error={submitted && formData.description === 'Motoboy' && !formData['users/searchCoordinator']}>
+                    <FormControl fullWidth error={submitted && formData.description === 'Motoboy' && !formData['users/searchCordinator']}>
                         <InputLabel>Hierarquia</InputLabel>
                         <Select
-                            name="users/searchCoordinator"
-                            value={formData['users/searchCoordinator'] || ''}
+                            name="users/searchCordinator"
+                            value={formData['users/searchCordinator'] || ''}
                             onChange={handleChange}
                             label="Hierarquia"
                             disabled={coordinatorsLoading}
@@ -163,7 +163,7 @@ const FormUsuarios = ({ submitted, newUser, isAdmin }) => {
                             ))}
                         </Select>
                         {coordinatorsError && <span style={{ color: 'red' }}>{coordinatorsError}</span>}
-                        {submitted && formData.description === 'Motoboy' && !formData['users/searchCoordinator'] && (
+                        {submitted && formData.description === 'Motoboy' && !formData['users/searchCordinator'] && (
                             <span style={{ color: 'red' }}>Este campo é obrigatório para Motoboys.</span>
                         )}
                     </FormControl>

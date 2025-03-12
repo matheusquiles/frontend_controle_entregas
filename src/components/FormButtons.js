@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 import { resetForm } from '../redux/reducers/FormSlice';
 import { useNavigate } from 'react-router-dom';
 
-const FormButtons = ({ handleSubmit, isLoading, isUpdating, btEnviar }) => {
+const FormButtons = ({ handleSubmit, isLoading, isUpdating, btEnviar, back, enableCancel = true }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -16,38 +16,40 @@ const FormButtons = ({ handleSubmit, isLoading, isUpdating, btEnviar }) => {
 
   const handleVoltarClick = () => {
     dispatch(resetForm());
-    navigate('/home');
+    navigate(back || '/home');
   };
 
-return (
+  return (
     <>
-        <Button
-            type="button"
-            variant='outlined'
-            onClick={handleVoltarClick}
-            sx={{ color: MAIN_YELLOW, borderColor: MAIN_YELLOW }}
-        >
-            Voltar 
-        </Button>
-        <Button
-            type="button"
-            variant='outlined'
-            onClick={handleCancelClick}
-            sx={{ color: MAIN_YELLOW, borderColor: MAIN_YELLOW }}
-        >
-            Cancelar
-        </Button>
-        <Button
-            type="submit"
-            onClick={handleSubmit}
-            disabled={isLoading}
-            startDecorator={isUpdating ? <CircularProgress variant="solid" /> : null}
-            sx={{ bgcolor: MAIN_YELLOW, color: MAIN_FONT_COLLOR }} variant="contained"
-        >
-            {isLoading ? btEnviar + '...' : (btEnviar || 'Cadastrar')}
-        </Button>
+      <Button
+        type="button"
+        variant="outlined"
+        onClick={handleVoltarClick}
+        sx={{ color: MAIN_YELLOW, borderColor: MAIN_YELLOW }}
+      >
+        Voltar
+      </Button>
+      <Button
+        type="button"
+        variant="outlined"
+        onClick={handleCancelClick}
+        sx={{ color: MAIN_YELLOW, borderColor: MAIN_YELLOW }}
+        disabled={!enableCancel}
+      >
+        Cancelar
+      </Button>
+      <Button
+        type="submit"
+        onClick={handleSubmit}
+        disabled={isLoading}
+        startDecorator={isUpdating ? <CircularProgress variant="solid" /> : null}
+        sx={{ bgcolor: MAIN_YELLOW, color: MAIN_FONT_COLLOR }}
+        variant="contained"
+      >
+        {isLoading ? btEnviar + '...' : (btEnviar || 'Cadastrar')}
+      </Button>
     </>
-);
+  );
 };
 
 export default FormButtons;

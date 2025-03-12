@@ -58,8 +58,6 @@ const SearchUserBar = ({ onSearchComplete }) => {
     e.preventDefault();
     dispatch(setLoading(true));
 
-    console.log("formData:", formData);
-
     try {
       const selectedUserType = userTypeOptions.find(
         (option) => option.description === formData.userType
@@ -72,9 +70,9 @@ const SearchUserBar = ({ onSearchComplete }) => {
         userType: formData.userType === 'todos' ? null : (selectedUserType ? selectedUserType.idUserType : null), // Envia o idUserType
         status: formData.status,
       };
-      console.log("Dados de pesquisa:", dataToSend);
+
       const response = await api.post(`${API_SEARCH_USERS_DTO}`, dataToSend);
-      console.log("Resposta da pesquisa:", response.data);
+
       onSearchComplete(response.data);
     } catch (error) {
       console.error('Erro na busca:', error);

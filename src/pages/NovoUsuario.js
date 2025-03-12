@@ -47,7 +47,7 @@ const NovoUsuario = () => {
     if (!isAdmin && user) {
       dispatch(setFormData({ 
         ...formData, 
-        ['users/searchCoordinator']: user.idUser,
+        ['users/searchCordinator']: user.idUser,
         description: 'Motoboy',
         idUserType: 3 // Assumindo que 3 é o idUserType para "Motoboy"
       }));
@@ -61,8 +61,8 @@ const NovoUsuario = () => {
     const requiredFields = ['nome', 'userKey', 'email', 'password', 'description'];
     let currentInvalidFields = requiredFields.filter(field => !formData[field]);
   
-    if (isAdmin && formData.description === 'Motoboy' && !formData['users/searchCoordinator']) {
-      currentInvalidFields = [...currentInvalidFields, 'users/searchCoordinator'];
+    if (isAdmin && formData.description === 'Motoboy' && !formData['users/searchCordinator']) {
+      currentInvalidFields = [...currentInvalidFields, 'users/searchCordinator'];
     }
   
     const passwordsMatch = formData.password === formData.confirmPassword;
@@ -88,12 +88,12 @@ const NovoUsuario = () => {
         email: formData.email,
         password: formData.password,
         userType: formData.idUserType,
-        ...(formData['users/searchCoordinator'] && {
-          hierarchy: parseInt(formData['users/searchCoordinator']) // Envia apenas o ID como integer
+        ...(formData['users/searchCordinator'] && {
+          hierarchy: parseInt(formData['users/searchCordinator']) // Envia apenas o ID como integer
         })
       };
   
-      if (!isAdmin && formData.description === 'Motoboy' && !formData['users/searchCoordinator']) {
+      if (!isAdmin && formData.description === 'Motoboy' && !formData['users/searchCordinator']) {
         dataToSend.hierarchy = user.idUser;
       }
   

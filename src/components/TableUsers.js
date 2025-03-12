@@ -4,8 +4,15 @@ import { useDispatch } from 'react-redux';
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit'; 
 import { MAIN_YELLOW, MAIN_FONT_COLLOR } from '../styles/Colors'; 
+import { useNavigate } from 'react-router-dom'; // Adicionar o useNavigate
 
 const TableUsers = ({ data, onEdit }) => {
+  const navigate = useNavigate(); // Hook para navegação
+
+  const handleEditClick = (id) => {
+    navigate(`/usuarios/editar/${id}`); // Redireciona para a rota com o ID
+  };
+
   return (
     <Box sx={{ width: '100%', overflow: 'hidden' }}>
       <TableContainer component={Paper} className="table-users-container">
@@ -35,7 +42,7 @@ const TableUsers = ({ data, onEdit }) => {
                 <TableCell>{user.status ? 'Habilitado' : 'Desabilitado'}</TableCell>
                 <TableCell>{user.coordinator || 'Nenhum'}</TableCell>
                 <TableCell className="action-cell">
-                  <button className="action-button" onClick={() => onEdit(user.idUser)}>
+                  <button className="action-button" onClick={() => handleEditClick(user.idUser)}>
                     <EditIcon />
                   </button>
                 </TableCell>
