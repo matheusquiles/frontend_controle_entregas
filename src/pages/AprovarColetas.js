@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { setFormData, setLoading, resetForm, setEditing, setNotification, setUpdating } from '../redux/reducers/FormSlice.js';
 import { useDispatch, useSelector } from 'react-redux';
-import { LoadingOverlay } from '../styles/globalStyles.jsx';
-import { FaSpinner } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import { setLoading, setNotification, resetForm } from '../redux/reducers/FormSlice';
 import { CssBaseline, Box, Toolbar } from '@mui/material';
-import NotificationSnackbar from '../components/NotificacaoSnackbar.js';
+import { LoadingOverlay } from '../styles/globalStyles';
+import { FaSpinner } from 'react-icons/fa';
+import api from '../api/api';
 import { useUser } from '../hooks/useUser';
-import FormButtons from '../components/FormButtons.js';
-import AppAppBar from '../components/AppAppBar.js';
-import CollectTable from '../components/CollectTable.js';
-import SearchBar from '../components/SearchBar.js';
-import api from '../api/api.js';
+import AppAppBar from '../components/AppAppBar';
+import SearchBar from '../components/SearchBar';
+import CollectTable from '../components/CollectTable';
+import FormButtons from '../components/FormButtons';
+import NotificationSnackbar from '../components/NotificacaoSnackbar';
 
 const AprovarColetas = () => {
   const dispatch = useDispatch();
@@ -19,7 +19,7 @@ const AprovarColetas = () => {
   const isLoading = useSelector((state) => state.form.isLoading);
   const formData = useSelector((state) => state.form.formData);
   const isUpdating = useSelector((state) => state.form.isUpdating);
-  const { user } = useUser();
+  const { user, loading: userLoading } = useUser(); 
 
   const [sampleData, setSampleData] = useState([]);
 
@@ -31,17 +31,22 @@ const AprovarColetas = () => {
     e.preventDefault();
     dispatch(setLoading(true));
 
-    console.log('Data to send', sampleData);
+    const updatedSampleData = sampleData.map(item => ({
+      ...item,
+      lastModificationBy: user?.idUser || null, 
+    }));
+
+    console.log('Data to send', updatedSampleData);
 
     try {
-      const response = await api.post('api/users/save', sampleData);
+      const response = await api.post('api/collects/editCollect', updatedSampleData);
 
-      if (!response.ok) {
-        const errorData = await response.json();
+      if (response.data === false) {
+        const errorData = await response.data; 
         throw new Error(errorData.message || 'Erro ao enviar os dados para a API');
       }
 
-      const result = await response.json();
+      const result = response.data; 
       dispatch(setNotification({ message: 'Dados salvos com sucesso!', severity: 'success' }));
       console.log('Resposta da API:', result);
     } catch (error) {
@@ -60,6 +65,14 @@ const AprovarColetas = () => {
     dispatch(setNotification({ message: '', severity: 'info' }));
     dispatch(resetForm());
   }, [dispatch]);
+
+  if (userLoading) {
+    return (
+      <LoadingOverlay>
+        <FaSpinner className="animate-spin text-4xl text-blue-500" />
+      </LoadingOverlay>
+    );
+  }
 
   return (
     <>
