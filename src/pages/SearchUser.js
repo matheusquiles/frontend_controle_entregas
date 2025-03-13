@@ -8,7 +8,6 @@ import { CssBaseline, Box, Toolbar } from '@mui/material';
 import NotificationSnackbar from '../components/NotificacaoSnackbar.js';
 import FormButtons from '../components/FormButtons.js';
 import AppAppBar from '../components/AppAppBar.js';
-import api from '../api/api.js';
 import SearchUserBar from '../components/SearchUserBar.js';
 import TableUsers from '../components/TableUsers.js';
 
@@ -24,16 +23,14 @@ const SearchUser = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch(setLoading(true));
-    // Lógica de submit, se necessário
     dispatch(setLoading(false));
   };
 
   const handleSearchComplete = (data) => {
-    setSampleData(data); // Atualiza os dados da tabela
+    setSampleData(data); 
   };
 
   const handleEdit = (idUser) => {
-    // Lógica para edição (ex.: navegar para a página de edição)
     dispatch(setEditing(true));
     navigate(`/usuarios/editar/${idUser}`);
   };
@@ -87,7 +84,7 @@ const SearchUser = () => {
               }}
             >
               <SearchUserBar onSearchComplete={handleSearchComplete} />
-              <TableUsers data={sampleData} onEdit={handleEdit} /> {/* Passa onEdit */}
+              <TableUsers data={sampleData} onEdit={handleEdit} /> 
             </Box>
           </Box>
 

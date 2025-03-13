@@ -34,7 +34,6 @@ const EditUser = () => {
       try {
         const response = await api.get(`api/users/getById/${id}`);
         const userData = response.data;
-        console.log("Dados do usuário:", JSON.stringify(userData, null, 2));
 
         const hierarchyName =
           userData.availableHierarchies?.find(h => h.id === userData.hierarchyId)?.name || '';
@@ -108,7 +107,6 @@ const EditUser = () => {
         userType: formData.idUserType, 
         ...(formData.hierarchy && { hierarchy: parseInt(formData.hierarchy) }),
       };
-      console.log("Dados a serem enviados:", JSON.stringify(dataToSend, null, 2));
       const response = await api.post(`api/users/editUser`, dataToSend);
   
       if (response.data === true) {

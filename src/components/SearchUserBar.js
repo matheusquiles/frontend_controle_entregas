@@ -67,7 +67,7 @@ const SearchUserBar = ({ onSearchComplete }) => {
         name: formData.name || null,
         userKey: formData.userKey || null,
         cpf: formData.cpf || null,
-        userType: formData.userType === 'todos' ? null : (selectedUserType ? selectedUserType.idUserType : null), // Envia o idUserType
+        userType: formData.userType === 'todos' ? null : (selectedUserType ? selectedUserType.idUserType : null),
         status: formData.status,
       };
 
