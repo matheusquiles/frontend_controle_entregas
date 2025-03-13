@@ -32,11 +32,9 @@ const EditUser = () => {
     const fetchUserData = async () => {
       dispatch(setLoading(true));
       try {
-        console.log(`Buscando dados do usuário com ID: ${id}`);
-        const response = await api.get(`api/users/getById/${id}`); // Endpoint ajustado
-        console.log('Resposta da API:', response.data);
-
+        const response = await api.get(`api/users/getById/${id}`);
         const userData = response.data;
+        console.log("Dados do usuário:", JSON.stringify(userData, null, 2));
 
         const hierarchyName =
           userData.availableHierarchies?.find(h => h.id === userData.hierarchyId)?.name || '';
@@ -48,16 +46,15 @@ const EditUser = () => {
           email: userData.email,
           userKey: userData.userKey,
           status: userData.status,
-          description: userData.userType || '',
-          hierarchy: hierarchyName,
+          userType: userData.userType || '',
+          idUserType: userData.idUserType || '',
+          hierarchy: userData.hierarchyId || '',
           availableHierarchies: userData.availableHierarchies || [],
         };
 
-        console.log('Dados enviados para o formData:', formDataToSet);
         dispatch(setFormData(formDataToSet));
         setDataFetched(true);
       } catch (error) {
-        console.error('Erro ao buscar usuário:', error);
         let errorMessage = 'Erro ao carregar dados do usuário';
         if (error.response) {
           errorMessage = `Erro ${error.response.status}: ${error.response.data.message || 'Erro desconhecido'}`;
@@ -81,10 +78,14 @@ const EditUser = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitted(true);
-
-    const requiredFields = ['name', 'userKey', 'email', 'description'];
+  
+    const requiredFields = ['name', 'userKey', 'email', 'userType'];
     const currentInvalidFields = requiredFields.filter(field => !formData[field]);
-
+  
+    if (formData.userType === 'Motoboy' && !formData.hierarchy) {
+      currentInvalidFields.push('hierarchy');
+    }
+  
     if (currentInvalidFields.length > 0) {
       dispatch(setNotification({
         message: 'Existem campos obrigatórios não preenchidos!',
@@ -92,27 +93,28 @@ const EditUser = () => {
       }));
       return;
     }
-
+  
     dispatch(setEditing(false));
     dispatch(setLoading(true));
-
+  
     try {
       const dataToSend = {
         idUser: formData.idUser,
         name: formData.name,
+        userKey: formData.userKey,
+        status: formData.status,
         cpf: formData.cpf,
         email: formData.email,
-        userType: formData.description, 
-        status: formData.status,
-        hierarchy: formData['users/searchCordinator'] || null, 
+        userType: formData.idUserType, 
+        ...(formData.hierarchy && { hierarchy: parseInt(formData.hierarchy) }),
       };
       console.log("Dados a serem enviados:", JSON.stringify(dataToSend, null, 2));
-      const response = await api.put(`api/users/getById/${id}`, dataToSend);
-
+      const response = await api.post(`api/users/editUser`, dataToSend);
+  
       if (response.data === true) {
         dispatch(setNotification({ message: 'Usuário atualizado com sucesso!', severity: 'success' }));
         dispatch(setLoading(false));
-        navigate('/usuarios/editar');
+        dispatch(setEditing(true));
       } else {
         dispatch(setNotification({ message: 'Erro ao atualizar usuário', severity: 'error' }));
         dispatch(setEditing(true));
@@ -178,7 +180,7 @@ const EditUser = () => {
                 submitted={submitted}
                 isAdmin={true}
                 hierarchies={formData.availableHierarchies || []}
-                initialHierarchyId={formData['users/searchCordinator']}
+                initialHierarchyId={formData.hierarchy}
               />
             </Box>
           </Box>

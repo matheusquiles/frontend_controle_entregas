@@ -27,7 +27,20 @@ const FormUsuariosEdit = ({ submitted, isAdmin, hierarchies, initialHierarchyId 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     const newValue = type === 'checkbox' ? checked : value;
-    dispatch(setFormData({ ...formData, [name]: newValue }));
+  
+    // Isso ta feio demais, mas vai ser ajustado (um dia)
+    const userTypeToIdMap = {
+      'Administrador': 1,
+      'Coordenador': 2,
+      'Motoboy': 3,
+    };
+  
+    if (name === 'userType') {
+      const idUserType = userTypeToIdMap[value] || null;
+      dispatch(setFormData({ ...formData, [name]: value, idUserType }));
+    } else {
+      dispatch(setFormData({ ...formData, [name]: newValue }));
+    }
   };
 
   const initialValue = initialHierarchyId || '';
@@ -58,14 +71,14 @@ const FormUsuariosEdit = ({ submitted, isAdmin, hierarchies, initialHierarchyId 
         idUser: formData.idUser,
         password: newPasswordData.password,
       };
-      setIsModalLoading(true); // Ativa o estado de carregamento do modal
+      setIsModalLoading(true);
       await api.post(`/api/users/changePassword`, dataToSend);
       dispatch(setNotification({ message: 'Senha alterada com sucesso!', severity: 'success' }));
       handleClosePasswordModal();
     } catch (error) {
       dispatch(setNotification({ message: 'Erro ao alterar senha', severity: 'error' }));
     } finally {
-      setIsModalLoading(false); // Desativa o estado de carregamento do modal
+      setIsModalLoading(false);
     }
   };
 
@@ -120,8 +133,8 @@ const FormUsuariosEdit = ({ submitted, isAdmin, hierarchies, initialHierarchyId 
           <FormControl fullWidth>
             <InputLabel>Tipo de Usuário</InputLabel>
             <Select
-              name="description"
-              value={formData.description || ''}
+              name="userType"
+              value={formData.userType || ''}
               onChange={handleChange}
               label="Tipo de Usuário"
               required
@@ -131,7 +144,7 @@ const FormUsuariosEdit = ({ submitted, isAdmin, hierarchies, initialHierarchyId 
               </MenuItem>
               <MenuItem value="Motoboy">Motoboy</MenuItem>
               <MenuItem value="Coordenador">Coordenador</MenuItem>
-              <MenuItem value="Admin">Admin</MenuItem>
+              <MenuItem value="Administrador">Administrador</MenuItem>
             </Select>
           </FormControl>
         ) : (
@@ -139,7 +152,7 @@ const FormUsuariosEdit = ({ submitted, isAdmin, hierarchies, initialHierarchyId 
             <FormControl fullWidth disabled>
               <InputLabel>Tipo de Usuário</InputLabel>
               <Select
-                name="description"
+                name="userType"
                 value={formData.description || ''}
                 label="Tipo de Usuário"
                 disabled
@@ -151,14 +164,13 @@ const FormUsuariosEdit = ({ submitted, isAdmin, hierarchies, initialHierarchyId 
         )}
       </Box>
       <Box mb={2} width={'49%'} ml={2}>
-        <FormControl fullWidth error={submitted}>
+        <FormControl fullWidth error={submitted && formData.description === 'Motoboy' && !formData.hierarchy}>
           <InputLabel>Hierarquia</InputLabel>
           <Select
             name="hierarchy"
             value={formData.hierarchy || initialValue}
             onChange={handleChange}
             label="Hierarquia"
-            required={formData.description === 'Motoboy'}
           >
             <MenuItem value="">
               <em>Selecione...</em>
@@ -169,7 +181,7 @@ const FormUsuariosEdit = ({ submitted, isAdmin, hierarchies, initialHierarchyId 
               </MenuItem>
             ))}
           </Select>
-          {submitted && formData.description === 'Motoboy' && !formData['users/searchCordinator'] && (
+          {submitted && formData.description === 'Motoboy' && !formData.hierarchy && (
             <span style={{ color: 'red' }}>Este campo é obrigatório para Motoboys.</span>
           )}
         </FormControl>
