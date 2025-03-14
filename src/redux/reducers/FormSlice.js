@@ -54,8 +54,8 @@ const formSlice = createSlice({
     setIsValidResponse: (state, action) => {
       state.isValidResponse = action.payload;
     },
-    setEditing: (state) => {
-      state.isEditing = !state.isEditing;
+    setEditing: (state, action) => {
+      state.isEditing = action.payload; 
     },
     setActiveComponent: (state, action) => {
       state.activeComponent = action.payload;

@@ -15,11 +15,12 @@ const CollectTable = ({ data, onDataChange }) => {
   }, [data]);
 
   const groupedData = tableData.reduce((acc, collect) => {
-    const key = `${collect.date}-${collect.edressDescription}`;
+    const key = `${collect.date}-${collect.edressDescription}-${collect.collectUser}`; // Inclui collectUser no key
     if (!acc[key]) {
       acc[key] = {
         date: collect.date,
         edressDescription: collect.edressDescription,
+        collectUser: collect.collectUser, // Armazena o motoboy
         collects: [],
       };
     }
@@ -124,7 +125,7 @@ const CollectTable = ({ data, onDataChange }) => {
                   <tr key={rowKey} className={`data-row ${isEditing ? 'editing' : ''}`}>
                     {collectIndex === 0 && itemIndex === 0 ? (
                       <>
-                        <td rowSpan={rowSpanCount}>{collect.collectUser}</td>
+                        <td rowSpan={rowSpanCount}>{group.collectUser}</td>
                         <td rowSpan={rowSpanCount}>{group.date}</td>
                         <td rowSpan={rowSpanCount}>{group.edressDescription}</td>
                       </>

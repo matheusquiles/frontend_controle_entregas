@@ -39,6 +39,8 @@ export default function AppAppBar() {
   const [coletasAnchorEl, setColetasAnchorEl] = React.useState(null);
   const [entregasAnchorEl, setEntregasAnchorEl] = React.useState(null);
   const [configAnchorEl, setConfigAnchorEl] = React.useState(null);
+  const [usuariosAnchorEl, setUsuariosAnchorEl] = React.useState(null); 
+  const [enderecosAnchorEl, setEnderecosAnchorEl] = React.useState(null); 
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -50,20 +52,20 @@ export default function AppAppBar() {
     setOpen(newOpen);
   };
 
-  const handleMenuClick = (event) => {
-    setAnchorEl(event.currentTarget);
+  const handleUsuariosMenuClick = (event) => {
+    setUsuariosAnchorEl(event.currentTarget);
   };
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
+  const handleUsuariosMenuClose = () => {
+    setUsuariosAnchorEl(null);
   };
 
-  const handleEntregasMenuClick = (event) => {
-    setEntregasAnchorEl(event.currentTarget);
+  const handleEnderecosMenuClick = (event) => {
+    setEnderecosAnchorEl(event.currentTarget);
   };
 
-  const handleEntregasMenuClose = () => {
-    setEntregasAnchorEl(null);
+  const handleEnderecosMenuClose = () => {
+    setEnderecosAnchorEl(null);
   };
 
   const handleColetasMenuClick = (event) => {
@@ -74,16 +76,22 @@ export default function AppAppBar() {
     setColetasAnchorEl(null);
   };
 
+  const handleEntregasMenuClick = (event) => {
+    setEntregasAnchorEl(event.currentTarget);
+  };
+
+  const handleEntregasMenuClose = () => {
+    setEntregasAnchorEl(null);
+  };
+
   const handleConfigMenuClick = (event) => {
     setConfigAnchorEl(event.currentTarget);
   };
 
   const handleConfigMenuClose = () => {
     setConfigAnchorEl(null);
-  };
-
-  const onMenuClick = (callback) => {
-    callback();
+    setUsuariosAnchorEl(null); 
+    setEnderecosAnchorEl(null); 
   };
 
   return (
@@ -102,7 +110,7 @@ export default function AppAppBar() {
           <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', px: 0, gap: 2 }}>
             <SiteIcon />
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <Button variant="text" sx={{ color: MAIN_FONT_COLLOR }} size="small" onClick={handleColetasMenuClick}>
+              <Button variant="text" sx={{ color: MAIN_FONT_COLLOR }} size="small" onClick={handleColetasMenuClick}>
                 Coletas
               </Button>
               <Menu
@@ -113,8 +121,6 @@ export default function AppAppBar() {
                 <MenuItem onClick={() => { handleColetasMenuClose(); navigate('/coletas/nova'); }}>Nova Coleta</MenuItem>
                 <MenuItem onClick={() => { handleColetasMenuClose(); navigate('/coletas/aprovar'); }}>Aprovar</MenuItem>
               </Menu>
-
-
 
               <Button variant="text" sx={{ color: MAIN_FONT_COLLOR }} size="small" onClick={handleEntregasMenuClick}>
                 Entregas
@@ -135,17 +141,41 @@ export default function AppAppBar() {
                 open={Boolean(configAnchorEl)}
                 onClose={handleConfigMenuClose}
               >
-                <MenuItem onClick={handleMenuClick}>
+                <MenuItem onClick={handleUsuariosMenuClick}>
                   Usuários
-                  <Menu
-                    anchorEl={anchorEl}
-                    open={Boolean(anchorEl)}
-                    onClose={handleMenuClose}
-                  >
-                    <MenuItem onClick={() => { handleMenuClose(); navigate('/usuarios/novo'); }}>Novo</MenuItem>
-                    <MenuItem onClick={() => { handleMenuClose(); navigate('/usuarios/editar'); }}>Editar</MenuItem>
-                  </Menu>
                 </MenuItem>
+                <Menu
+                  anchorEl={usuariosAnchorEl}
+                  open={Boolean(usuariosAnchorEl)}
+                  onClose={handleUsuariosMenuClose}
+                  anchorOrigin={{ vertical: 'top', horizontal: 'right' }} 
+                  transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+                >
+                  <MenuItem onClick={() => { handleUsuariosMenuClose(); handleConfigMenuClose(); navigate('/usuarios/novo'); }}>
+                    Novo
+                  </MenuItem>
+                  <MenuItem onClick={() => { handleUsuariosMenuClose(); handleConfigMenuClose(); navigate('/usuarios/editar'); }}>
+                    Editar
+                  </MenuItem>
+                </Menu>
+
+                <MenuItem onClick={handleEnderecosMenuClick}>
+                  Endereços
+                </MenuItem>
+                <Menu
+                  anchorEl={enderecosAnchorEl}
+                  open={Boolean(enderecosAnchorEl)}
+                  onClose={handleEnderecosMenuClose}
+                  anchorOrigin={{ vertical: 'top', horizontal: 'right' }} 
+                  transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+                >
+                  <MenuItem onClick={() => { handleEnderecosMenuClose(); handleConfigMenuClose(); navigate('/enderecos/novo'); }}>
+                    Novo
+                  </MenuItem>
+                  <MenuItem onClick={() => { handleEnderecosMenuClose(); handleConfigMenuClose(); navigate('/enderecos/editar'); }}>
+                    Editar
+                  </MenuItem>
+                </Menu>
               </Menu>
             </Box>
           </Box>
@@ -186,7 +216,6 @@ export default function AppAppBar() {
                     <CloseRoundedIcon />
                   </IconButton>
                 </Box>
-
                 <Divider sx={{ my: 3 }} />
               </Box>
             </Drawer>

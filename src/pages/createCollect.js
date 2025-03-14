@@ -17,7 +17,7 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import FormButtons from '../components/FormButtons.js';
 import AppAppBar from '../components/AppAppBar.js';
-import { useUser } from '../hooks/useUser'; // Hook para pegar o usuário logado
+import { useUser } from '../hooks/useUser'; 
 
 const CreateCollect = () => {
   const dispatch = useDispatch();
@@ -30,12 +30,12 @@ const CreateCollect = () => {
   const [items, setItems] = useState([{ collectType: '', quantity: '' }]);
   const [submitted, setSubmitted] = useState(false);
 
-  // Usando o hook useUser para pegar o usuário logado
   const { user, loading: userLoading } = useUser();
 
   useEffect(() => {
     dispatch(setNotification({ message: '', severity: 'info' }));
     dispatch(resetForm());
+    dispatch(setEditing(true));
   }, [dispatch]);
 
   const handleChange = (e, index) => {
@@ -84,7 +84,6 @@ const CreateCollect = () => {
       return;
     }
 
-    // Verifica se o usuário ainda está sendo carregado ou não existe
     if (userLoading) {
       dispatch(setNotification({ message: 'Aguardando carregamento do usuário...', severity: 'warning' }));
       return;
@@ -185,7 +184,7 @@ const CreateCollect = () => {
                       defaultValue=""
                       invalidFields={invalidFields}
                       loading={isLoading}
-                      disabled={isEditing}
+                      disabled={!isEditing}
                       required={true}
                       submitted={submitted}
                     />
@@ -202,7 +201,7 @@ const CreateCollect = () => {
                       defaultValue=""
                       invalidFields={invalidFields}
                       loading={isLoading}
-                      disabled={isEditing}
+                      disabled={!isEditing}
                       required={true}
                       submitted={submitted}
                     />
@@ -225,7 +224,7 @@ const CreateCollect = () => {
                           defaultValue=""
                           invalidFields={invalidFields}
                           loading={isLoading}
-                          disabled={isEditing}
+                          disabled={!isEditing}
                           index={index}
                           required={true}
                           submitted={submitted}
@@ -241,7 +240,7 @@ const CreateCollect = () => {
                           formData={item}
                           onChange={(e) => handleChange(e, index)}
                           invalidFields={invalidFields}
-                          disabled={isEditing}
+                          disabled={!isEditing}
                           required={true}
                           submitted={submitted}
                         />

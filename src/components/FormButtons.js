@@ -3,7 +3,7 @@ import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import { MAIN_YELLOW, MAIN_FONT_COLLOR } from '../styles/Colors';
 import { useDispatch } from 'react-redux';
-import { resetForm } from '../redux/reducers/FormSlice';
+import { resetForm, setEditing } from '../redux/reducers/FormSlice';
 import { useNavigate } from 'react-router-dom';
 
 const FormButtons = ({ handleSubmit, isLoading, isUpdating, btEnviar, back, enableCancel = true }) => {
@@ -12,6 +12,7 @@ const FormButtons = ({ handleSubmit, isLoading, isUpdating, btEnviar, back, enab
 
   const handleCancelClick = () => {
     dispatch(resetForm());
+    dispatch(setEditing(true))
   };
 
   const handleVoltarClick = () => {
