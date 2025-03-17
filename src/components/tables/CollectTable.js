@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/CollectTable.css';
+import '../../styles/CollectTable.css';
 import { IconButton, TextField } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -15,12 +15,12 @@ const CollectTable = ({ data, onDataChange }) => {
   }, [data]);
 
   const groupedData = tableData.reduce((acc, collect) => {
-    const key = `${collect.date}-${collect.edressDescription}-${collect.collectUser}`; // Inclui collectUser no key
+    const key = `${collect.date}-${collect.edressDescription}-${collect.collectUser}`; 
     if (!acc[key]) {
       acc[key] = {
         date: collect.date,
         edressDescription: collect.edressDescription,
-        collectUser: collect.collectUser, // Armazena o motoboy
+        collectUser: collect.collectUser, 
         collects: [],
       };
     }
@@ -39,7 +39,13 @@ const CollectTable = ({ data, onDataChange }) => {
 
   const handleSave = (collectId, itemIndex) => {
     setEditRow(null);
-    onDataChange(tableData); // Notifica o componente pai sobre as alterações
+    onDataChange(tableData);
+  };
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return '-';
+    const [year, month, day] = dateStr.split('-');
+    return `${day}/${month}/${year}`;
   };
 
   const handleChange = (collectId, itemIndex, field, value) => {
@@ -60,7 +66,7 @@ const CollectTable = ({ data, onDataChange }) => {
       return collect;
     });
     setTableData(updatedData);
-    onDataChange(updatedData); // Notifica o componente pai imediatamente
+    onDataChange(updatedData);
   };
 
   const handleApprove = (collectId, itemIndex) => {
@@ -69,12 +75,12 @@ const CollectTable = ({ data, onDataChange }) => {
         const updatedItens = collect.itens.map((item, idx) =>
           idx === itemIndex ? { ...item, deliveryStatus: 'Aprovado' } : item
         );
-        return { ...collect, itens: updatedItens, status: true }; // Define status como true para Aprovado
+        return { ...collect, itens: updatedItens, status: true }; 
       }
       return collect;
     });
     setTableData(updatedData);
-    onDataChange(updatedData); // Notifica o componente pai
+    onDataChange(updatedData); 
   };
 
   const handleReject = (collectId, itemIndex) => {
@@ -83,12 +89,12 @@ const CollectTable = ({ data, onDataChange }) => {
         const updatedItens = collect.itens.map((item, idx) =>
           idx === itemIndex ? { ...item, deliveryStatus: 'Reprovado' } : item
         );
-        return { ...collect, itens: updatedItens, status: false }; // Define status como false para Reprovado
+        return { ...collect, itens: updatedItens, status: false }; 
       }
       return collect;
     });
     setTableData(updatedData);
-    onDataChange(updatedData); // Notifica o componente pai
+    onDataChange(updatedData); 
   };
 
   return (
@@ -126,7 +132,7 @@ const CollectTable = ({ data, onDataChange }) => {
                     {collectIndex === 0 && itemIndex === 0 ? (
                       <>
                         <td rowSpan={rowSpanCount}>{group.collectUser}</td>
-                        <td rowSpan={rowSpanCount}>{group.date}</td>
+                        <td rowSpan={rowSpanCount}>{formatDate(group.date)}</td>
                         <td rowSpan={rowSpanCount}>{group.edressDescription}</td>
                       </>
                     ) : null}

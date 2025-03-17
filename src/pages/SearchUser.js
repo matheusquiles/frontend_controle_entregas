@@ -9,7 +9,7 @@ import NotificationSnackbar from '../components/NotificacaoSnackbar.js';
 import FormButtons from '../components/FormButtons.js';
 import AppAppBar from '../components/AppAppBar.js';
 import SearchUserBar from '../components/SearchUserBar.js';
-import TableUsers from '../components/TableUsers.js';
+import TableUsers from '../components/tables/TableUsers.js';
 
 const SearchUser = () => {
   const dispatch = useDispatch();

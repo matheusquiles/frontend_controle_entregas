@@ -9,7 +9,7 @@ import api from '../api/api';
 import { useUser } from '../hooks/useUser';
 import AppAppBar from '../components/AppAppBar';
 import SearchBar from '../components/SearchBar';
-import CollectTable from '../components/CollectTable';
+import CollectTable from '../components/tables/CollectTable';
 import FormButtons from '../components/FormButtons';
 import NotificationSnackbar from '../components/NotificacaoSnackbar';
 

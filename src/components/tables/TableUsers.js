@@ -1,9 +1,9 @@
 import React from 'react';
-import '../styles/TableUsers.css';
+import '../../styles/TableUsers.css';
 import { useDispatch } from 'react-redux';
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit'; 
-import { MAIN_YELLOW, MAIN_FONT_COLLOR } from '../styles/Colors'; 
+import { MAIN_YELLOW, MAIN_FONT_COLLOR } from '../../styles/Colors'; 
 import { useNavigate } from 'react-router-dom'; // Adicionar o useNavigate
 
 const TableUsers = ({ data, onEdit }) => {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { setFormData, setLoading, setEditing, setNotification } from '../redux/reducers/FormSlice.js';
+import { setFormData, setLoading, setEditing, setNotification, resetForm } from '../redux/reducers/FormSlice.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { LoadingOverlay } from '../styles/globalStyles.jsx';
 import { FaSpinner } from 'react-icons/fa';
@@ -41,7 +41,7 @@ const CreateEdress = () => {
             if (response.data === true) {
                 dispatch(setNotification({ message: 'Endereço criado com sucesso!', severity: 'success' }));
                 dispatch(setLoading(false));
-                dispatch(setEditing(false));
+                dispatch(setEditing(true));
             } else {
                 dispatch(setNotification({ message: 'Erro ao criar endereço', severity: 'error' }));
                 dispatch(setEditing(true));

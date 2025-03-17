@@ -4,8 +4,6 @@ import AppAppBar from './AppAppBar.js';
 import AppTheme from '../styles/theme/AppTheme.js';
 import { Toolbar, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import CreateCollect from '../pages/createCollect.js';
 import { useUser } from '../hooks/useUser';
 
 const Home = (props) => {
@@ -49,9 +47,6 @@ const Home = (props) => {
           )}
         </header>
 
-        <Routes>
-          <Route path="/coletas" element={<CreateCollect />} />
-        </Routes>
       </Box>
     </AppTheme>
   );

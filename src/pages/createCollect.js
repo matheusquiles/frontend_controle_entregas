@@ -103,7 +103,7 @@ const CreateCollect = () => {
         status: true,
         userId: { idUser: parseInt(formData['users/searchMotoboy']) },
         edress: { idEdress: parseInt(camelCaseFormData.edress) },
-        createdBy: { idUser: user.idUser }, // Usa o ID do usuário logado
+        createdBy: { idUser: user.idUser }, 
         itens: items.map((item) => ({
           collectType: { idCollectType: parseInt(item.collectType) },
           quantity: parseInt(item.quantity),

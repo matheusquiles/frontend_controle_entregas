@@ -127,7 +127,7 @@ const SearchBar = ({ onSearchComplete }) => {
             <InputLabel id="motoboy-label">Motoboy</InputLabel>
             <Select
               labelId="motoboy-label"
-              name="userKey" // Mantido como userKey para compatibilidade com formData, mas mapeado para idUser
+              name="userKey" 
               value={filters.userKey}
               onChange={handleChange}
               label="Motoboy"
@@ -137,7 +137,7 @@ const SearchBar = ({ onSearchComplete }) => {
             >
               <MenuItem value="">Todos</MenuItem>
               {motoboyOptions.map((option) => (
-                <MenuItem key={option.idUser} value={String(option.idUser)}> {/* Usa idUser como string */}
+                <MenuItem key={option.idUser} value={String(option.idUser)}> 
                   {option.name}
                 </MenuItem>
               ))}
@@ -180,20 +180,20 @@ const SearchBar = ({ onSearchComplete }) => {
               <MenuItem value="Recusado">Recusados</MenuItem>
             </Select>
           </FormControl>
-        </Box>
 
-        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center', height: '40px' }}>
           <DatePicker
             label="Data Inicial"
             value={filters.startDate}
             onChange={(date) => handleDateChange('startDate', date)}
-            renderInput={(params) => <TextField {...params} size="small" sx={{ width: '200px' }} />}
+            sx={{ width: '150px', height: '40px' }}
+            renderInput={(params) => <TextField {...params} size="small" sx={{ width: '200px', height: '40px' }} />}
           />
           <DatePicker
             label="Data Final"
             value={filters.endDate}
             onChange={(date) => handleDateChange('endDate', date)}
-            renderInput={(params) => <TextField {...params} size="small" sx={{ width: '200px' }} />}
+            sx={{ width: '150px', height: '40px' }}
+            renderInput={(params) => <TextField {...params} size="small" sx={{ width: '200px', height: '40px' }} />}
           />
 
           <Button
