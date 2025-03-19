@@ -8,9 +8,10 @@ import { FaSpinner } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { CssBaseline, Box, IconButton, Toolbar } from '@mui/material';
 import NotificationSnackbar from '../components/NotificacaoSnackbar.js';
-import SelectRest from '../components/SelectRest.js';
 import SelectRestCollect from '../components/SelectRestCollect.js';
 import Input from '../components/input.js';
+import SelectRest from '../components/SelectRest.js';
+import SelectAutocomplete from '../components/SelectAutocomplete.js'; 
 import { API_SAVE_URL } from '../helper/Contants.js';
 import camelCase from '../helper/camelCase.js';
 import AddIcon from '@mui/icons-material/Add';
@@ -190,10 +191,9 @@ const CreateCollect = () => {
                     />
                   </F.InputLine>
                   <F.InputLine>
-                    <SelectRest
+                    <SelectAutocomplete
                       label="Endereço"
-                      first
-                      route="edress"
+                      route="http://localhost:8080/api/edress"
                       id="idEdress"
                       name="edress"
                       onChange={(e) => handleChange(e, 0)}
