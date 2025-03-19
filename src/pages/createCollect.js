@@ -10,15 +10,14 @@ import { CssBaseline, Box, IconButton, Toolbar } from '@mui/material';
 import NotificationSnackbar from '../components/NotificacaoSnackbar.js';
 import SelectRestCollect from '../components/SelectRestCollect.js';
 import Input from '../components/input.js';
-import SelectRest from '../components/SelectRest.js';
-import SelectAutocomplete from '../components/SelectAutocomplete.js'; 
+import SelectAutoComplete from '../components/SelectAutoComplete.js';
 import { API_SAVE_URL } from '../helper/Contants.js';
 import camelCase from '../helper/camelCase.js';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import FormButtons from '../components/FormButtons.js';
 import AppAppBar from '../components/AppAppBar.js';
-import { useUser } from '../hooks/useUser'; 
+import { useUser } from '../hooks/useUser';
 
 const CreateCollect = () => {
   const dispatch = useDispatch();
@@ -41,17 +40,19 @@ const CreateCollect = () => {
 
   const handleChange = (e, index) => {
     const { name, value, selectedOption } = e.target;
-    const newItems = [...items];
-
-    if (name === 'description') {
-      newItems[index]['collectType'] = selectedOption ? selectedOption.id : value;
+  
+    if (index !== undefined) {
+      // Atualiza a lista de itens
+      const newItems = [...items];
+      if (name === 'description') {
+        newItems[index]['collectType'] = selectedOption ? selectedOption.id : value;
+      } else {
+        newItems[index][name] = value;
+      }
+      setItems(newItems);
     } else {
-      newItems[index][name] = value;
-    }
-
-    setItems(newItems);
-    if (name === 'edress') {
-      dispatch(setFormData({ [name]: value }));
+      // Atualiza os dados do formulário principal
+      dispatch(setFormData({ ...formData, [name]: value }));
     }
   };
 
@@ -68,53 +69,39 @@ const CreateCollect = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitted(true);
-
+  
     console.log('Form data:', formData);
-
-    const currentInvalidFields = [];
-    if (!formData.edress) {
-      currentInvalidFields.push('edress');
-    }
-    items.forEach((item, index) => {
-      if (!item.collectType) currentInvalidFields.push(`collectType-${index}`);
-      if (!item.quantity) currentInvalidFields.push(`quantity-${index}`);
-    });
-
-    if (currentInvalidFields.length > 0) {
+  
+    if (!formData?.edress) {
       dispatch(setNotification({ message: 'Preencha todos os campos obrigatórios!', severity: 'error' }));
       return;
     }
-
-    if (userLoading) {
-      dispatch(setNotification({ message: 'Aguardando carregamento do usuário...', severity: 'warning' }));
-      return;
-    }
+  
     if (!user) {
       dispatch(setNotification({ message: 'Nenhum usuário logado encontrado!', severity: 'error' }));
       return;
     }
-
+  
     dispatch(setEditing(false));
     dispatch(setLoading(true));
-
+  
     try {
-      const camelCaseFormData = camelCase.convertKeysToCamelCase(formData);
       const dataToSend = {
         date: new Date().toISOString().split('T')[0],
         status: true,
-        userId: { idUser: parseInt(formData['users/searchMotoboy']) },
-        edress: { idEdress: parseInt(camelCaseFormData.edress) },
-        createdBy: { idUser: user.idUser }, 
+        userId: { idUser: parseInt(formData?.motoboy) },
+        edress: { idEdress: parseInt(formData?.edress) },
+        createdBy: { idUser: user.idUser },
         itens: items.map((item) => ({
           collectType: { idCollectType: parseInt(item.collectType) },
           quantity: parseInt(item.quantity),
           deliveryStatus: false,
         })),
       };
-
+  
       console.log('Dados a serem enviados:', JSON.stringify(dataToSend, null, 2));
       const response = await api.post(`${API_SAVE_URL}`, dataToSend);
-
+  
       if (response.data === true) {
         dispatch(setNotification({ message: 'Coleta criada com sucesso!', severity: 'success' }));
       } else {
@@ -174,36 +161,32 @@ const CreateCollect = () => {
               <F.InputLine column>
                 <Box mb={2} width={'100%'}>
                   <F.InputLine>
-                    <SelectRest
+                    <SelectAutoComplete
                       label="Motoboy"
-                      first
-                      route="users/searchMotoboy"
-                      id="idUser"
-                      name="name"
-                      onChange={(e) => handleChange(e, 0)}
-                      form={formData}
-                      defaultValue=""
-                      invalidFields={invalidFields}
-                      loading={isLoading}
-                      disabled={!isEditing}
-                      required={true}
+                      route="http://localhost:8080/api/users/searchMotoboy"
+                      idField="idUser"
+                      labelField="name"
+                      name="motoboy"
+                      value={formData.motoboy}
+                      onChange={handleChange}
+                      required
                       submitted={submitted}
+                      invalidFields={invalidFields}
                     />
                   </F.InputLine>
                   <F.InputLine>
-                    <SelectAutocomplete
+                    <SelectAutoComplete
                       label="Endereço"
                       route="http://localhost:8080/api/edress"
-                      id="idEdress"
+                      idField="idEdress"
+                      labelField="edress"
                       name="edress"
-                      onChange={(e) => handleChange(e, 0)}
-                      form={formData}
-                      defaultValue=""
-                      invalidFields={invalidFields}
-                      loading={isLoading}
-                      disabled={!isEditing}
-                      required={true}
+                      value={formData.edress}
+                      onChange={handleChange}
+                      required
                       submitted={submitted}
+                      invalidFields={invalidFields}
+                      
                     />
                   </F.InputLine>
                 </Box>
