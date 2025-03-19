@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Box, TextField, Button, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { Box, TextField, Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { ptBR } from 'date-fns/locale';
@@ -8,6 +8,7 @@ import { setFormData, setLoading, resetForm, setNotification } from '../redux/re
 import api from '../api/api.js';
 import { MAIN_YELLOW, MAIN_FONT_COLLOR } from '../styles/Colors';
 import { API_BASE_URL, API_SEARCH_COLLECTS_DTO } from '../helper/Contants.js';
+import SelectAutoComplete from './SelectAutoComplete.js';
 
 const SearchBar = ({ onSearchComplete }) => {
   const dispatch = useDispatch();
@@ -23,52 +24,23 @@ const SearchBar = ({ onSearchComplete }) => {
     endDate: hoje,
     userKey: '',
     edress: '',
-    status: 'todos'
+    status: 'todos',
   });
-  const [motoboyOptions, setMotoboyOptions] = useState([]);
-  const [edressOptions, setEdressOptions] = useState([]);
-  const [loadingMotoboys, setLoadingMotoboys] = useState(false);
-  const [loadingEdress, setLoadingEdress] = useState(false);
+
+  const todosOption = useMemo(() => [{ id: '', label: 'Todos' }], []);
 
   useEffect(() => {
-    const fetchMotoboys = async () => {
-      setLoadingMotoboys(true);
-      try {
-        const { data } = await api.get(`${API_BASE_URL}/users/searchMotoboy`);
-        setMotoboyOptions(data);
-      } catch (error) {
-        console.error('Erro ao carregar motoboys:', error);
-        dispatch(setNotification({ message: 'Erro ao carregar motoboys', severity: 'error' }));
-      } finally {
-        setLoadingMotoboys(false);
-      }
-    };
-
-    const fetchEdress = async () => {
-      setLoadingEdress(true);
-      try {
-        const { data } = await api.get(`${API_BASE_URL}/edress`);
-        setEdressOptions(data);
-      } catch (error) {
-        console.error('Erro ao carregar endereços:', error);
-        dispatch(setNotification({ message: 'Erro ao carregar endereços', severity: 'error' }));
-      } finally {
-        setLoadingEdress(false);
-      }
-    };
-
-    fetchMotoboys();
-    fetchEdress();
-
     dispatch(setNotification({ message: '', severity: 'info' }));
     dispatch(resetForm());
     const ontemFormatado = ontem.toISOString().split('T')[0];
     const hojeFormatado = hoje.toISOString().split('T')[0];
-    dispatch(setFormData({
-      dataInicial: ontemFormatado,
-      dataFinal: hojeFormatado,
-      status: 'todos'
-    }));
+    dispatch(
+      setFormData({
+        dataInicial: ontemFormatado,
+        dataFinal: hojeFormatado,
+        status: 'todos',
+      })
+    );
   }, [dispatch]);
 
   const handleChange = (e) => {
@@ -76,20 +48,22 @@ const SearchBar = ({ onSearchComplete }) => {
     dispatch(setFormData({ ...formData, [name]: value }));
     setFilters((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleDateChange = (name, date) => {
     setFilters({
       ...filters,
-      [name]: date
+      [name]: date,
     });
     const dataFormatada = date ? date.toISOString().split('T')[0] : '';
-    dispatch(setFormData({
-      ...formData,
-      [name === 'startDate' ? 'dataInicial' : 'dataFinal']: dataFormatada
-    }));
+    dispatch(
+      setFormData({
+        ...formData,
+        [name === 'startDate' ? 'dataInicial' : 'dataFinal']: dataFormatada,
+      })
+    );
   };
 
   const handleSearch = async (e) => {
@@ -107,9 +81,9 @@ const SearchBar = ({ onSearchComplete }) => {
         initialDate: formatDate(filters.startDate),
         finalDate: formatDate(filters.endDate),
         idEdress: formData.edress ? parseInt(formData.edress) : null,
-        deliveryStatus: formData.status
+        deliveryStatus: formData.status,
       };
-      console.log("Dados de pesquisa:", dataToSend);
+      console.log('Dados de pesquisa:', dataToSend);
       const response = await api.post(`${API_SEARCH_COLLECTS_DTO}`, dataToSend);
       onSearchComplete(response.data);
     } catch (error) {
@@ -124,44 +98,30 @@ const SearchBar = ({ onSearchComplete }) => {
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 2 }}>
         <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
           <FormControl sx={{ width: '258px' }}>
-            <InputLabel id="motoboy-label">Motoboy</InputLabel>
-            <Select
-              labelId="motoboy-label"
-              name="userKey" 
-              value={filters.userKey}
-              onChange={handleChange}
+            <SelectAutoComplete
               label="Motoboy"
-              variant="outlined"
-              size="small"
-              disabled={loadingMotoboys}
-            >
-              <MenuItem value="">Todos</MenuItem>
-              {motoboyOptions.map((option) => (
-                <MenuItem key={option.idUser} value={String(option.idUser)}> 
-                  {option.name}
-                </MenuItem>
-              ))}
-            </Select>
+              route={`${API_BASE_URL}/users/searchMotoboy`}
+              idField="idUser"
+              labelField="name"
+              name="userKey"
+              value={formData.userKey || ''} 
+              onChange={handleChange}
+              optionsPrefix={todosOption} 
+              externalLoading={false}
+            />
           </FormControl>
           <FormControl sx={{ width: '390px' }}>
-            <InputLabel id="edress-label">Endereço</InputLabel>
-            <Select
-              labelId="edress-label"
-              name="edress"
-              value={filters.edress}
-              onChange={handleChange}
+            <SelectAutoComplete
               label="Endereço"
-              variant="outlined"
-              size="small"
-              disabled={loadingEdress}
-            >
-              <MenuItem value="">Todos</MenuItem>
-              {edressOptions.map((option) => (
-                <MenuItem key={option.idEdress} value={option.idEdress}>
-                  {option.description}
-                </MenuItem>
-              ))}
-            </Select>
+              route={`${API_BASE_URL}/edress`}
+              idField="idEdress"
+              labelField="description"
+              name="edress"
+              value={formData.edress || ''} 
+              onChange={handleChange}
+              optionsPrefix={todosOption} 
+              externalLoading={false}
+            />
           </FormControl>
           <FormControl sx={{ width: '200px' }}>
             <InputLabel id="status-label">Status</InputLabel>
@@ -186,14 +146,18 @@ const SearchBar = ({ onSearchComplete }) => {
             value={filters.startDate}
             onChange={(date) => handleDateChange('startDate', date)}
             sx={{ width: '150px', height: '40px' }}
-            renderInput={(params) => <TextField {...params} size="small" sx={{ width: '200px', height: '40px' }} />}
+            renderInput={(params) => (
+              <TextField {...params} size="small" sx={{ width: '200px', height: '40px' }} />
+            )}
           />
           <DatePicker
             label="Data Final"
             value={filters.endDate}
             onChange={(date) => handleDateChange('endDate', date)}
             sx={{ width: '150px', height: '40px' }}
-            renderInput={(params) => <TextField {...params} size="small" sx={{ width: '200px', height: '40px' }} />}
+            renderInput={(params) => (
+              <TextField {...params} size="small" sx={{ width: '200px', height: '40px' }} />
+            )}
           />
 
           <Button
@@ -202,8 +166,8 @@ const SearchBar = ({ onSearchComplete }) => {
             sx={{
               bgcolor: MAIN_YELLOW,
               color: MAIN_FONT_COLLOR,
-              height: '40px', 
-              padding: '0 16px', 
+              height: '40px',
+              padding: '0 16px',
               minWidth: '100px',
             }}
           >

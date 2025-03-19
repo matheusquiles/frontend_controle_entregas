@@ -12,7 +12,7 @@ import SelectRestCollect from '../components/SelectRestCollect.js';
 import Input from '../components/input.js';
 import SelectAutoComplete from '../components/SelectAutoComplete.js';
 import { API_SAVE_URL } from '../helper/Contants.js';
-import camelCase from '../helper/camelCase.js';
+import { API_BASE_URL } from '../helper/Contants.js';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import FormButtons from '../components/FormButtons.js';
@@ -42,7 +42,6 @@ const CreateCollect = () => {
     const { name, value, selectedOption } = e.target;
   
     if (index !== undefined) {
-      // Atualiza a lista de itens
       const newItems = [...items];
       if (name === 'description') {
         newItems[index]['collectType'] = selectedOption ? selectedOption.id : value;
@@ -51,7 +50,6 @@ const CreateCollect = () => {
       }
       setItems(newItems);
     } else {
-      // Atualiza os dados do formulário principal
       dispatch(setFormData({ ...formData, [name]: value }));
     }
   };
@@ -163,7 +161,7 @@ const CreateCollect = () => {
                   <F.InputLine>
                     <SelectAutoComplete
                       label="Motoboy"
-                      route="http://localhost:8080/api/users/searchMotoboy"
+                      route={`${API_BASE_URL}/users/searchMotoboy`}
                       idField="idUser"
                       labelField="name"
                       name="motoboy"
@@ -177,7 +175,7 @@ const CreateCollect = () => {
                   <F.InputLine>
                     <SelectAutoComplete
                       label="Endereço"
-                      route="http://localhost:8080/api/edress"
+                      route={`${API_BASE_URL}/edress`}
                       idField="idEdress"
                       labelField="edress"
                       name="edress"
