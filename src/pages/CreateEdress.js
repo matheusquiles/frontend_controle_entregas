@@ -3,7 +3,7 @@ import { setFormData, setLoading, setEditing, setNotification, resetForm } from 
 import { useDispatch, useSelector } from 'react-redux';
 import { LoadingOverlay } from '../styles/globalStyles.jsx';
 import { FaSpinner } from 'react-icons/fa';
-import { CssBaseline, Box, Toolbar, TextField } from '@mui/material';
+import { CssBaseline, Box, Toolbar, TextField, Grid } from '@mui/material';
 import NotificationSnackbar from '../components/NotificacaoSnackbar.js';
 import FormButtons from '../components/FormButtons.js';
 import AppAppBar from '../components/AppAppBar.js';
@@ -18,9 +18,32 @@ const CreateEdress = () => {
 
     const { loading: userLoading } = useUser();
     const [submitted, setSubmitted] = useState(false);
+    const [collectTypes, setCollectTypes] = useState([]);
 
     useEffect(() => {
         dispatch(setEditing(true));
+        // Fetch collect types on component mount
+        const fetchCollectTypes = async () => {
+            try {
+                const response = await api.get('api/collectType');
+                setCollectTypes(response.data);
+                // Initialize collectTypesData in formData
+                dispatch(setFormData({
+                    ...formData,
+                    collectTypesData: response.data.map(type => ({
+                        idCollectType: type.idCollectType,
+                        description: type.description,
+                        preValue: ''
+                    }))
+                }));
+            } catch (error) {
+                dispatch(setNotification({ 
+                    message: 'Erro ao carregar tipos de coleta', 
+                    severity: 'error' 
+                }));
+            }
+        };
+        fetchCollectTypes();
     }, [dispatch]);
 
     const handleSubmit = async (e) => {
@@ -31,10 +54,15 @@ const CreateEdress = () => {
         dispatch(setLoading(true));
 
         try {
-            
             const dataToSend = { 
                 ...formData,
-            status: true };
+                status: true,
+                collectPreValue: formData.collectTypesData.map(type => ({
+                    collectType: type.idCollectType,
+                    preValue: type.preValue
+                }))
+            };
+            console.log(dataToSend);
 
             const response = await api.post('api/edress/save', dataToSend);
 
@@ -63,6 +91,21 @@ const CreateEdress = () => {
     const handleInputChange = (e) => {
         const { id, value } = e.target;
         dispatch(setFormData({ ...formData, [id]: value }));
+    };
+
+    const handlePreValueChange = (index) => (e) => {
+        const value = e.target.value;
+        if (/^\d*\.?\d*$/.test(value)) {
+            const newCollectTypesData = formData.collectTypesData.map((type, i) => 
+                i === index 
+                    ? { ...type, preValue: value }
+                    : type
+            );
+            dispatch(setFormData({ 
+                ...formData, 
+                collectTypesData: newCollectTypesData 
+            }));
+        }
     };
 
     if (userLoading) {
@@ -138,6 +181,38 @@ const CreateEdress = () => {
                                 helperText={submitted && !formData.edress ? 'Campo obrigatório' : ''}
                                 disabled={!isEditing}
                             />
+                            
+                            {/* Collect Types Section */}
+                            {formData.collectTypesData?.map((type, index) => (
+                                <Grid container spacing={2} key={type.idCollectType} sx={{ mt: 2 }}>
+                                    <Grid item xs={6}>
+                                        <TextField
+                                            fullWidth
+                                            label="Tipo de Coleta"
+                                            value={type.description}
+                                            size="small"
+                                            margin="normal"
+                                            disabled
+                                        />
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <TextField
+                                            fullWidth
+                                            label="Valor Prévio"
+                                            value={type.preValue}
+                                            onChange={handlePreValueChange(index)}
+                                            size="small"
+                                            margin="normal"
+                                            placeholder="Digite um número"
+                                            inputProps={{
+                                                inputMode: 'decimal',
+                                                pattern: '[0-9]*\.?[0-9]*'
+                                            }}
+                                            disabled={!isEditing}
+                                        />
+                                    </Grid>
+                                </Grid>
+                            ))}
                         </Box>
                     </Box>
 
