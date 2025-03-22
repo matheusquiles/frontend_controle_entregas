@@ -1,50 +1,17 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
+import { GlobalStyle } from '../globalStyles.jsx';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 import { colorSchemes, typography, shadows, shape } from './themePrimitives';
 
-function AppTheme(props) {
-  const { children, disableCustomTheme, themeComponents } = props;
-  const theme = React.useMemo(() => {
-    return disableCustomTheme
-      ? {}
-      : createTheme({
-          // For more details about CSS variables configuration, see https://mui.com/material-ui/customization/css-theme-variables/configuration/
-          cssVariables: {
-            cssVarPrefix: 'template',
-          },
-          colorSchemes, // Recently added in v6 for building light & dark mode app, see https://mui.com/material-ui/customization/palette/#color-schemes
-          typography,
-          shadows,
-          shape,
-          components: {
-            // ...inputsCustomizations,
-            // ...dataDisplayCustomizations,
-            // ...feedbackCustomizations,
-            // ...navigationCustomizations,
-            // ...surfacesCustomizations,
-            ...themeComponents,
-          },
-        });
-  }, [disableCustomTheme, themeComponents]);
-  if (disableCustomTheme) {
-    return <React.Fragment>{children}</React.Fragment>;
-  }
+const AppTheme = ({ children }) => {
   return (
-    <ThemeProvider theme={theme} disableTransitionOnChange>
+    <ThemeProvider theme={{}}>
+      <GlobalStyle /> {/* Aplique o GlobalStyle */}
       {children}
     </ThemeProvider>
   );
-}
-
-AppTheme.propTypes = {
-  children: PropTypes.node,
-  /**
-   * This is for the docs site. You can ignore it or remove it.
-   */
-  disableCustomTheme: PropTypes.bool,
-  themeComponents: PropTypes.object,
 };
 
 export default AppTheme;

@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { setLoading, setNotification, resetForm } from '../redux/reducers/FormSlice';
+import { setLoading, setNotification, resetForm, setTableData } from '../redux/reducers/FormSlice'; // Adicione setTableData
 import { CssBaseline, Box, Toolbar } from '@mui/material';
 import { LoadingOverlay } from '../styles/globalStyles';
 import { FaSpinner } from 'react-icons/fa';
 import api from '../api/api';
 import { useUser } from '../hooks/useUser';
 import AppAppBar from '../components/AppAppBar';
-import SearchBar from '../components/SearchBar';
+import SearchCollectBar from '../components/lookups/SearchCollectBar';
 import CollectTable from '../components/tables/CollectTable';
 import FormButtons from '../components/FormButtons';
 import NotificationSnackbar from '../components/NotificacaoSnackbar';
@@ -19,34 +19,33 @@ const AprovarColetas = () => {
   const isLoading = useSelector((state) => state.form.isLoading);
   const formData = useSelector((state) => state.form.formData);
   const isUpdating = useSelector((state) => state.form.isUpdating);
-  const { user, loading: userLoading } = useUser(); 
-
-  const [sampleData, setSampleData] = useState([]);
+  const tableData = useSelector((state) => state.form.tableData); // Acesse o tableData do formSlice
+  const { user, loading: userLoading } = useUser();
 
   const handleDataChange = (updatedData) => {
-    setSampleData(updatedData);
+    dispatch(setTableData(updatedData)); // Atualiza os dados da tabela no formSlice
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch(setLoading(true));
 
-    const updatedSampleData = sampleData.map(item => ({
+    const updatedTableData = tableData.map(item => ({
       ...item,
-      lastModificationBy: user?.idUser || null, 
+      lastModificationBy: user?.idUser || null,
     }));
 
-    console.log('Data to send', updatedSampleData);
+    console.log('Data to send', updatedTableData);
 
     try {
-      const response = await api.post('api/collects/editCollect', updatedSampleData);
+      const response = await api.post('api/collects/editCollect', updatedTableData);
 
       if (response.data === false) {
-        const errorData = await response.data; 
+        const errorData = await response.data;
         throw new Error(errorData.message || 'Erro ao enviar os dados para a API');
       }
 
-      const result = response.data; 
+      const result = response.data;
       dispatch(setNotification({ message: 'Dados salvos com sucesso!', severity: 'success' }));
       console.log('Resposta da API:', result);
     } catch (error) {
@@ -58,7 +57,7 @@ const AprovarColetas = () => {
   };
 
   const handleSearchComplete = (data) => {
-    setSampleData(data);
+    dispatch(setTableData(data)); // Atualiza os dados da tabela no formSlice
   };
 
   useEffect(() => {
@@ -117,8 +116,8 @@ const AprovarColetas = () => {
                 color: 'black',
               }}
             >
-              <SearchBar onSearchComplete={handleSearchComplete} />
-              <CollectTable data={sampleData} onDataChange={handleDataChange} />
+              <SearchCollectBar onSearchComplete={handleSearchComplete} />
+              <CollectTable data={tableData} onDataChange={handleDataChange} />
             </Box>
           </Box>
 
@@ -136,7 +135,13 @@ const AprovarColetas = () => {
               color: 'black',
             }}
           >
-            <FormButtons handleSubmit={handleSubmit} isLoading={isLoading} isUpdating={isUpdating} btEnviar="Salvar" />
+            <FormButtons
+              handleSubmit={handleSubmit}
+              isLoading={isLoading}
+              isUpdating={isUpdating}
+              btEnviar="Salvar"
+              back="/home"
+            />
           </Box>
         </form>
         <NotificationSnackbar />

@@ -8,7 +8,8 @@ const initialState = {
   isEditing: false,
   isUpdating: false,
   notification: { message: '', severity: 'info' },
-  activeComponent: null
+  activeComponent: null,
+  tableData: [], 
 };
 
 const formSlice = createSlice({
@@ -60,6 +61,12 @@ const formSlice = createSlice({
     setActiveComponent: (state, action) => {
       state.activeComponent = action.payload;
     },
+    setTableData: (state, action) => {
+      state.tableData = action.payload; 
+    },
+    resetTableData: (state) => {
+      state.tableData = []; 
+    },
   },
 });
 
@@ -77,6 +84,8 @@ export const {
   setUpdating,
   setNotification,
   clearNotification,
-  setActiveComponent 
+  setActiveComponent,
+  setTableData,
+  resetTableData,
 } = formSlice.actions;
 export default formSlice.reducer;

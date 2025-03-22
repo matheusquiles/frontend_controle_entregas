@@ -1,0 +1,76 @@
+/* AddressTable.css */
+.address-table-container {
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  .address-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    table-layout: fixed; /* Garante que as colunas tenham largura fixa */
+  }
+  
+  .address-table th,
+  .address-table td {
+    padding: 8px;
+    text-align: left;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    overflow: hidden; /* Evita que o conteúdo transborde */
+    text-overflow: ellipsis; /* Adiciona reticências se o texto for muito longo */
+    white-space: nowrap; /* Impede que o texto quebre linha */
+  }
+  
+  .address-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+  }
+  
+  /* Definindo larguras fixas para cada coluna */
+  .address-table th:nth-child(1),
+  .address-table td:nth-child(1) {
+    width: 80px; /* ID Endereço */
+  }
+  
+  .address-table th:nth-child(2),
+  .address-table td:nth-child(2) {
+    width: 200px; /* Descrição */
+  }
+  
+  .address-table th:nth-child(3),
+  .address-table td:nth-child(3) {
+    width: 200px; /* Endereço */
+  }
+  
+  .address-table th:nth-child(4),
+  .address-table td:nth-child(4) {
+    width: 100px; /* Status */
+  }
+  
+  .address-table th:nth-child(5),
+  .address-table td:nth-child(5) {
+    width: 150px; /* Tipo de Coleta */
+  }
+  
+  .address-table th:nth-child(6),
+  .address-table td:nth-child(6) {
+    width: 100px; /* Valor Prévio */
+  }
+  
+  .address-table th:nth-child(7),
+  .address-table td:nth-child(7) {
+    width: 80px; /* Ações */
+  }
+  
+  .data-row {
+    background-color: #ffffff;
+  }
+  
+  .data-row:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  .data-row.editing {
+    background-color: #f5f5f5;
+  }

@@ -12,6 +12,7 @@ import AprovarColetas from './pages/AprovarColetas.js';
 import PrivateRoute from './routes/PrivateRoute.js';
 import UnauthorizedScreen from './pages/UnauthorizedScreen.js';
 import CreateEdress from './pages/CreateEdress.js';
+import SearchAddress from './pages/SearchAddress.js';
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
             <Route path="/usuarios/editar/:id" element={<EditUser />} /> 
             <Route path="/usuarios/editar" element={<SearchUser />} /> 
             <Route path="/enderecos/novo" element={<CreateEdress />} /> 
+            <Route path="/enderecos/editar" element={<SearchAddress />} />
           </Route>
 
           <Route element={<PrivateRoute allowedRoles={['ADMIN']} />}>

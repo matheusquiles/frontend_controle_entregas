@@ -1,6 +1,18 @@
-import styled from 'styled-components';
+import styled, {createGlobalStyle} from 'styled-components';
 import { TEXT_SECUNDARY, WHITE, BOX_SHADOW, BACKGROUND, HR } from './Colors';
 
+export const GlobalStyle = createGlobalStyle`
+  body {
+    background-color: ${WHITE};
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+`;
 
 export const GenericP = styled.p`
   /* color: ${ TEXT_SECUNDARY }; */

@@ -16,16 +16,16 @@ import { CssBaseline, Box, Toolbar } from '@mui/material';
 import NotificationSnackbar from '../components/NotificacaoSnackbar.js';
 import FormButtons from '../components/FormButtons.js';
 import AppAppBar from '../components/AppAppBar.js';
-import SearchUserBar from '../components/lookups/SearchUserBar.js';
-import TableUsers from '../components/tables/TableUsers.js';
+import AddressTable from '../components/tables/AddressTable.js';
+import SearchAddressBar from '../components/lookups/SearchAddressBar.js';
 
-const SearchUser = () => {
+const SearchAddress = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const isLoading = useSelector((state) => state.form.isLoading);
   const formData = useSelector((state) => state.form.formData);
   const isUpdating = useSelector((state) => state.form.isUpdating);
-  const tableData = useSelector((state) => state.form.tableData); // Acessa o tableData do formSlice
+  const tableData = useSelector((state) => state.form.tableData); // Usa o tableData do formSlice
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,6 +40,10 @@ const SearchUser = () => {
   const handleEdit = (idUser) => {
     dispatch(setEditing(true));
     navigate(`/usuarios/editar/${idUser}`);
+  };
+
+  const handleDataChange = (updatedData) => {
+    dispatch(setTableData(updatedData)); // Atualiza os dados da tabela no formSlice quando há alterações
   };
 
   useEffect(() => {
@@ -90,8 +94,8 @@ const SearchUser = () => {
                 color: 'black',
               }}
             >
-              <SearchUserBar onSearchComplete={handleSearchComplete} />
-              <TableUsers data={tableData} onEdit={handleEdit} /> {/* Passa tableData em vez de sampleData */}
+              <SearchAddressBar onSearchComplete={handleSearchComplete} />
+              <AddressTable data={tableData} onDataChange={handleDataChange} onEdit={handleEdit} />
             </Box>
           </Box>
 
@@ -123,4 +127,4 @@ const SearchUser = () => {
   );
 };
 
-export default SearchUser;
+export default SearchAddress;

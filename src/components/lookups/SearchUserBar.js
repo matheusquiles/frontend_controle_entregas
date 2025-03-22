@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, TextField, Button, Checkbox, FormControlLabel, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-import { setFormData, setLoading, resetForm, setNotification } from '../redux/reducers/FormSlice.js';
-import api from '../api/api.js';
-import { MAIN_YELLOW, MAIN_FONT_COLLOR } from '../styles/Colors';
-import { API_BASE_URL, API_SEARCH_USERS_DTO } from '../helper/Contants.js';
+import { setFormData, setLoading, resetForm, setNotification } from '../../redux/reducers/FormSlice.js';
+import api from '../../api/api.js';
+import { MAIN_YELLOW, MAIN_FONT_COLLOR } from '../../styles/Colors.jsx';
+import { API_BASE_URL, API_SEARCH_USERS_DTO } from '../../helper/Contants.js';
 
 const SearchUserBar = ({ onSearchComplete }) => {
   const dispatch = useDispatch();

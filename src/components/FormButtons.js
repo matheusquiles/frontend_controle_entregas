@@ -1,18 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react'; 
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import { MAIN_YELLOW, MAIN_FONT_COLLOR } from '../styles/Colors';
 import { useDispatch } from 'react-redux';
-import { resetForm, setEditing } from '../redux/reducers/FormSlice';
+import { Dialog, DialogTitle, DialogActions, Button as MuiButton } from '@mui/material';
+import { resetForm, setEditing, resetTableData } from '../redux/reducers/FormSlice';
 import { useNavigate } from 'react-router-dom';
 
 const FormButtons = ({ handleSubmit, isLoading, isUpdating, btEnviar, back, enableCancel = true }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [openConfirm, setOpenConfirm] = useState(false);
 
   const handleCancelClick = () => {
-    dispatch(resetForm());
-    dispatch(setEditing(true))
+    setOpenConfirm(true); 
+  };
+
+  const confirmCancel = () => {
+    dispatch(resetForm()); 
+    dispatch(resetTableData()); 
+    dispatch(setEditing(true));
+    setOpenConfirm(false); 
   };
 
   const handleVoltarClick = () => {
@@ -39,6 +47,17 @@ const FormButtons = ({ handleSubmit, isLoading, isUpdating, btEnviar, back, enab
       >
         Cancelar
       </Button>
+      <Dialog open={openConfirm} onClose={() => setOpenConfirm(false)}>
+        <DialogTitle>Confirmar Cancelamento</DialogTitle>
+        <DialogActions>
+          <MuiButton onClick={() => setOpenConfirm(false)} color="primary">
+            Não
+          </MuiButton>
+          <MuiButton onClick={confirmCancel} color="secondary">
+            Sim
+          </MuiButton>
+        </DialogActions>
+      </Dialog>
       <Button
         type="submit"
         onClick={handleSubmit}

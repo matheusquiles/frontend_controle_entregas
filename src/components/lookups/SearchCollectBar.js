@@ -4,13 +4,13 @@ import { Box, TextField, Button, FormControl, InputLabel, Select, MenuItem } fro
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { ptBR } from 'date-fns/locale';
-import { setFormData, setLoading, resetForm, setNotification } from '../redux/reducers/FormSlice.js';
-import api from '../api/api.js';
-import { MAIN_YELLOW, MAIN_FONT_COLLOR } from '../styles/Colors';
-import { API_BASE_URL, API_SEARCH_COLLECTS_DTO } from '../helper/Contants.js';
-import SelectAutoComplete from './SelectAutoComplete.js';
+import { setFormData, setLoading, resetForm, setNotification } from '../../redux/reducers/FormSlice.js';
+import api from '../../api/api.js';
+import { MAIN_YELLOW, MAIN_FONT_COLLOR } from '../../styles/Colors.jsx';
+import { API_BASE_URL, API_SEARCH_COLLECTS_DTO } from '../../helper/Contants.js';
+import SelectAutoComplete from '../SelectAutoComplete.js';
 
-const SearchBar = ({ onSearchComplete }) => {
+const SearchCollectBar = ({ onSearchComplete }) => {
   const dispatch = useDispatch();
   const formData = useSelector((state) => state.form.formData);
   const invalidFields = useSelector((state) => state.form.invalidFields) || [];
@@ -179,4 +179,4 @@ const SearchBar = ({ onSearchComplete }) => {
   );
 };
 
-export default SearchBar;
+export default SearchCollectBar;
