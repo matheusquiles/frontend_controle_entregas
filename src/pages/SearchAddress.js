@@ -25,25 +25,44 @@ const SearchAddress = () => {
   const isLoading = useSelector((state) => state.form.isLoading);
   const formData = useSelector((state) => state.form.formData);
   const isUpdating = useSelector((state) => state.form.isUpdating);
-  const tableData = useSelector((state) => state.form.tableData); // Usa o tableData do formSlice
+  const tableData = useSelector((state) => state.form.tableData);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch(setLoading(true));
-    dispatch(setLoading(false));
+    try {
+      // Simulação de envio para a API com os dados da tabela
+      const response = await fetch('/api/addresses', {
+        method: 'POST', // ou 'PUT' se for atualização
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(tableData), // Envia os dados atualizados da tabela
+      });
+
+      if (response.ok) {
+        dispatch(setNotification({ message: 'Dados salvos com sucesso!', severity: 'success' }));
+      } else {
+        throw new Error('Erro ao salvar os dados');
+      }
+    } catch (error) {
+      dispatch(setNotification({ message: error.message, severity: 'error' }));
+    } finally {
+      dispatch(setLoading(false));
+    }
   };
 
   const handleSearchComplete = (data) => {
-    dispatch(setTableData(data)); // Atualiza os dados da tabela no formSlice
+    dispatch(setTableData(data));
   };
 
   const handleEdit = (idUser) => {
     dispatch(setEditing(true));
-    navigate(`/usuarios/editar/${idUser}`);
+    navigate(`/usuarios/editar/${idUser}`); // handleEdit apenas redireciona, sem salvar
   };
 
   const handleDataChange = (updatedData) => {
-    dispatch(setTableData(updatedData)); // Atualiza os dados da tabela no formSlice quando há alterações
+    dispatch(setTableData(updatedData)); // Atualiza o estado com as alterações da tabela
   };
 
   useEffect(() => {
@@ -95,7 +114,7 @@ const SearchAddress = () => {
               }}
             >
               <SearchAddressBar onSearchComplete={handleSearchComplete} />
-              <AddressTable data={tableData} onDataChange={handleDataChange} onEdit={handleEdit} />
+              <AddressTable data={tableData} onDataChange={handleDataChange} />
             </Box>
           </Box>
 

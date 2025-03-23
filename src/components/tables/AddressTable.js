@@ -7,39 +7,40 @@ import SaveIcon from '@mui/icons-material/Save';
 const AddressTable = ({ data = [], onDataChange }) => {
   const [tableData, setTableData] = useState([]);
   const [editRow, setEditRow] = useState(null);
+  const [initialData, setInitialData] = useState(null); 
 
-  useEffect(() => {
-    const flattenData = (apiData) => {
-      return apiData.flatMap(address => {
-        // Se não houver collectPreValue, criar uma linha "vazia"
-        if (!address.collectPreValue || address.collectPreValue.length === 0) {
-          return [{
-            idEdress: address.idEdress,
-            description: address.description,
-            edress: address.edress,
-            status: address.status,
-            collectType: '-', // Valor padrão para indicar que não há collectType
-            preValue: null, // Valor padrão para indicar que não há preValue
-            idCollectPreValue: `empty-${address.idEdress}`, // Chave única para a linha
-          }];
-        }
-
-        // Caso contrário, mapear os collectPreValue normalmente
-        return address.collectPreValue.map(cpv => ({
+  const flattenData = (apiData) => {
+    return apiData.flatMap((address, index) => {
+      if (!address.collectPreValue || address.collectPreValue.length === 0) {
+        return [{
           idEdress: address.idEdress,
           description: address.description,
           edress: address.edress,
           status: address.status,
-          collectType: cpv.collectType,
-          preValue: cpv.preValue,
-          idCollectPreValue: cpv.idCollectPreValue,
-        }));
-      });
-    };
+          collectType: '-',
+          preValue: null,
+          idCollectPreValue: `empty-${address.idEdress}-${index}`,
+        }];
+      }
+      return address.collectPreValue.map(cpv => ({
+        idEdress: address.idEdress,
+        description: address.description,
+        edress: address.edress,
+        status: address.status,
+        collectType: cpv.collectType,
+        preValue: cpv.preValue,
+        idCollectPreValue: cpv.idCollectPreValue,
+      }));
+    });
+  };
 
-    const flattenedData = flattenData(data);
-    setTableData(flattenedData);
-  }, [data]);
+  useEffect(() => {
+    if (JSON.stringify(data) !== JSON.stringify(initialData)) {
+      const flattenedData = flattenData(data);
+      setTableData(flattenedData);
+      setInitialData(data);
+    }
+  }, [data]); 
 
   const groupedData = tableData.reduce((acc, address) => {
     const key = `${address.idEdress}-${address.description}-${address.edress}-${address.status}`;
@@ -67,8 +68,10 @@ const AddressTable = ({ data = [], onDataChange }) => {
 
   const handleSave = (idCollectPreValue) => {
     setEditRow(null);
+    
+    const updatedData = [...tableData];
     if (typeof onDataChange === 'function') {
-      onDataChange(tableData);
+      onDataChange(updatedData);
     }
   };
 
@@ -76,18 +79,15 @@ const AddressTable = ({ data = [], onDataChange }) => {
     const updatedData = tableData.map(address => {
       if (address.idCollectPreValue === idCollectPreValue) {
         if (field === 'preValue') {
-          const numericValue = parseFloat(value) || 0;
-          return { ...address, [field]: numericValue };
-        }
-        if (field === 'status') {
-          const statusValue = value === 'Ativo' ? true : false;
-          return { ...address, [field]: statusValue };
+          return { ...address, [field]: value === '' ? null : parseFloat(value) };
         }
         return { ...address, [field]: value };
       }
       return address;
     });
+  
     setTableData(updatedData);
+  
     if (typeof onDataChange === 'function') {
       onDataChange(updatedData);
     }
@@ -164,7 +164,7 @@ const AddressTable = ({ data = [], onDataChange }) => {
                     {isEditing && address.collectType !== '-' ? (
                       <TextField
                         size="small"
-                        value={address.preValue || ''}
+                        value={address.preValue ?? ''}
                         onChange={(e) => handleChange(address.idCollectPreValue, 'preValue', e.target.value)}
                         type="number"
                         inputProps={{ step: '0.01' }}
