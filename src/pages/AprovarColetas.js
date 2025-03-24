@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { setLoading, setNotification, resetForm, setTableData } from '../redux/reducers/FormSlice'; // Adicione setTableData
+import { setLoading, setNotification, resetForm, setTableData } from '../redux/reducers/FormSlice';
 import { CssBaseline, Box, Toolbar } from '@mui/material';
 import { LoadingOverlay } from '../styles/globalStyles';
 import { FaSpinner } from 'react-icons/fa';
@@ -19,11 +19,11 @@ const AprovarColetas = () => {
   const isLoading = useSelector((state) => state.form.isLoading);
   const formData = useSelector((state) => state.form.formData);
   const isUpdating = useSelector((state) => state.form.isUpdating);
-  const tableData = useSelector((state) => state.form.tableData); // Acesse o tableData do formSlice
+  const tableData = useSelector((state) => state.form.tableData);
   const { user, loading: userLoading } = useUser();
 
   const handleDataChange = (updatedData) => {
-    dispatch(setTableData(updatedData)); // Atualiza os dados da tabela no formSlice
+    dispatch(setTableData(updatedData));
   };
 
   const handleSubmit = async (e) => {
@@ -35,8 +35,6 @@ const AprovarColetas = () => {
       lastModificationBy: user?.idUser || null,
     }));
 
-    console.log('Data to send', updatedTableData);
-
     try {
       const response = await api.post('api/collects/editCollect', updatedTableData);
 
@@ -45,9 +43,7 @@ const AprovarColetas = () => {
         throw new Error(errorData.message || 'Erro ao enviar os dados para a API');
       }
 
-      const result = response.data;
       dispatch(setNotification({ message: 'Dados salvos com sucesso!', severity: 'success' }));
-      console.log('Resposta da API:', result);
     } catch (error) {
       dispatch(setNotification({ message: error.message || 'Erro ao salvar os dados', severity: 'error' }));
       console.error('Erro:', error);
@@ -57,7 +53,7 @@ const AprovarColetas = () => {
   };
 
   const handleSearchComplete = (data) => {
-    dispatch(setTableData(data)); // Atualiza os dados da tabela no formSlice
+    dispatch(setTableData(data));
   };
 
   useEffect(() => {
@@ -81,44 +77,33 @@ const AprovarColetas = () => {
       <Box
         component="main"
         sx={{
+          height: 'calc(100vh - 64px)', // Subtrai a altura do AppBar/Toolbar (ajuste se necessário)
           display: 'flex',
           flexDirection: 'column',
-          minHeight: '100vh',
           color: 'black',
           p: { xs: 2, md: 3 },
           maxWidth: 'xl',
           mx: 'auto',
         }}
       >
-        <form onSubmit={handleSubmit} className="cadastro-usuario-form">
+        <form onSubmit={handleSubmit} className="cadastro-usuario-form" style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
           {isLoading && (
             <LoadingOverlay>
               <FaSpinner className="animate-spin text-4xl text-blue-500" />
             </LoadingOverlay>
           )}
-          <Box sx={{ flexGrow: 1, display: 'flex', minHeight: '100dvh' }}>
-            <Box
-              component="main"
-              className="MainContent"
-              sx={{
-                px: { xs: 2, md: 6 },
-                pt: {
-                  xs: 'calc(12px + var(--Header-height))',
-                  sm: 'calc(12px + var(--Header-height))',
-                  md: 3,
-                },
-                pb: { xs: 2, sm: 2, md: 3 },
-                flex: 1,
-                display: 'flex',
-                flexDirection: 'column',
-                minWidth: 0,
-                gap: 1,
-                color: 'black',
-              }}
-            >
-              <SearchCollectBar onSearchComplete={handleSearchComplete} />
-              <CollectTable data={tableData} onDataChange={handleDataChange} />
-            </Box>
+          <Box
+            sx={{
+              flexGrow: 1, // Faz o conteúdo principal crescer para ocupar o espaço disponível
+              display: 'flex',
+              flexDirection: 'column',
+              px: { xs: 2, md: 6 },
+              py: 2,
+              overflow: 'auto', // Rolagem interna se o conteúdo exceder
+            }}
+          >
+            <SearchCollectBar onSearchComplete={handleSearchComplete} />
+            <CollectTable data={tableData} onDataChange={handleDataChange} />
           </Box>
 
           <Box
@@ -130,9 +115,9 @@ const AprovarColetas = () => {
               borderTop: '1px solid #e0e0e0',
               backgroundColor: '#fff',
               justifyContent: 'flex-end',
-              position: 'sticky',
+              flexShrink: 0, // Impede que o rodapé encolha
+              position: 'sticky', // Fixa o rodapé no fundo
               bottom: 0,
-              color: 'black',
             }}
           >
             <FormButtons

@@ -15,12 +15,12 @@ const CollectTable = ({ data, onDataChange }) => {
   }, [data]);
 
   const groupedData = tableData.reduce((acc, collect) => {
-    const key = `${collect.date}-${collect.edressDescription}-${collect.collectUser}`; 
+    const key = `${collect.date}-${collect.edressDescription}-${collect.collectUser}`;
     if (!acc[key]) {
       acc[key] = {
         date: collect.date,
         edressDescription: collect.edressDescription,
-        collectUser: collect.collectUser, 
+        collectUser: collect.collectUser,
         collects: [],
       };
     }
@@ -56,7 +56,7 @@ const CollectTable = ({ data, onDataChange }) => {
             const numericValue = parseFloat(value) || 0;
             const updatedItem = { ...item, [field]: numericValue };
             updatedItem.totalToReceive = updatedItem.valuePerUnitCollect * updatedItem.quantity;
-            updatedItem.totalValueToPay = updatedItem.valueToPayPerUnit * updatedItem.quantity;
+            updatedItem.totalValueToPay = updatedItem.valuePerUnitCollect * updatedItem.quantity;
             return updatedItem;
           }
           return item;
@@ -75,12 +75,12 @@ const CollectTable = ({ data, onDataChange }) => {
         const updatedItens = collect.itens.map((item, idx) =>
           idx === itemIndex ? { ...item, deliveryStatus: 'Aprovado' } : item
         );
-        return { ...collect, itens: updatedItens, status: true }; 
+        return { ...collect, itens: updatedItens, status: true };
       }
       return collect;
     });
     setTableData(updatedData);
-    onDataChange(updatedData); 
+    onDataChange(updatedData);
   };
 
   const handleReject = (collectId, itemIndex) => {
@@ -89,12 +89,12 @@ const CollectTable = ({ data, onDataChange }) => {
         const updatedItens = collect.itens.map((item, idx) =>
           idx === itemIndex ? { ...item, deliveryStatus: 'Reprovado' } : item
         );
-        return { ...collect, itens: updatedItens, status: false }; 
+        return { ...collect, itens: updatedItens, status: false };
       }
       return collect;
     });
     setTableData(updatedData);
-    onDataChange(updatedData); 
+    onDataChange(updatedData);
   };
 
   return (
@@ -102,15 +102,15 @@ const CollectTable = ({ data, onDataChange }) => {
       <table className="collect-table">
         <thead>
           <tr>
-            <th>Motoboy</th>
-            <th>Data</th>
-            <th>Cliente/Endereço</th>
-            <th>Tipo de Coleta</th>
-            <th>Quantidade</th>
-            <th>R$ por Unidade</th>
-            <th>R$ Total a Receber</th>
-            <th>Status</th>
-            <th>Ações</th>
+            <th className="col-motoboy">Motoboy</th>
+            <th className="col-date">Data</th>
+            <th className="col-client">Cliente/Endereço</th>
+            <th className="col-type">Tipo de Coleta</th>
+            <th className="col-quantity">Quantidade</th>
+            <th className="col-unit-value">R$ por Unidade</th>
+            <th className="col-total-receive">R$ Total a Receber</th>
+            <th className="col-status">Status</th>
+            <th className="col-actions">Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -131,13 +131,13 @@ const CollectTable = ({ data, onDataChange }) => {
                   <tr key={rowKey} className={`data-row ${isEditing ? 'editing' : ''}`}>
                     {collectIndex === 0 && itemIndex === 0 ? (
                       <>
-                        <td rowSpan={rowSpanCount}>{group.collectUser}</td>
-                        <td rowSpan={rowSpanCount}>{formatDate(group.date)}</td>
-                        <td rowSpan={rowSpanCount}>{group.edressDescription}</td>
+                        <td rowSpan={rowSpanCount} className="col-motoboy">{group.collectUser}</td>
+                        <td rowSpan={rowSpanCount} className="col-date">{formatDate(group.date)}</td>
+                        <td rowSpan={rowSpanCount} className="col-client">{group.edressDescription}</td>
                       </>
                     ) : null}
-                    <td>{item.collectType}</td>
-                    <td>
+                    <td className="col-type">{item.collectType}</td>
+                    <td className="col-quantity">
                       {isEditing ? (
                         <TextField
                           size="small"
@@ -145,12 +145,13 @@ const CollectTable = ({ data, onDataChange }) => {
                           onChange={(e) => handleChange(collect.idCollect, itemIndex, 'quantity', e.target.value)}
                           type="number"
                           inputProps={{ step: '1' }}
+                          sx={{ width: '100%' }}
                         />
                       ) : (
                         item.quantity
                       )}
                     </td>
-                    <td>
+                    <td className="col-unit-value">
                       {isEditing ? (
                         <TextField
                           size="small"
@@ -158,14 +159,15 @@ const CollectTable = ({ data, onDataChange }) => {
                           onChange={(e) => handleChange(collect.idCollect, itemIndex, 'valuePerUnitCollect', e.target.value)}
                           type="number"
                           inputProps={{ step: '0.01' }}
+                          sx={{ width: '100%' }}
                         />
                       ) : (
                         formatCurrency(item.valuePerUnitCollect)
                       )}
                     </td>
-                    <td>{formatCurrency(item.totalToReceive)}</td>
-                    <td>{item.deliveryStatus ?? '-'}</td>
-                    <td>
+                    <td className="col-total-receive">{formatCurrency(item.totalToReceive)}</td>
+                    <td className="col-status">{item.deliveryStatus ?? '-'}</td>
+                    <td className="col-actions">
                       {isEditing ? (
                         <IconButton onClick={() => handleSave(collect.idCollect, itemIndex)} color="primary">
                           <SaveIcon />

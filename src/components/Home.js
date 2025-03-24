@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '../hooks/useUser';
 
 const Home = (props) => {
-  const [activeComponent, setActiveComponent] = useState(null);
   const { user, loading } = useUser();
   const navigate = useNavigate();
   const [cachedUserName, setCachedUserName] = useState(localStorage.getItem('userName') || 'Usuário');
@@ -19,34 +18,41 @@ const Home = (props) => {
     }
   }, [user]);
 
-  const handleMenuClick = (path) => {
-    navigate("/coletas");
-  };
-
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
-      <AppAppBar onMenuClick={handleMenuClick} />
+      <AppAppBar />
       <Toolbar />
       <Box
         component="main"
         sx={{
+          height: 'calc(100vh - 64px)',
+          display: 'flex',
+          flexDirection: 'column',
           p: { xs: 2, md: 3 },
           maxWidth: 'lg',
           mx: 'auto',
-          minHeight: '100vh',
         }}
       >
-        <header>
-          {loading ? (
-            <h1>Carregando...</h1>
-          ) : (
-            <div>
-              <h1>Bem-vindo, {cachedUserName}!</h1>
-            </div>
-          )}
-        </header>
-
+        <Box
+          sx={{
+            flexGrow: 1, 
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center', 
+            alignItems: 'center', 
+          }}
+        >
+          <header>
+            {loading ? (
+              <h1>Carregando...</h1>
+            ) : (
+              <div>
+                <h1>Bem-vindo, {cachedUserName}!</h1>
+              </div>
+            )}
+          </header>
+        </Box>
       </Box>
     </AppTheme>
   );

@@ -22,12 +22,10 @@ const CreateEdress = () => {
 
     useEffect(() => {
         dispatch(setEditing(true));
-        // Fetch collect types on component mount
         const fetchCollectTypes = async () => {
             try {
                 const response = await api.get('api/collectType');
                 setCollectTypes(response.data);
-                // Initialize collectTypesData in formData
                 dispatch(setFormData({
                     ...formData,
                     collectTypesData: response.data.map(type => ({
@@ -62,7 +60,6 @@ const CreateEdress = () => {
                     preValue: type.preValue
                 }))
             };
-            console.log(dataToSend);
 
             const response = await api.post('api/edress/save', dataToSend);
 
@@ -124,110 +121,101 @@ const CreateEdress = () => {
             <Box
                 component="main"
                 sx={{
+                    height: 'calc(100vh - 64px)', // Subtrai a altura do AppBar/Toolbar (ajuste se necessário)
                     display: 'flex',
                     flexDirection: 'column',
-                    minHeight: '100vh',
                     color: 'black',
                     p: { xs: 2, md: 3 },
                     maxWidth: 'lg',
                     mx: 'auto',
                 }}
             >
-                <form onSubmit={handleSubmit} className="cadastro-usuario-form">
+                <form onSubmit={handleSubmit} className="cadastro-usuario-form" style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                     {isLoading && (
                         <LoadingOverlay>
                             <FaSpinner className="animate-spin text-4xl text-blue-500" />
                         </LoadingOverlay>
                     )}
-                    <Box sx={{ flexGrow: 1, display: 'flex', minHeight: '100dvh' }}>
-                        <Box
-                            component="main"
-                            className="MainContent"
-                            sx={{
-                                px: { xs: 2, md: 6 },
-                                pt: {
-                                    xs: 'calc(12px + var(--Header-height))',
-                                    sm: 'calc(12px + var(--Header-height))',
-                                    md: 3,
-                                },
-                                pb: { xs: 2, sm: 2, md: 3 },
-                                flex: 1,
-                                display: 'flex',
-                                flexDirection: 'column',
-                                minWidth: 0,
-                                gap: 1,
-                                color: 'black',
-                            }}
-                        >
-                            <TextField
-                                id="description"
-                                label="Descrição Endereço"
-                                value={formData.description || ''}
-                                onChange={handleInputChange}
-                                size="small"
-                                margin="normal"
-                                error={submitted && !formData.description}
-                                helperText={submitted && !formData.description ? 'Campo obrigatório' : ''}
-                                disabled={!isEditing}
-                            />
-                            <TextField
-                                id="edress"
-                                label="Endereço"
-                                value={formData.edress || ''}
-                                onChange={handleInputChange}
-                                size="small"
-                                margin="normal"
-                                error={submitted && !formData.edress}
-                                helperText={submitted && !formData.edress ? 'Campo obrigatório' : ''}
-                                disabled={!isEditing}
-                            />
-                            
-                            {/* Collect Types Section */}
-                            {formData.collectTypesData?.map((type, index) => (
-                                <Grid container spacing={2} key={type.idCollectType} sx={{ mt: 2 }}>
-                                    <Grid item xs={6}>
-                                        <TextField
-                                            fullWidth
-                                            label="Tipo de Coleta"
-                                            value={type.description}
-                                            size="small"
-                                            margin="normal"
-                                            disabled
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <TextField
-                                            fullWidth
-                                            label="Valor Prévio"
-                                            value={type.preValue}
-                                            onChange={handlePreValueChange(index)}
-                                            size="small"
-                                            margin="normal"
-                                            placeholder="Digite um número"
-                                            inputProps={{
-                                                inputMode: 'decimal',
-                                                pattern: '[0-9]*\.?[0-9]*'
-                                            }}
-                                            disabled={!isEditing}
-                                        />
-                                    </Grid>
+                    <Box
+                        sx={{
+                            flexGrow: 1, // Faz o conteúdo principal crescer para ocupar o espaço disponível
+                            display: 'flex',
+                            flexDirection: 'column',
+                            px: { xs: 2, md: 6 },
+                            py: 2,
+                            overflow: 'auto', // Rolagem interna se o conteúdo exceder
+                        }}
+                    >
+                        <TextField
+                            id="description"
+                            label="Descrição Endereço"
+                            value={formData.description || ''}
+                            onChange={handleInputChange}
+                            size="small"
+                            margin="normal"
+                            error={submitted && !formData.description}
+                            helperText={submitted && !formData.description ? 'Campo obrigatório' : ''}
+                            disabled={!isEditing}
+                        />
+                        <TextField
+                            id="edress"
+                            label="Endereço"
+                            value={formData.edress || ''}
+                            onChange={handleInputChange}
+                            size="small"
+                            margin="normal"
+                            error={submitted && !formData.edress}
+                            helperText={submitted && !formData.edress ? 'Campo obrigatório' : ''}
+                            disabled={!isEditing}
+                        />
+                        
+                        {/* Collect Types Section */}
+                        {formData.collectTypesData?.map((type, index) => (
+                            <Grid container spacing={2} key={type.idCollectType} sx={{ mt: 2 }}>
+                                <Grid item xs={6}>
+                                    <TextField
+                                        fullWidth
+                                        label="Tipo de Coleta"
+                                        value={type.description}
+                                        size="small"
+                                        margin="normal"
+                                        disabled
+                                    />
                                 </Grid>
-                            ))}
-                        </Box>
+                                <Grid item xs={6}>
+                                    <TextField
+                                        fullWidth
+                                        label="Valor Prévio"
+                                        value={type.preValue}
+                                        onChange={handlePreValueChange(index)}
+                                        size="small"
+                                        margin="normal"
+                                        placeholder="Digite um número"
+                                        inputProps={{
+                                            inputMode: 'decimal',
+                                            pattern: '[0-9]*\.?[0-9]*'
+                                        }}
+                                        disabled={!isEditing}
+                                    />
+                                </Grid>
+                            </Grid>
+                        ))}
                     </Box>
 
-                    <Box sx={{
-                        display: 'flex',
-                        gap: 2,
-                        width: '100%',
-                        p: 2,
-                        borderTop: '1px solid #e0e0e0',
-                        backgroundColor: '#fff',
-                        justifyContent: 'flex-end',
-                        position: 'sticky',
-                        bottom: 0,
-                        color: 'black',
-                    }}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            gap: 2,
+                            width: '100%',
+                            p: 2,
+                            borderTop: '1px solid #e0e0e0',
+                            backgroundColor: '#fff',
+                            justifyContent: 'flex-end',
+                            flexShrink: 0, // Impede que o rodapé encolha
+                            position: 'sticky', // Fixa o rodapé no fundo
+                            bottom: 0,
+                        }}
+                    >
                         <FormButtons handleSubmit={handleSubmit} isLoading={isLoading} />
                     </Box>
                 </form>

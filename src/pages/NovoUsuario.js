@@ -21,7 +21,7 @@ const NovoUsuario = () => {
   const invalidFields = useSelector((state) => state.form.invalidFields);
   const isEditing = useSelector((state) => state.form.isEditing);
 
-  const { user, token, loading: userLoading, error: userError } = useUser(); 
+  const { user, token, loading: userLoading, error: userError } = useUser();
   const [submitted, setSubmitted] = useState(false);
 
   const decodedToken = token ? jwtDecode(token) : null;
@@ -97,7 +97,6 @@ const NovoUsuario = () => {
         dataToSend.hierarchy = user.idUser;
       }
   
-      console.log("Dados a serem enviados:", JSON.stringify(dataToSend, null, 2));
       const response = await api.post('api/users/saveUser', dataToSend);
   
       if (response.data === true) {
@@ -137,57 +136,48 @@ const NovoUsuario = () => {
       <Box
         component="main"
         sx={{
+          height: 'calc(100vh - 64px)', // Subtrai a altura do AppBar/Toolbar (ajuste se necessário)
           display: 'flex',
           flexDirection: 'column',
-          minHeight: '100vh',
           color: 'black',
           p: { xs: 2, md: 3 },
           maxWidth: 'lg',
           mx: 'auto',
         }}
       >
-        <form onSubmit={handleSubmit} className="cadastro-usuario-form">
+        <form onSubmit={handleSubmit} className="cadastro-usuario-form" style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
           {isLoading && (
             <LoadingOverlay>
               <FaSpinner className="animate-spin text-4xl text-blue-500" />
             </LoadingOverlay>
           )}
-          <Box sx={{ flexGrow: 1, display: 'flex', minHeight: '100dvh' }}>
-            <Box
-              component="main"
-              className="MainContent"
-              sx={{
-                px: { xs: 2, md: 6 },
-                pt: {
-                  xs: 'calc(12px + var(--Header-height))',
-                  sm: 'calc(12px + var(--Header-height))',
-                  md: 3,
-                },
-                pb: { xs: 2, sm: 2, md: 3 },
-                flex: 1,
-                display: 'flex',
-                flexDirection: 'column',
-                minWidth: 0,
-                gap: 1,
-                color: 'black',
-              }}
-            >
-              <FormUsuarios submitted={submitted} newUser={true} isAdmin={isAdmin} />
-            </Box>
+          <Box
+            sx={{
+              flexGrow: 1, // Faz o conteúdo principal crescer para ocupar o espaço disponível
+              display: 'flex',
+              flexDirection: 'column',
+              px: { xs: 2, md: 6 },
+              py: 2,
+              overflow: 'auto', // Rolagem interna se o conteúdo exceder
+            }}
+          >
+            <FormUsuarios submitted={submitted} newUser={true} isAdmin={isAdmin} />
           </Box>
 
-          <Box sx={{
-            display: 'flex',
-            gap: 2,
-            width: '100%',
-            p: 2,
-            borderTop: '1px solid #e0e0e0',
-            backgroundColor: '#fff',
-            justifyContent: 'flex-end',
-            position: 'sticky',
-            bottom: 0,
-            color: 'black',
-          }}>
+          <Box
+            sx={{
+              display: 'flex',
+              gap: 2,
+              width: '100%',
+              p: 2,
+              borderTop: '1px solid #e0e0e0',
+              backgroundColor: '#fff',
+              justifyContent: 'flex-end',
+              flexShrink: 0, // Impede que o rodapé encolha
+              position: 'sticky', // Fixa o rodapé no fundo
+              bottom: 0,
+            }}
+          >
             <FormButtons handleSubmit={handleSubmit} isLoading={isLoading} />
           </Box>
         </form>

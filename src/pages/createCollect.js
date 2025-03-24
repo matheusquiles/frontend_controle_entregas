@@ -20,7 +20,6 @@ import { useUser } from '../hooks/useUser';
 
 const CreateCollect = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const isLoading = useSelector((state) => state.form.isLoading);
   const formData = useSelector((state) => state.form.formData);
   const invalidFields = useSelector((state) => state.form.invalidFields);

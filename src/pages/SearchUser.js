@@ -25,7 +25,7 @@ const SearchUser = () => {
   const isLoading = useSelector((state) => state.form.isLoading);
   const formData = useSelector((state) => state.form.formData);
   const isUpdating = useSelector((state) => state.form.isUpdating);
-  const tableData = useSelector((state) => state.form.tableData); // Acessa o tableData do formSlice
+  const tableData = useSelector((state) => state.form.tableData);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,7 +34,7 @@ const SearchUser = () => {
   };
 
   const handleSearchComplete = (data) => {
-    dispatch(setTableData(data)); // Atualiza os dados da tabela no formSlice
+    dispatch(setTableData(data));
   };
 
   const handleEdit = (idUser) => {
@@ -55,44 +55,33 @@ const SearchUser = () => {
       <Box
         component="main"
         sx={{
+          height: 'calc(100vh - 64px)', // Subtrai a altura do AppBar/Toolbar (ajuste se necessário)
           display: 'flex',
           flexDirection: 'column',
-          minHeight: '100vh',
           color: 'black',
           p: { xs: 2, md: 3 },
           maxWidth: 'xl',
           mx: 'auto',
         }}
       >
-        <form onSubmit={handleSubmit} className="cadastro-usuario-form">
+        <form onSubmit={handleSubmit} className="cadastro-usuario-form" style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
           {isLoading && (
             <LoadingOverlay>
               <FaSpinner className="animate-spin text-4xl text-blue-500" />
             </LoadingOverlay>
           )}
-          <Box sx={{ flexGrow: 1, display: 'flex', minHeight: '100dvh' }}>
-            <Box
-              component="main"
-              className="MainContent"
-              sx={{
-                px: { xs: 2, md: 6 },
-                pt: {
-                  xs: 'calc(12px + var(--Header-height))',
-                  sm: 'calc(12px + var(--Header-height))',
-                  md: 3,
-                },
-                pb: { xs: 2, sm: 2, md: 3 },
-                flex: 1,
-                display: 'flex',
-                flexDirection: 'column',
-                minWidth: 0,
-                gap: 1,
-                color: 'black',
-              }}
-            >
-              <SearchUserBar onSearchComplete={handleSearchComplete} />
-              <TableUsers data={tableData} onEdit={handleEdit} /> {/* Passa tableData em vez de sampleData */}
-            </Box>
+          <Box
+            sx={{
+              flexGrow: 1, // Faz o conteúdo principal crescer para ocupar o espaço disponível
+              display: 'flex',
+              flexDirection: 'column',
+              px: { xs: 2, md: 6 },
+              py: 2,
+              overflow: 'auto', // Rolagem interna se o conteúdo exceder
+            }}
+          >
+            <SearchUserBar onSearchComplete={handleSearchComplete} />
+            <TableUsers data={tableData} onEdit={handleEdit} />
           </Box>
 
           <Box
@@ -104,9 +93,9 @@ const SearchUser = () => {
               borderTop: '1px solid #e0e0e0',
               backgroundColor: '#fff',
               justifyContent: 'flex-end',
-              position: 'sticky',
+              flexShrink: 0, // Impede que o rodapé encolha
+              position: 'sticky', // Fixa o rodapé no fundo
               bottom: 0,
-              color: 'black',
             }}
           >
             <FormButtons
