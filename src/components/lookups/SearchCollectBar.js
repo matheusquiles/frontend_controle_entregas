@@ -69,25 +69,35 @@ const SearchCollectBar = ({ onSearchComplete }) => {
   const handleSearch = async (e) => {
     e.preventDefault();
     dispatch(setLoading(true));
+    dispatch(resetForm());
+
+    const formatDate = (date) => {
+      if (!date) return '';
+      return date.toISOString().split('T')[0];
+    };
+
+    const updatedFormData = {
+      dataInicial: formatDate(filters.startDate),
+      dataFinal: formatDate(filters.endDate),
+      userKey: filters.userKey || '',
+      edress: filters.edress || '',
+      status: filters.status,
+    };
+    dispatch(setFormData(updatedFormData));
 
     try {
-      const formatDate = (date) => {
-        if (!date) return '';
-        return date.toISOString().split('T')[0];
-      };
-
       const dataToSend = {
-        idUser: formData.userKey || '',
+        idUser: filters.userKey || '',
         initialDate: formatDate(filters.startDate),
         finalDate: formatDate(filters.endDate),
-        idEdress: formData.edress ? parseInt(formData.edress) : null,
-        deliveryStatus: formData.status,
+        idEdress: filters.edress ? parseInt(filters.edress) : null,
+        deliveryStatus: filters.status === 'todos' ? null : filters.status, 
       };
-      console.log('Dados de pesquisa:', dataToSend);
       const response = await api.post(`${API_SEARCH_COLLECTS_DTO}`, dataToSend);
       onSearchComplete(response.data);
     } catch (error) {
       console.error('Erro na busca:', error);
+      dispatch(setNotification({ message: 'Erro ao realizar a pesquisa', severity: 'error' }));
     } finally {
       dispatch(setLoading(false));
     }
@@ -104,9 +114,9 @@ const SearchCollectBar = ({ onSearchComplete }) => {
               idField="idUser"
               labelField="name"
               name="userKey"
-              value={formData.userKey || ''} 
+              value={formData.userKey || ''}
               onChange={handleChange}
-              optionsPrefix={todosOption} 
+              optionsPrefix={todosOption}
               externalLoading={false}
             />
           </FormControl>
@@ -117,9 +127,9 @@ const SearchCollectBar = ({ onSearchComplete }) => {
               idField="idEdress"
               labelField="description"
               name="edress"
-              value={formData.edress || ''} 
+              value={formData.edress || ''}
               onChange={handleChange}
-              optionsPrefix={todosOption} 
+              optionsPrefix={todosOption}
               externalLoading={false}
             />
           </FormControl>
@@ -137,7 +147,7 @@ const SearchCollectBar = ({ onSearchComplete }) => {
               <MenuItem value="todos">Todos</MenuItem>
               <MenuItem value="Aprovado">Aprovados</MenuItem>
               <MenuItem value="Pendente">Pendentes</MenuItem>
-              <MenuItem value="Recusado">Recusados</MenuItem>
+              <MenuItem value="Reprovado">Reprovados</MenuItem>
             </Select>
           </FormControl>
 
