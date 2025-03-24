@@ -18,6 +18,9 @@ import FormButtons from '../components/FormButtons.js';
 import AppAppBar from '../components/AppAppBar.js';
 import AddressTable from '../components/tables/AddressTable.js';
 import SearchAddressBar from '../components/lookups/SearchAddressBar.js';
+import { API_EDIT_ADDRESS } from '../helper/Contants.js';
+import api from '../api/api.js';
+import { useUser } from '../hooks/useUser.js';
 
 const SearchAddress = () => {
   const dispatch = useDispatch();
@@ -26,26 +29,59 @@ const SearchAddress = () => {
   const formData = useSelector((state) => state.form.formData);
   const isUpdating = useSelector((state) => state.form.isUpdating);
   const tableData = useSelector((state) => state.form.tableData);
+  const { user, loading: userLoading } = useUser();
+
+  const transformTableDataForAPI = (tableData, user) => {
+    const groupedData = tableData.reduce((acc, item) => {
+      const { idEdress, description, edress, status, idCollectPreValue, idCollectType, collectType, preValue } = item;
+
+      if (!acc[idEdress]) {
+        acc[idEdress] = {
+          idEdress,
+          description,
+          edress,
+          status,
+          lastModificationBy: user?.idUser || null,
+          collectPreValue: [],
+        };
+      }
+
+      if (idCollectPreValue) {
+        acc[idEdress].collectPreValue.push({
+          idCollectPreValue,
+          idEdress,
+          edress,
+          idCollectType,
+          collectType,
+          preValue,
+        });
+      }
+
+      return acc;
+    }, {});
+
+    return Object.values(groupedData);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch(setLoading(true));
-    try {
-      const response = await fetch('/api/addresses', {
-        method: 'POST', // ou 'PUT' se for atualização
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(tableData), // Envia os dados atualizados da tabela
-      });
 
-      if (response.ok) {
-        dispatch(setNotification({ message: 'Dados salvos com sucesso!', severity: 'success' }));
-      } else {
-        throw new Error('Erro ao salvar os dados');
+    const updatedTableData = transformTableDataForAPI(tableData, user);
+    console.log('updatedTableData:', updatedTableData);
+
+    try {
+      const response = await api.post(API_EDIT_ADDRESS, updatedTableData);
+
+      if (response.data === false) {
+        const errorData = await response.data;
+        throw new Error(errorData.message || 'Erro ao enviar os dados para a API');
       }
+
+      dispatch(setNotification({ message: 'Dados salvos com sucesso!', severity: 'success' }));
     } catch (error) {
-      dispatch(setNotification({ message: error.message, severity: 'error' }));
+      dispatch(setNotification({ message: error.message || 'Erro ao salvar os dados', severity: 'error' }));
+      console.error('Erro:', error);
     } finally {
       dispatch(setLoading(false));
     }
@@ -55,13 +91,8 @@ const SearchAddress = () => {
     dispatch(setTableData(data));
   };
 
-  const handleEdit = (idUser) => {
-    dispatch(setEditing(true));
-    navigate(`/usuarios/editar/${idUser}`); // handleEdit apenas redireciona, sem salvar
-  };
-
   const handleDataChange = (updatedData) => {
-    dispatch(setTableData(updatedData)); // Atualiza o estado com as alterações da tabela
+    dispatch(setTableData(updatedData));
   };
 
   useEffect(() => {
@@ -77,7 +108,7 @@ const SearchAddress = () => {
       <Box
         component="main"
         sx={{
-          height: 'calc(100vh - 64px)', // Subtrai a altura do AppBar/Toolbar (ajuste se necessário)
+          height: 'calc(100vh - 64px)',
           display: 'flex',
           flexDirection: 'column',
           color: 'black',
@@ -94,12 +125,12 @@ const SearchAddress = () => {
           )}
           <Box
             sx={{
-              flexGrow: 1, // Faz o conteúdo principal crescer para ocupar o espaço disponível
+              flexGrow: 1,
               display: 'flex',
               flexDirection: 'column',
               px: { xs: 2, md: 6 },
               py: 2,
-              overflow: 'auto', // Rolagem interna se o conteúdo exceder
+              overflow: 'auto',
             }}
           >
             <SearchAddressBar onSearchComplete={handleSearchComplete} />
@@ -115,8 +146,8 @@ const SearchAddress = () => {
               borderTop: '1px solid #e0e0e0',
               backgroundColor: '#fff',
               justifyContent: 'flex-end',
-              flexShrink: 0, // Impede que o rodapé encolha
-              position: 'sticky', // Fixa o rodapé no fundo
+              flexShrink: 0,
+              position: 'sticky',
               bottom: 0,
             }}
           >

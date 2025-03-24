@@ -27,6 +27,7 @@ const AddressTable = ({ data = [], onDataChange }) => {
         description: address.description,
         edress: address.edress,
         status: address.status,
+        idCollectType: cpv.idCollectType,
         collectType: cpv.collectType,
         preValue: cpv.preValue,
         idCollectPreValue: cpv.idCollectPreValue,
@@ -35,12 +36,12 @@ const AddressTable = ({ data = [], onDataChange }) => {
   };
 
   useEffect(() => {
-    if (JSON.stringify(data) !== JSON.stringify(initialData)) {
+    if (!initialData || JSON.stringify(data) !== JSON.stringify(initialData)) {
       const flattenedData = flattenData(data);
-      setTableData(flattenedData);
+      setTableData((prevData) => prevData.length > 0 ? prevData : flattenedData);
       setInitialData(data);
     }
-  }, [data]); 
+  }, [data]);  
 
   const groupedData = tableData.reduce((acc, address) => {
     const key = `${address.idEdress}-${address.description}-${address.edress}-${address.status}`;
@@ -70,8 +71,10 @@ const AddressTable = ({ data = [], onDataChange }) => {
     setEditRow(null);
     
     const updatedData = [...tableData];
+    setTableData(updatedData); // Atualiza estado local
+    
     if (typeof onDataChange === 'function') {
-      onDataChange(updatedData);
+      onDataChange(updatedData); // Atualiza Redux
     }
   };
 
