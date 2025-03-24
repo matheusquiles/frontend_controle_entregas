@@ -130,6 +130,7 @@ export default function AppAppBar() {
                 open={Boolean(entregasAnchorEl)}
                 onClose={handleEntregasMenuClose}
               >
+                <MenuItem onClick={() => { handleEntregasMenuClose(); navigate('/entregas/novo'); }}>Nova Entrega</MenuItem>
                 <MenuItem onClick={() => { handleEntregasMenuClose(); navigate('/entregas/aprovar'); }}>Aprovar</MenuItem>
               </Menu>
 

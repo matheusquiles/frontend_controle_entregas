@@ -11,8 +11,7 @@ import NotificationSnackbar from '../components/NotificacaoSnackbar.js';
 import SelectRestCollect from '../components/SelectRestCollect.js';
 import Input from '../components/input.js';
 import SelectAutoComplete from '../components/SelectAutoComplete.js';
-import { API_SAVE_URL } from '../helper/Contants.js';
-import { API_BASE_URL } from '../helper/Contants.js';
+import { API_SAVE_URL, API_BASE_URL } from '../helper/Contants.js';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import FormButtons from '../components/FormButtons.js';
@@ -68,8 +67,6 @@ const CreateCollect = () => {
     e.preventDefault();
     setSubmitted(true);
   
-    console.log('Form data:', formData);
-  
     if (!formData?.edress) {
       dispatch(setNotification({ message: 'Preencha todos os campos obrigatórios!', severity: 'error' }));
       return;
@@ -97,7 +94,6 @@ const CreateCollect = () => {
         })),
       };
   
-      console.log('Dados a serem enviados:', JSON.stringify(dataToSend, null, 2));
       const response = await api.post(`${API_SAVE_URL}`, dataToSend);
   
       if (response.data === true) {
@@ -115,132 +111,120 @@ const CreateCollect = () => {
 
   return (
     <>
-      <form onSubmit={handleSubmit} className="cadastro-coleta-form">
-        {isLoading && (
-          <LoadingOverlay>
-            <FaSpinner className="animate-spin text-4xl text-blue-500" />
-          </LoadingOverlay>
-        )}
-        <CssBaseline />
-        <AppAppBar />
-        <Toolbar />
-        <Box
-          component="main"
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            minHeight: '100vh',
-            color: 'black',
-            p: { xs: 2, md: 3 },
-            maxWidth: 'lg',
-            mx: 'auto',
-          }}
-        >
-          <Box sx={{ flexGrow: 1, display: 'flex', minHeight: '100dvh' }}>
-            <Box
-              component="main"
-              className="MainContent"
-              sx={{
-                px: { xs: 2, md: 6 },
-                pt: {
-                  xs: 'calc(12px + var(--Header-height))',
-                  sm: 'calc(12px + var(--Header-height))',
-                  md: 3,
-                },
-                pb: { xs: 2, sm: 2, md: 3 },
-                flex: 1,
-                display: 'flex',
-                flexDirection: 'column',
-                minWidth: 0,
-                gap: 1,
-                color: 'black',
-              }}
-            >
-              <F.InputLine column>
-                <Box mb={2} width={'100%'}>
-                  <F.InputLine>
-                    <SelectAutoComplete
-                      label="Motoboy"
-                      route={`${API_BASE_URL}/users/searchMotoboy`}
-                      idField="idUser"
-                      labelField="name"
-                      name="motoboy"
-                      value={formData.motoboy}
-                      onChange={handleChange}
-                      required
-                      submitted={submitted}
-                      invalidFields={invalidFields}
-                    />
-                  </F.InputLine>
-                  <F.InputLine>
-                    <SelectAutoComplete
-                      label="Endereço"
-                      route={`${API_BASE_URL}/edress`}
-                      idField="idEdress"
-                      labelField="edress"
-                      name="edress"
-                      value={formData.edress}
-                      onChange={handleChange}
-                      required
-                      submitted={submitted}
-                      invalidFields={invalidFields}
-                      
-                    />
-                  </F.InputLine>
-                </Box>
+      <CssBaseline />
+      <AppAppBar />
+      <Toolbar />
+      <Box
+        component="main"
+        sx={{
+          height: 'calc(100vh - 64px)', // Subtrai a altura do AppBar/Toolbar (ajuste se necessário)
+          display: 'flex',
+          flexDirection: 'column',
+          color: 'black',
+          p: { xs: 2, md: 3 },
+          maxWidth: 'lg',
+          mx: 'auto',
+        }}
+      >
+        <form onSubmit={handleSubmit} className="cadastro-coleta-form" style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+          {isLoading && (
+            <LoadingOverlay>
+              <FaSpinner className="animate-spin text-4xl text-blue-500" />
+            </LoadingOverlay>
+          )}
+          <Box
+            sx={{
+              flexGrow: 1, // Faz o conteúdo principal crescer para ocupar o espaço disponível
+              display: 'flex',
+              flexDirection: 'column',
+              px: { xs: 2, md: 6 },
+              py: 2,
+              overflow: 'auto', // Rolagem interna se o conteúdo exceder
+            }}
+          >
+            <F.InputLine column>
+              <Box mb={2} width={'100%'}>
+                <F.InputLine>
+                  <SelectAutoComplete
+                    label="Motoboy"
+                    route={`${API_BASE_URL}/users/searchMotoboy`}
+                    idField="idUser"
+                    labelField="name"
+                    name="motoboy"
+                    value={formData.motoboy}
+                    onChange={handleChange}
+                    required
+                    submitted={submitted}
+                    invalidFields={invalidFields}
+                  />
+                </F.InputLine>
+                <F.InputLine>
+                  <SelectAutoComplete
+                    label="Endereço"
+                    route={`${API_BASE_URL}/edress`}
+                    idField="idEdress"
+                    labelField="edress"
+                    name="edress"
+                    value={formData.edress}
+                    onChange={handleChange}
+                    required
+                    submitted={submitted}
+                    invalidFields={invalidFields}
+                  />
+                </F.InputLine>
+              </Box>
 
-                {items.map((item, index) => (
-                  <Box key={index} mb={2} width={'100%'}>
-                    <F.InputLine>
-                      <F.MediumInputLine>
-                        <SelectRestCollect
-                          label="Tipo de Coleta"
-                          first
-                          route="collectType"
-                          data-index={index}
-                          id="idCollectType"
-                          name="description"
-                          onChange={(e) => handleChange(e, index)}
-                          form={item}
-                          defaultValue=""
-                          invalidFields={invalidFields}
-                          loading={isLoading}
-                          disabled={!isEditing}
-                          index={index}
-                          required={true}
-                          submitted={submitted}
-                        />
-                      </F.MediumInputLine>
-                    </F.InputLine>
-                    <F.InputLine>
-                      <F.MediumInputLine>
-                        <Input
-                          first
-                          label="Quantidade de itens"
-                          fieldName="quantity"
-                          formData={item}
-                          onChange={(e) => handleChange(e, index)}
-                          invalidFields={invalidFields}
-                          disabled={!isEditing}
-                          required={true}
-                          submitted={submitted}
-                        />
-                      </F.MediumInputLine>
-                    </F.InputLine>
-                    <Box display="flex" justifyContent="flex-end">
-                      <IconButton onClick={() => handleAddFields()}>
-                        <AddIcon />
+              {items.map((item, index) => (
+                <Box key={index} mb={2} width={'100%'}>
+                  <F.InputLine>
+                    <F.MediumInputLine>
+                      <SelectRestCollect
+                        label="Tipo de Coleta"
+                        first
+                        route="collectType"
+                        data-index={index}
+                        id="idCollectType"
+                        name="description"
+                        onChange={(e) => handleChange(e, index)}
+                        form={item}
+                        defaultValue=""
+                        invalidFields={invalidFields}
+                        loading={isLoading}
+                        disabled={!isEditing}
+                        index={index}
+                        required={true}
+                        submitted={submitted}
+                      />
+                    </F.MediumInputLine>
+                  </F.InputLine>
+                  <F.InputLine>
+                    <F.MediumInputLine>
+                      <Input
+                        first
+                        label="Quantidade de itens"
+                        fieldName="quantity"
+                        formData={item}
+                        onChange={(e) => handleChange(e, index)}
+                        invalidFields={invalidFields}
+                        disabled={!isEditing}
+                        required={true}
+                        submitted={submitted}
+                      />
+                    </F.MediumInputLine>
+                  </F.InputLine>
+                  <Box display="flex" justifyContent="flex-end">
+                    <IconButton onClick={() => handleAddFields()}>
+                      <AddIcon />
+                    </IconButton>
+                    {items.length > 1 && (
+                      <IconButton onClick={() => handleRemoveFields(index)}>
+                        <RemoveIcon />
                       </IconButton>
-                      {items.length > 1 && (
-                        <IconButton onClick={() => handleRemoveFields(index)}>
-                          <RemoveIcon />
-                        </IconButton>
-                      )}
-                    </Box>
+                    )}
                   </Box>
-                ))}
-              </F.InputLine>
-            </Box>
+                </Box>
+              ))}
+            </F.InputLine>
           </Box>
 
           <Box
@@ -252,17 +236,16 @@ const CreateCollect = () => {
               borderTop: '1px solid #e0e0e0',
               backgroundColor: '#fff',
               justifyContent: 'flex-end',
-              position: 'sticky',
+              flexShrink: 0, // Impede que o rodapé encolha
+              position: 'sticky', // Fixa o rodapé no fundo
               bottom: 0,
-              color: 'black',
             }}
           >
             <FormButtons handleSubmit={handleSubmit} isLoading={isLoading} />
           </Box>
-        </Box>
-
-        <NotificationSnackbar />
-      </form>
+        </form>
+      </Box>
+      <NotificationSnackbar />
     </>
   );
 };

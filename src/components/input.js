@@ -14,7 +14,8 @@ export default function TextInput({
   small, 
   medium, 
   topless, 
-  formData, 
+  formData, // Optional, for backward compatibility
+  value: propValue, // Add support for direct value prop
   onChange, 
   invalidFields = [], 
   disabled = false, 
@@ -22,12 +23,16 @@ export default function TextInput({
   email = false, 
   password = false, 
   required = false, 
-  submitted = false 
+  submitted = false,
+  type, // Add support for type prop
+  step, // Add support for step prop
 }) {
   const dispatch = useDispatch();
-  const value = formData[fieldName] || '';
   const [showPassword, setShowPassword] = useState(false);
   const [touched, setTouched] = useState(false);
+
+  // Use the provided value prop if available, otherwise fall back to formData[fieldName]
+  const value = propValue !== undefined ? propValue : (formData && formData[fieldName]) || '';
 
   const validateEmail = (email) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -55,7 +60,7 @@ export default function TextInput({
 
   const toggleShowPassword = () => setShowPassword(!showPassword);
 
-  const inputType = password ? (showPassword ? 'text' : 'password') : 'text';
+  const inputType = password ? (showPassword ? 'text' : 'password') : type || 'text';
 
   return (
     <InputLabel 
@@ -86,6 +91,7 @@ export default function TextInput({
           onBlur={handleBlur}
           style={{ borderColor: isInvalid || isEmailInvalid ? 'red' : 'initial' }}
           disabled={disabled}
+          step={step} // Pass step prop to the input
           endAdornment={
             password ? (
               <InputAdornment position="end">

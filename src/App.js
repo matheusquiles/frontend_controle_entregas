@@ -13,6 +13,7 @@ import PrivateRoute from './routes/PrivateRoute.js';
 import UnauthorizedScreen from './pages/UnauthorizedScreen.js';
 import CreateEdress from './pages/CreateEdress.js';
 import SearchAddress from './pages/SearchAddress.js';
+import CreateDelivery from './pages/CreateDelivery.js';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
             <Route path="/usuarios/editar" element={<SearchUser />} /> 
             <Route path="/enderecos/novo" element={<CreateEdress />} /> 
             <Route path="/enderecos/editar" element={<SearchAddress />} />
+            <Route path="/entregas/novo/" element={<CreateDelivery />} />
           </Route>
 
           <Route element={<PrivateRoute allowedRoles={['ADMIN']} />}>
