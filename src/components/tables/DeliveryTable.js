@@ -15,16 +15,17 @@ const DeliveryTable = ({ data, onDataChange }) => {
   }, [data]);
 
   const groupedData = tableData.reduce((acc, delivery) => {
-    const key = `${delivery.date}-${delivery.edressDescription}-${delivery.deliveryUser}`;
+    const key = `${delivery.date}-${delivery.deliveryUser}-${delivery.coordinator}-${delivery.edressDescription}`;
     if (!acc[key]) {
       acc[key] = {
         date: delivery.date,
-        edressDescription: delivery.edressDescription,
         deliveryUser: delivery.deliveryUser,
-        deliverys: [],
+        coordinator: delivery.coordinator,
+        edressDescription: delivery.edressDescription,
+        deliveries: [],
       };
     }
-    acc[key].deliverys.push(delivery);
+    acc[key].deliveries.push(delivery);
     return acc;
   }, {});
 
@@ -54,8 +55,7 @@ const DeliveryTable = ({ data, onDataChange }) => {
         const updatedItens = delivery.itens.map((item, idx) => {
           if (idx === itemIndex) {
             const numericValue = parseFloat(value) || 0;
-            const updatedItem = { ...item, [field]: numericValue };
-            return updatedItem;
+            return { ...item, [field]: numericValue };
           }
           return item;
         });
@@ -102,9 +102,9 @@ const DeliveryTable = ({ data, onDataChange }) => {
           <tr>
             <th className="col-date">Data</th>
             <th className="col-motoboy">Motoboy</th>
-            <th className="col-motoboy">Supervisor</th>
-            <th className="col-client">Zona</th>
-            <th className="col-total-receive">R$ Valor</th>
+            <th className="col-coordinator">Coordenador</th>
+            <th className="col-client">Região</th>
+            <th className="col-unit-value">R$ Valor</th>
             <th className="col-status">Status</th>
             <th className="col-actions">Ações</th>
           </tr>
@@ -112,11 +112,11 @@ const DeliveryTable = ({ data, onDataChange }) => {
         <tbody>
           {Object.values(groupedData).map((group, groupIndex) => {
             let rowSpanCount = 0;
-            group.deliverys.forEach(delivery => {
+            group.deliveries.forEach(delivery => {
               rowSpanCount += delivery.itens.length;
             });
 
-            return group.deliverys.map((delivery, deliveryIndex) =>
+            return group.deliveries.map((delivery, deliveryIndex) =>
               delivery.itens.map((item, itemIndex) => {
                 const rowKey = `${delivery.idDelivery}-${itemIndex}`;
                 const isEditing = editRow === rowKey;
@@ -127,32 +127,22 @@ const DeliveryTable = ({ data, onDataChange }) => {
                   <tr key={rowKey} className={`data-row ${isEditing ? 'editing' : ''}`}>
                     {deliveryIndex === 0 && itemIndex === 0 ? (
                       <>
-                        <td rowSpan={rowSpanCount} className="col-motoboy">{group.deliveryUser}</td>
                         <td rowSpan={rowSpanCount} className="col-date">{formatDate(group.date)}</td>
+                        <td rowSpan={rowSpanCount} className="col-motoboy">{group.deliveryUser}</td>
+                        <td rowSpan={rowSpanCount} className="col-coordinator">
+                          {group.coordinator || '-'}
+                        </td>
                         <td rowSpan={rowSpanCount} className="col-client">{group.edressDescription}</td>
                       </>
                     ) : null}
-                    <td className="col-type">{item.deliveryType}</td>
-                    <td className="col-quantity">
-                      {isEditing ? (
-                        <TextField
-                          size="small"
-                          value={item.quantity}
-                          onChange={(e) => handleChange(delivery.idDelivery, itemIndex, 'quantity', e.target.value)}
-                          type="number"
-                          inputProps={{ step: '1' }}
-                          sx={{ width: '100%' }}
-                        />
-                      ) : (
-                        item.quantity
-                      )}
-                    </td>
                     <td className="col-unit-value">
                       {isEditing ? (
                         <TextField
                           size="small"
                           value={item.valuePerUnitDelivery}
-                          onChange={(e) => handleChange(delivery.idDelivery, itemIndex, 'valuePerUnitDelivery', e.target.value)}
+                          onChange={(e) =>
+                            handleChange(delivery.idDelivery, itemIndex, 'valuePerUnitDelivery', e.target.value)
+                          }
                           type="number"
                           inputProps={{ step: '0.01' }}
                           sx={{ width: '100%' }}
@@ -161,7 +151,6 @@ const DeliveryTable = ({ data, onDataChange }) => {
                         formatCurrency(item.valuePerUnitDelivery)
                       )}
                     </td>
-                    <td className="col-total-receive">{formatCurrency(item.totalToReceive)}</td>
                     <td className="col-status">{item.deliveryStatus ?? '-'}</td>
                     <td className="col-actions">
                       {isEditing ? (

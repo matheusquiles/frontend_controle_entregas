@@ -14,6 +14,7 @@ import UnauthorizedScreen from './pages/UnauthorizedScreen.js';
 import CreateEdress from './pages/CreateEdress.js';
 import SearchAddress from './pages/SearchAddress.js';
 import CreateDelivery from './pages/CreateDelivery.js';
+import AprovarEntregas from './pages/AprovarEntregas.js';
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
 
           <Route element={<PrivateRoute allowedRoles={['ADMIN']} />}>
             <Route path="/coletas/aprovar" element={<AprovarColetas />} />
+            <Route path="/entregas/aprovar" element={<AprovarEntregas />} />
           </Route>
         </Routes>
       </Router>

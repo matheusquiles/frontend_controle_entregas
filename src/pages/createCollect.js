@@ -11,7 +11,7 @@ import NotificationSnackbar from '../components/NotificacaoSnackbar.js';
 import SelectRestCollect from '../components/SelectRestCollect.js';
 import Input from '../components/input.js';
 import SelectAutoComplete from '../components/SelectAutoComplete.js';
-import { API_SAVE_URL, API_BASE_URL } from '../helper/Contants.js';
+import { API_SAVE_URL, API_ADDRESS, API_SEARCH_MOTOBOY } from '../helper/Constants.js';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import FormButtons from '../components/FormButtons.js';
@@ -146,7 +146,7 @@ const CreateCollect = () => {
                 <F.InputLine>
                   <SelectAutoComplete
                     label="Motoboy"
-                    route={`${API_BASE_URL}/users/searchMotoboy`}
+                    route={`${API_SEARCH_MOTOBOY}`}
                     idField="idUser"
                     labelField="name"
                     name="motoboy"
@@ -160,7 +160,7 @@ const CreateCollect = () => {
                 <F.InputLine>
                   <SelectAutoComplete
                     label="Endereço"
-                    route={`${API_BASE_URL}/edress`}
+                    route={`${API_ADDRESS}`}
                     idField="idEdress"
                     labelField="edress"
                     name="edress"

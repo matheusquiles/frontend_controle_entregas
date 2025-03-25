@@ -4,7 +4,7 @@ import { Box, TextField, Button, Checkbox, FormControlLabel, Select, MenuItem, F
 import { setFormData, setLoading, resetForm, setNotification } from '../../redux/reducers/FormSlice.js';
 import api from '../../api/api.js';
 import { MAIN_YELLOW, MAIN_FONT_COLLOR } from '../../styles/Colors.jsx';
-import { API_BASE_URL, API_SEARCH_USERS_DTO } from '../../helper/Contants.js';
+import { API_USER_TYPE, API_SEARCH_USERS_DTO } from '../../helper/Constants.js';
 
 const SearchUserBar = ({ onSearchComplete }) => {
   const dispatch = useDispatch();
@@ -25,7 +25,7 @@ const SearchUserBar = ({ onSearchComplete }) => {
     const fetchUserTypes = async () => {
       setLoadingUserTypes(true);
       try {
-        const { data } = await api.get(`${API_BASE_URL}/userType`);
+        const { data } = await api.get(`${API_USER_TYPE}`);
         setUserTypeOptions(data);
       } catch (error) {
         console.error('Erro ao carregar tipos de usuário:', error);

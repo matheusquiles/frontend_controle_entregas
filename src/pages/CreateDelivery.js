@@ -11,7 +11,7 @@ import SelectAutoComplete from '../components/SelectAutoComplete.js';
 import FormButtons from '../components/FormButtons.js';
 import AppAppBar from '../components/AppAppBar.js';
 import { useUser } from '../hooks/useUser';
-import { API_SEARCH_MOTOBOY, API_SEARCH_DELIVERY_REGION, API_SEARCH_DELIVERY } from '../helper/Contants.js';
+import { API_SEARCH_MOTOBOY, API_SEARCH_DELIVERY_REGION, API_SAVE_DELIVERY } from '../helper/Constants.js';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -69,7 +69,7 @@ const CreateDelivery = () => {
 
     try {
       dispatch(setLoading(true));
-      await api.post(API_SEARCH_DELIVERY, payload);
+      await api.post(API_SAVE_DELIVERY, payload);
       dispatch(setNotification({
         message: 'Entrega criada com sucesso!',
         severity: 'success'

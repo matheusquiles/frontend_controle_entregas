@@ -7,10 +7,10 @@ import { ptBR } from 'date-fns/locale';
 import { setFormData, setLoading, resetForm, setNotification } from '../../redux/reducers/FormSlice.js';
 import api from '../../api/api.js';
 import { MAIN_YELLOW, MAIN_FONT_COLLOR } from '../../styles/Colors.jsx';
-import { API_ADDRESS, API_SEARCH_MOTOBOY, API_SEARCH_COLLECTS_DTO } from '../../helper/Constants.js';
+import { API_SEARCH_DELIVERY_REGION, API_SEARCH_COLLECTS_DTO, API_SEARCH_MOTOBOY } from '../../helper/Constants.js';
 import SelectAutoComplete from '../SelectAutoComplete.js';
 
-const SearchCollectBar = ({ onSearchComplete }) => {
+const SearchDeliveryBar = ({ onSearchComplete }) => {
   const dispatch = useDispatch();
   const formData = useSelector((state) => state.form.formData);
   const invalidFields = useSelector((state) => state.form.invalidFields) || [];
@@ -23,7 +23,7 @@ const SearchCollectBar = ({ onSearchComplete }) => {
     startDate: ontem,
     endDate: hoje,
     userKey: '',
-    edress: '',
+    deliveryRegion: '',
     status: 'todos',
   });
 
@@ -80,7 +80,7 @@ const SearchCollectBar = ({ onSearchComplete }) => {
       dataInicial: formatDate(filters.startDate),
       dataFinal: formatDate(filters.endDate),
       userKey: filters.userKey || '',
-      edress: filters.edress || '',
+      deliveryRegion: filters.deliveryRegion || '',
       status: filters.status,
     };
     dispatch(setFormData(updatedFormData));
@@ -90,7 +90,7 @@ const SearchCollectBar = ({ onSearchComplete }) => {
         idUser: filters.userKey || '',
         initialDate: formatDate(filters.startDate),
         finalDate: formatDate(filters.endDate),
-        idEdress: filters.edress ? parseInt(filters.edress) : null,
+        deliveryRegion: filters.deliveryRegion ? parseInt(filters.deliveryRegion) : null,
         deliveryStatus: filters.status === 'todos' ? null : filters.status, 
       };
       const response = await api.post(`${API_SEARCH_COLLECTS_DTO}`, dataToSend);
@@ -120,14 +120,14 @@ const SearchCollectBar = ({ onSearchComplete }) => {
               externalLoading={false}
             />
           </FormControl>
-          <FormControl sx={{ width: '390px' }}>
+          <FormControl sx={{ width: '180px' }}>
             <SelectAutoComplete
-              label="Endereço"
-              route={`${API_ADDRESS}`}
-              idField="idEdress"
-              labelField="description"
-              name="edress"
-              value={formData.edress || ''}
+              label="Região"
+              route={`${API_SEARCH_DELIVERY_REGION}`}
+              idField="idDeliveryRegion"
+              labelField="deliveryRegion"
+              name="deliveryRegion"
+              value={formData.deliveryRegion || ''}
               onChange={handleChange}
               optionsPrefix={todosOption}
               externalLoading={false}
@@ -189,4 +189,4 @@ const SearchCollectBar = ({ onSearchComplete }) => {
   );
 };
 
-export default SearchCollectBar;
+export default SearchDeliveryBar;

@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setFormData, setOptions, setLoading } from '../redux/reducers/FormSlice';
 import { InputLabel, StyledSelect, GenericP } from '../styles/globalStyles';
-import { API_BASE_URL } from '../helper/Contants';
+import { API_BASE } from '../helper/Constants';
 import api from '../api/api';
 
 export default function SelectRestCollect({ 
@@ -45,7 +45,7 @@ export default function SelectRestCollect({
     setLoadingDelay(true);
     try {
       const thisOptions = [];
-      const { data } = await api.get(`${API_BASE_URL}/${route}`);
+      const { data } = await api.get(`${API_BASE}/${route}`);
       data.forEach((obj) => {
         thisOptions.push({ id: obj[id], name: obj[name] });
       });

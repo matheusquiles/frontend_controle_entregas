@@ -8,8 +8,8 @@ import { FaSpinner } from 'react-icons/fa';
 import api from '../api/api';
 import { useUser } from '../hooks/useUser';
 import AppAppBar from '../components/AppAppBar';
-import SearchCollectBar from '../components/lookups/SearchCollectBar';
-import CollectTable from '../components/tables/CollectTable';
+import SearchDeliveryBar from '../components/lookups/SearchDeliveryBar';
+import DeliveryTable from '../components/tables/DeliveryTable';
 import FormButtons from '../components/FormButtons';
 import NotificationSnackbar from '../components/NotificacaoSnackbar';
 
@@ -102,8 +102,8 @@ const AprovarEntregas = () => {
               overflow: 'auto', 
             }}
           >
-            <SearchCollectBar onSearchComplete={handleSearchComplete} />
-            <CollectTable data={tableData} onDataChange={handleDataChange} />
+            <SearchDeliveryBar onSearchComplete={handleSearchComplete} />
+            <DeliveryTable data={tableData} onDataChange={handleDataChange} />
           </Box>
 
           <Box
@@ -135,4 +135,4 @@ const AprovarEntregas = () => {
   );
 };
 
-export default AprovarColetas;
+export default AprovarEntregas;

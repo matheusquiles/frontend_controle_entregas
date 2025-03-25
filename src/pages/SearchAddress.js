@@ -18,7 +18,7 @@ import FormButtons from '../components/FormButtons.js';
 import AppAppBar from '../components/AppAppBar.js';
 import AddressTable from '../components/tables/AddressTable.js';
 import SearchAddressBar from '../components/lookups/SearchAddressBar.js';
-import { API_EDIT_ADDRESS } from '../helper/Contants.js';
+import { API_EDIT_ADDRESS } from '../helper/Constants.js';
 import api from '../api/api.js';
 import { useUser } from '../hooks/useUser.js';
 
