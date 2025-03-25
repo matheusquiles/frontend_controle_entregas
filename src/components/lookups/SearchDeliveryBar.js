@@ -1,18 +1,19 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Box, TextField, Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { Box, TextField, Button, FormControl, InputLabel, Select, MenuItem, CircularProgress } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { ptBR } from 'date-fns/locale';
 import { setFormData, setLoading, resetForm, setNotification } from '../../redux/reducers/FormSlice.js';
 import api from '../../api/api.js';
 import { MAIN_YELLOW, MAIN_FONT_COLLOR } from '../../styles/Colors.jsx';
-import { API_SEARCH_DELIVERY_REGION, API_SEARCH_COLLECTS_DTO, API_SEARCH_MOTOBOY } from '../../helper/Constants.js';
+import { API_SEARCH_DELIVERY_REGION, API_SEARCH_DELIVERIES_DTO, API_SEARCH_MOTOBOY } from '../../helper/Constants.js';
 import SelectAutoComplete from '../SelectAutoComplete.js';
 
 const SearchDeliveryBar = ({ onSearchComplete }) => {
   const dispatch = useDispatch();
   const formData = useSelector((state) => state.form.formData);
+  const loading = useSelector((state) => state.form.loading); // Acessa o estado loading do Redux
   const invalidFields = useSelector((state) => state.form.invalidFields) || [];
 
   const hoje = new Date();
@@ -22,7 +23,7 @@ const SearchDeliveryBar = ({ onSearchComplete }) => {
   const [filters, setFilters] = useState({
     startDate: ontem,
     endDate: hoje,
-    userKey: '',
+    idMotoboy: '',
     deliveryRegion: '',
     status: 'todos',
   });
@@ -48,7 +49,7 @@ const SearchDeliveryBar = ({ onSearchComplete }) => {
     dispatch(setFormData({ ...formData, [name]: value }));
     setFilters((prev) => ({
       ...prev,
-      [name]: value,
+      [name === 'userKey' ? 'idMotoboy' : name]: value,
     }));
   };
 
@@ -79,22 +80,25 @@ const SearchDeliveryBar = ({ onSearchComplete }) => {
     const updatedFormData = {
       dataInicial: formatDate(filters.startDate),
       dataFinal: formatDate(filters.endDate),
-      userKey: filters.userKey || '',
-      deliveryRegion: filters.deliveryRegion || '',
+      idMotoboy: filters.idMotoboy || '',
+      idDeliveryRegion: filters.deliveryRegion || '',
       status: filters.status,
     };
     dispatch(setFormData(updatedFormData));
 
     try {
       const dataToSend = {
-        idUser: filters.userKey || '',
+        idMotoboy: filters.idMotoboy || '',
         initialDate: formatDate(filters.startDate),
         finalDate: formatDate(filters.endDate),
-        deliveryRegion: filters.deliveryRegion ? parseInt(filters.deliveryRegion) : null,
-        deliveryStatus: filters.status === 'todos' ? null : filters.status, 
+        idDeliveryRegion: filters.deliveryRegion ? parseInt(filters.deliveryRegion) : null,
+        deliveryStatus: filters.status === 'todos' ? null : filters.status,
       };
-      const response = await api.post(`${API_SEARCH_COLLECTS_DTO}`, dataToSend);
+      console.log('dataToSend:', dataToSend);
+
+      const response = await api.post(`${API_SEARCH_DELIVERIES_DTO}`, dataToSend);
       onSearchComplete(response.data);
+      console.log('response.data:', response.data);
     } catch (error) {
       console.error('Erro na busca:', error);
       dispatch(setNotification({ message: 'Erro ao realizar a pesquisa', severity: 'error' }));
@@ -173,15 +177,26 @@ const SearchDeliveryBar = ({ onSearchComplete }) => {
           <Button
             variant="contained"
             onClick={handleSearch}
+            disabled={loading} // Desativa o botão enquanto carrega
             sx={{
               bgcolor: MAIN_YELLOW,
               color: MAIN_FONT_COLLOR,
               height: '40px',
               padding: '0 16px',
               minWidth: '100px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1, // Espaço entre texto e ícone
             }}
           >
-            Pesquisar
+            {loading ? (
+              <>
+                <CircularProgress size={20} sx={{ color: MAIN_FONT_COLLOR }} />
+                Carregando...
+              </>
+            ) : (
+              'Pesquisar'
+            )}
           </Button>
         </Box>
       </Box>

@@ -11,17 +11,17 @@ const DeliveryTable = ({ data, onDataChange }) => {
   const [editRow, setEditRow] = useState(null);
 
   useEffect(() => {
-    setTableData(data);
+    setTableData(data); // Sincroniza tableData com data sempre que data mudar
   }, [data]);
 
   const groupedData = tableData.reduce((acc, delivery) => {
-    const key = `${delivery.date}-${delivery.deliveryUser}-${delivery.coordinator}-${delivery.edressDescription}`;
+    const key = `${delivery.date}-${delivery.nameMotoboy}-${delivery.nameCoordinator || 'sem-coordenador'}-${delivery.deliveryRegion}`;
     if (!acc[key]) {
       acc[key] = {
         date: delivery.date,
-        deliveryUser: delivery.deliveryUser,
-        coordinator: delivery.coordinator,
-        edressDescription: delivery.edressDescription,
+        deliveryUser: delivery.nameMotoboy,
+        coordinator: delivery.nameCoordinator,
+        edressDescription: delivery.deliveryRegion, // Usa apenas deliveryRegion
         deliveries: [],
       };
     }
@@ -34,11 +34,11 @@ const DeliveryTable = ({ data, onDataChange }) => {
     return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   };
 
-  const handleEdit = (deliveryId, itemIndex) => {
-    setEditRow(`${deliveryId}-${itemIndex}`);
+  const handleEdit = (deliveryId) => {
+    setEditRow(deliveryId);
   };
 
-  const handleSave = (deliveryId, itemIndex) => {
+  const handleSave = (deliveryId) => {
     setEditRow(null);
     onDataChange(tableData);
   };
@@ -49,17 +49,11 @@ const DeliveryTable = ({ data, onDataChange }) => {
     return `${day}/${month}/${year}`;
   };
 
-  const handleChange = (deliveryId, itemIndex, field, value) => {
+  const handleChange = (deliveryId, field, value) => {
     const updatedData = tableData.map(delivery => {
       if (delivery.idDelivery === deliveryId) {
-        const updatedItens = delivery.itens.map((item, idx) => {
-          if (idx === itemIndex) {
-            const numericValue = parseFloat(value) || 0;
-            return { ...item, [field]: numericValue };
-          }
-          return item;
-        });
-        return { ...delivery, itens: updatedItens };
+        const numericValue = field === 'value' ? parseFloat(value) || 0 : value;
+        return { ...delivery, [field]: numericValue };
       }
       return delivery;
     });
@@ -67,30 +61,22 @@ const DeliveryTable = ({ data, onDataChange }) => {
     onDataChange(updatedData);
   };
 
-  const handleApprove = (deliveryId, itemIndex) => {
-    const updatedData = tableData.map(delivery => {
-      if (delivery.idDelivery === deliveryId) {
-        const updatedItens = delivery.itens.map((item, idx) =>
-          idx === itemIndex ? { ...item, deliveryStatus: 'Aprovado' } : item
-        );
-        return { ...delivery, itens: updatedItens, status: true };
-      }
-      return delivery;
-    });
+  const handleApprove = (deliveryId) => {
+    const updatedData = tableData.map(delivery =>
+      delivery.idDelivery === deliveryId
+        ? { ...delivery, deliveryStatus: 'Aprovado', status: true }
+        : delivery
+    );
     setTableData(updatedData);
     onDataChange(updatedData);
   };
 
-  const handleReject = (deliveryId, itemIndex) => {
-    const updatedData = tableData.map(delivery => {
-      if (delivery.idDelivery === deliveryId) {
-        const updatedItens = delivery.itens.map((item, idx) =>
-          idx === itemIndex ? { ...item, deliveryStatus: 'Reprovado' } : item
-        );
-        return { ...delivery, itens: updatedItens, status: false };
-      }
-      return delivery;
-    });
+  const handleReject = (deliveryId) => {
+    const updatedData = tableData.map(delivery =>
+      delivery.idDelivery === deliveryId
+        ? { ...delivery, deliveryStatus: 'Reprovado', status: false }
+        : delivery
+    );
     setTableData(updatedData);
     onDataChange(updatedData);
   };
@@ -111,78 +97,71 @@ const DeliveryTable = ({ data, onDataChange }) => {
         </thead>
         <tbody>
           {Object.values(groupedData).map((group, groupIndex) => {
-            let rowSpanCount = 0;
-            group.deliveries.forEach(delivery => {
-              rowSpanCount += delivery.itens.length;
-            });
+            const rowSpanCount = group.deliveries.length;
 
-            return group.deliveries.map((delivery, deliveryIndex) =>
-              delivery.itens.map((item, itemIndex) => {
-                const rowKey = `${delivery.idDelivery}-${itemIndex}`;
-                const isEditing = editRow === rowKey;
-                const isApproved = item.deliveryStatus === 'Aprovado';
-                const isRejected = item.deliveryStatus === 'Reprovado';
+            return group.deliveries.map((delivery, deliveryIndex) => {
+              const rowKey = delivery.idDelivery;
+              const isEditing = editRow === rowKey;
+              const isApproved = delivery.deliveryStatus === 'Aprovado';
+              const isRejected = delivery.deliveryStatus === 'Reprovado';
 
-                return (
-                  <tr key={rowKey} className={`data-row ${isEditing ? 'editing' : ''}`}>
-                    {deliveryIndex === 0 && itemIndex === 0 ? (
+              return (
+                <tr key={rowKey} className={`data-row ${isEditing ? 'editing' : ''}`}>
+                  {deliveryIndex === 0 ? (
+                    <>
+                      <td rowSpan={rowSpanCount} className="col-date">{formatDate(group.date)}</td>
+                      <td rowSpan={rowSpanCount} className="col-motoboy">{group.deliveryUser}</td>
+                      <td rowSpan={rowSpanCount} className="col-coordinator">
+                        {group.coordinator || '-'}
+                      </td>
+                      <td rowSpan={rowSpanCount} className="col-client">{group.edressDescription || '-'}</td>
+                    </>
+                  ) : null}
+                  <td className="col-unit-value">
+                    {isEditing ? (
+                      <TextField
+                        size="small"
+                        value={delivery.value}
+                        onChange={(e) => handleChange(delivery.idDelivery, 'value', e.target.value)}
+                        type="number"
+                        inputProps={{ step: '0.01' }}
+                        sx={{ width: '100%' }}
+                      />
+                    ) : (
+                      formatCurrency(delivery.value)
+                    )}
+                  </td>
+                  <td className="col-status">{delivery.deliveryStatus ?? '-'}</td>
+                  <td className="col-actions">
+                    {isEditing ? (
+                      <IconButton onClick={() => handleSave(delivery.idDelivery)} color="primary">
+                        <SaveIcon />
+                      </IconButton>
+                    ) : (
                       <>
-                        <td rowSpan={rowSpanCount} className="col-date">{formatDate(group.date)}</td>
-                        <td rowSpan={rowSpanCount} className="col-motoboy">{group.deliveryUser}</td>
-                        <td rowSpan={rowSpanCount} className="col-coordinator">
-                          {group.coordinator || '-'}
-                        </td>
-                        <td rowSpan={rowSpanCount} className="col-client">{group.edressDescription}</td>
-                      </>
-                    ) : null}
-                    <td className="col-unit-value">
-                      {isEditing ? (
-                        <TextField
-                          size="small"
-                          value={item.valuePerUnitDelivery}
-                          onChange={(e) =>
-                            handleChange(delivery.idDelivery, itemIndex, 'valuePerUnitDelivery', e.target.value)
-                          }
-                          type="number"
-                          inputProps={{ step: '0.01' }}
-                          sx={{ width: '100%' }}
-                        />
-                      ) : (
-                        formatCurrency(item.valuePerUnitDelivery)
-                      )}
-                    </td>
-                    <td className="col-status">{item.deliveryStatus ?? '-'}</td>
-                    <td className="col-actions">
-                      {isEditing ? (
-                        <IconButton onClick={() => handleSave(delivery.idDelivery, itemIndex)} color="primary">
-                          <SaveIcon />
+                        <IconButton
+                          onClick={() => handleApprove(delivery.idDelivery)}
+                          color={isApproved ? 'success' : 'default'}
+                          sx={{ color: isApproved ? undefined : '#bdbdbd' }}
+                        >
+                          <CheckCircleIcon />
                         </IconButton>
-                      ) : (
-                        <>
-                          <IconButton
-                            onClick={() => handleApprove(delivery.idDelivery, itemIndex)}
-                            color={isApproved ? 'success' : 'default'}
-                            sx={{ color: isApproved ? undefined : '#bdbdbd' }}
-                          >
-                            <CheckCircleIcon />
-                          </IconButton>
-                          <IconButton
-                            onClick={() => handleReject(delivery.idDelivery, itemIndex)}
-                            color={isRejected ? 'error' : 'default'}
-                            sx={{ color: isRejected ? undefined : '#bdbdbd' }}
-                          >
-                            <CancelIcon />
-                          </IconButton>
-                          <IconButton onClick={() => handleEdit(delivery.idDelivery, itemIndex)} color="primary">
-                            <EditIcon />
-                          </IconButton>
-                        </>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })
-            );
+                        <IconButton
+                          onClick={() => handleReject(delivery.idDelivery)}
+                          color={isRejected ? 'error' : 'default'}
+                          sx={{ color: isRejected ? undefined : '#bdbdbd' }}
+                        >
+                          <CancelIcon />
+                        </IconButton>
+                        <IconButton onClick={() => handleEdit(delivery.idDelivery)} color="primary">
+                          <EditIcon />
+                        </IconButton>
+                      </>
+                    )}
+                  </td>
+                </tr>
+              );
+            });
           })}
         </tbody>
       </table>
