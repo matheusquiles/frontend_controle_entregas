@@ -1,0 +1,92 @@
+/* Delivery.css */
+.delivery-table-container {
+    width: 100%;
+    overflow-x: auto; /* Mantém a rolagem horizontal se necessário */
+  }
+  
+  .delivery-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    table-layout: fixed; /* Força as colunas a respeitarem as larguras definidas */
+  }
+  
+  .delivery-table th,
+  .delivery-table td {
+    padding: 8px;
+    text-align: left;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    overflow: hidden; /* Evita que o conteúdo transborde */
+    text-overflow: ellipsis; /* Adiciona "..." se o texto for muito longo */
+    white-space: nowrap; /* Impede que o texto quebre em várias linhas */
+  }
+  
+  /* Definindo larguras fixas para cada coluna */
+  .delivery-table th.col-motoboy,
+  .delivery-table td.col-motoboy {
+    width: 150px; /* Ajuste conforme necessário */
+  }
+  
+  .delivery-table th.col-date,
+  .delivery-table td.col-date {
+    width: 100px; /* Ajuste conforme necessário */
+  }
+  
+  .delivery-table th.col-client,
+  .delivery-table td.col-client {
+    width: 200px; /* Ajuste conforme necessário */
+  }
+  
+  .delivery-table th.col-type,
+  .delivery-table td.col-type {
+    width: 150px; /* Ajuste conforme necessário */
+  }
+  
+  .delivery-table th.col-quantity,
+  .delivery-table td.col-quantity {
+    width: 100px; /* Ajuste conforme necessário */
+  }
+  
+  .delivery-table th.col-unit-value,
+  .delivery-table td.col-unit-value {
+    width: 120px; /* Ajuste conforme necessário */
+  }
+  
+  .delivery-table th.col-total-receive,
+  .delivery-table td.col-total-receive {
+    width: 130px; /* Ajuste conforme necessário */
+  }
+  
+  .delivery-table th.col-status,
+  .delivery-table td.col-status {
+    width: 100px; /* Ajuste conforme necessário */
+  }
+  
+  .delivery-table th.col-actions,
+  .delivery-table td.col-actions {
+    width: 150px; /* Ajuste conforme necessário */
+  }
+  
+  .delivery-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+  }
+  
+  .data-row {
+    background-color: #ffffff;
+  }
+  
+  .data-row:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  .data-row.editing {
+    background-color: #f5f5f5;
+  }
+  
+  /* Ajuste para os TextField dentro das células */
+  .delivery-table td .MuiTextField-root {
+    width: 100%; /* Faz o TextField ocupar toda a largura da célula */
+    margin: 0; /* Remove margens extras */
+  }

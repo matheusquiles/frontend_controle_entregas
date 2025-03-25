@@ -40,7 +40,7 @@
 
 .collect-table th.col-type,
 .collect-table td.col-type {
-  width: 150px; /* Ajuste conforme necessário */
+  width: 180px; /* Ajuste conforme necessário */
 }
 
 .collect-table th.col-quantity,
@@ -50,12 +50,12 @@
 
 .collect-table th.col-unit-value,
 .collect-table td.col-unit-value {
-  width: 120px; /* Ajuste conforme necessário */
+  width: 100px; /* Ajuste conforme necessário */
 }
 
 .collect-table th.col-total-receive,
 .collect-table td.col-total-receive {
-  width: 130px; /* Ajuste conforme necessário */
+  width: 100px; /* Ajuste conforme necessário */
 }
 
 .collect-table th.col-status,
@@ -89,4 +89,9 @@
 .collect-table td .MuiTextField-root {
   width: 100%; /* Faz o TextField ocupar toda a largura da célula */
   margin: 0; /* Remove margens extras */
+}
+
+.col-coordinator {
+  width: 150px; /* Ajuste conforme necessário */
+  text-align: left;
 }

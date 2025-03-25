@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import '../../styles/CollectTable.css';
+import '../../styles/DeliveryTable.css';
 import { IconButton, TextField } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import SaveIcon from '@mui/icons-material/Save';
 
-const CollectTable = ({ data, onDataChange }) => {
+const DeliveryTable = ({ data, onDataChange }) => {
   const [tableData, setTableData] = useState(data);
   const [editRow, setEditRow] = useState(null);
 
@@ -14,18 +14,17 @@ const CollectTable = ({ data, onDataChange }) => {
     setTableData(data);
   }, [data]);
 
-  const groupedData = tableData.reduce((acc, collect) => {
-    const key = `${collect.date}-${collect.edressDescription}-${collect.collectUser}`;
+  const groupedData = tableData.reduce((acc, delivery) => {
+    const key = `${delivery.date}-${delivery.edressDescription}-${delivery.deliveryUser}`;
     if (!acc[key]) {
       acc[key] = {
-        date: collect.date,
-        edressDescription: collect.edressDescription,
-        collectUser: collect.collectUser,
-        coordinator: collect.coordinator, // Adiciona o coordinator ao grupo
-        collects: [],
+        date: delivery.date,
+        edressDescription: delivery.edressDescription,
+        deliveryUser: delivery.deliveryUser,
+        deliverys: [],
       };
     }
-    acc[key].collects.push(collect);
+    acc[key].deliverys.push(delivery);
     return acc;
   }, {});
 
@@ -34,11 +33,11 @@ const CollectTable = ({ data, onDataChange }) => {
     return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   };
 
-  const handleEdit = (collectId, itemIndex) => {
-    setEditRow(`${collectId}-${itemIndex}`);
+  const handleEdit = (deliveryId, itemIndex) => {
+    setEditRow(`${deliveryId}-${itemIndex}`);
   };
 
-  const handleSave = (collectId, itemIndex) => {
+  const handleSave = (deliveryId, itemIndex) => {
     setEditRow(null);
     onDataChange(tableData);
   };
@@ -49,68 +48,63 @@ const CollectTable = ({ data, onDataChange }) => {
     return `${day}/${month}/${year}`;
   };
 
-  const handleChange = (collectId, itemIndex, field, value) => {
-    const updatedData = tableData.map(collect => {
-      if (collect.idCollect === collectId) {
-        const updatedItens = collect.itens.map((item, idx) => {
+  const handleChange = (deliveryId, itemIndex, field, value) => {
+    const updatedData = tableData.map(delivery => {
+      if (delivery.idDelivery === deliveryId) {
+        const updatedItens = delivery.itens.map((item, idx) => {
           if (idx === itemIndex) {
             const numericValue = parseFloat(value) || 0;
             const updatedItem = { ...item, [field]: numericValue };
-            updatedItem.totalToReceive = updatedItem.valuePerUnitCollect * updatedItem.quantity;
-            updatedItem.totalValueToPay = updatedItem.valuePerUnitCollect * updatedItem.quantity;
             return updatedItem;
           }
           return item;
         });
-        return { ...collect, itens: updatedItens };
+        return { ...delivery, itens: updatedItens };
       }
-      return collect;
+      return delivery;
     });
     setTableData(updatedData);
     onDataChange(updatedData);
   };
 
-  const handleApprove = (collectId, itemIndex) => {
-    const updatedData = tableData.map(collect => {
-      if (collect.idCollect === collectId) {
-        const updatedItens = collect.itens.map((item, idx) =>
+  const handleApprove = (deliveryId, itemIndex) => {
+    const updatedData = tableData.map(delivery => {
+      if (delivery.idDelivery === deliveryId) {
+        const updatedItens = delivery.itens.map((item, idx) =>
           idx === itemIndex ? { ...item, deliveryStatus: 'Aprovado' } : item
         );
-        return { ...collect, itens: updatedItens, status: true };
+        return { ...delivery, itens: updatedItens, status: true };
       }
-      return collect;
+      return delivery;
     });
     setTableData(updatedData);
     onDataChange(updatedData);
   };
 
-  const handleReject = (collectId, itemIndex) => {
-    const updatedData = tableData.map(collect => {
-      if (collect.idCollect === collectId) {
-        const updatedItens = collect.itens.map((item, idx) =>
+  const handleReject = (deliveryId, itemIndex) => {
+    const updatedData = tableData.map(delivery => {
+      if (delivery.idDelivery === deliveryId) {
+        const updatedItens = delivery.itens.map((item, idx) =>
           idx === itemIndex ? { ...item, deliveryStatus: 'Reprovado' } : item
         );
-        return { ...collect, itens: updatedItens, status: false };
+        return { ...delivery, itens: updatedItens, status: false };
       }
-      return collect;
+      return delivery;
     });
     setTableData(updatedData);
     onDataChange(updatedData);
   };
 
   return (
-    <div className="collect-table-container">
-      <table className="collect-table">
+    <div className="delivery-table-container">
+      <table className="delivery-table">
         <thead>
           <tr>
-            <th className="col-motoboy">Motoboy</th>
-            <th className="col-coordinator">Coordenador</th> 
             <th className="col-date">Data</th>
-            <th className="col-client">Cliente/Endereço</th>
-            <th className="col-type">Tipo de Coleta</th>
-            <th className="col-quantity">Quantidade</th>
-            <th className="col-unit-value">R$ Unidade</th>
-            <th className="col-total-receive">R$ Total</th>
+            <th className="col-motoboy">Motoboy</th>
+            <th className="col-motoboy">Supervisor</th>
+            <th className="col-client">Zona</th>
+            <th className="col-total-receive">R$ Valor</th>
             <th className="col-status">Status</th>
             <th className="col-actions">Ações</th>
           </tr>
@@ -118,36 +112,33 @@ const CollectTable = ({ data, onDataChange }) => {
         <tbody>
           {Object.values(groupedData).map((group, groupIndex) => {
             let rowSpanCount = 0;
-            group.collects.forEach(collect => {
-              rowSpanCount += collect.itens.length;
+            group.deliverys.forEach(delivery => {
+              rowSpanCount += delivery.itens.length;
             });
 
-            return group.collects.map((collect, collectIndex) =>
-              collect.itens.map((item, itemIndex) => {
-                const rowKey = `${collect.idCollect}-${itemIndex}`;
+            return group.deliverys.map((delivery, deliveryIndex) =>
+              delivery.itens.map((item, itemIndex) => {
+                const rowKey = `${delivery.idDelivery}-${itemIndex}`;
                 const isEditing = editRow === rowKey;
                 const isApproved = item.deliveryStatus === 'Aprovado';
                 const isRejected = item.deliveryStatus === 'Reprovado';
 
                 return (
                   <tr key={rowKey} className={`data-row ${isEditing ? 'editing' : ''}`}>
-                    {collectIndex === 0 && itemIndex === 0 ? (
+                    {deliveryIndex === 0 && itemIndex === 0 ? (
                       <>
-                        <td rowSpan={rowSpanCount} className="col-motoboy">{group.collectUser}</td>
-                        <td rowSpan={rowSpanCount} className="col-coordinator">
-                          {group.coordinator || '-'} {/* Exibe o coordinator ou '-' se for null */}
-                        </td>
+                        <td rowSpan={rowSpanCount} className="col-motoboy">{group.deliveryUser}</td>
                         <td rowSpan={rowSpanCount} className="col-date">{formatDate(group.date)}</td>
                         <td rowSpan={rowSpanCount} className="col-client">{group.edressDescription}</td>
                       </>
                     ) : null}
-                    <td className="col-type">{item.collectType}</td>
+                    <td className="col-type">{item.deliveryType}</td>
                     <td className="col-quantity">
                       {isEditing ? (
                         <TextField
                           size="small"
                           value={item.quantity}
-                          onChange={(e) => handleChange(collect.idCollect, itemIndex, 'quantity', e.target.value)}
+                          onChange={(e) => handleChange(delivery.idDelivery, itemIndex, 'quantity', e.target.value)}
                           type="number"
                           inputProps={{ step: '1' }}
                           sx={{ width: '100%' }}
@@ -160,40 +151,40 @@ const CollectTable = ({ data, onDataChange }) => {
                       {isEditing ? (
                         <TextField
                           size="small"
-                          value={item.valuePerUnitCollect}
-                          onChange={(e) => handleChange(collect.idCollect, itemIndex, 'valuePerUnitCollect', e.target.value)}
+                          value={item.valuePerUnitDelivery}
+                          onChange={(e) => handleChange(delivery.idDelivery, itemIndex, 'valuePerUnitDelivery', e.target.value)}
                           type="number"
                           inputProps={{ step: '0.01' }}
                           sx={{ width: '100%' }}
                         />
                       ) : (
-                        formatCurrency(item.valuePerUnitCollect)
+                        formatCurrency(item.valuePerUnitDelivery)
                       )}
                     </td>
                     <td className="col-total-receive">{formatCurrency(item.totalToReceive)}</td>
                     <td className="col-status">{item.deliveryStatus ?? '-'}</td>
                     <td className="col-actions">
                       {isEditing ? (
-                        <IconButton onClick={() => handleSave(collect.idCollect, itemIndex)} color="primary">
+                        <IconButton onClick={() => handleSave(delivery.idDelivery, itemIndex)} color="primary">
                           <SaveIcon />
                         </IconButton>
                       ) : (
                         <>
                           <IconButton
-                            onClick={() => handleApprove(collect.idCollect, itemIndex)}
+                            onClick={() => handleApprove(delivery.idDelivery, itemIndex)}
                             color={isApproved ? 'success' : 'default'}
                             sx={{ color: isApproved ? undefined : '#bdbdbd' }}
                           >
                             <CheckCircleIcon />
                           </IconButton>
                           <IconButton
-                            onClick={() => handleReject(collect.idCollect, itemIndex)}
+                            onClick={() => handleReject(delivery.idDelivery, itemIndex)}
                             color={isRejected ? 'error' : 'default'}
                             sx={{ color: isRejected ? undefined : '#bdbdbd' }}
                           >
                             <CancelIcon />
                           </IconButton>
-                          <IconButton onClick={() => handleEdit(collect.idCollect, itemIndex)} color="primary">
+                          <IconButton onClick={() => handleEdit(delivery.idDelivery, itemIndex)} color="primary">
                             <EditIcon />
                           </IconButton>
                         </>
@@ -210,4 +201,4 @@ const CollectTable = ({ data, onDataChange }) => {
   );
 };
 
-export default CollectTable;
+export default DeliveryTable;
