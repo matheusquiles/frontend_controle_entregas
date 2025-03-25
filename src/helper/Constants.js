@@ -16,3 +16,4 @@ export const API_SEARCH_MOTOBOY = `${API_BASE_URL}/users/searchMotoboy`
 export const API_SEARCH_DELIVERY_REGION = `${API_BASE_URL}/deliveryRegion`
 export const API_SAVE_DELIVERY = `${API_BASE_URL}/deliveries/save`
 export const API_EDIT_ADDRESS = `${API_BASE_URL}/edress/editAddress`
+export const API_EDIT_DELIVERY = `${API_BASE_URL}/deliveries/editDelivery`

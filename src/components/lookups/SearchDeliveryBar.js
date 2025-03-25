@@ -35,7 +35,6 @@ const SearchDeliveryBar = ({ onSearchComplete }) => {
       dispatch(setNotification({ message: '', severity: 'info' }));
       dispatch(resetForm());
     }
-    console.log("Loading state atualizado:", loading);
     const ontemFormatado = ontem.toISOString().split('T')[0];
     const hojeFormatado = hoje.toISOString().split('T')[0];
     dispatch(
@@ -72,9 +71,7 @@ const SearchDeliveryBar = ({ onSearchComplete }) => {
 
   const handleSearch = async (e) => {
     e.preventDefault();
-    console.log("Buscando...");
     dispatch(setLoading(true));
-    console.log("Loading state:", loading);
     dispatch(resetForm());
     await new Promise((resolve) => setTimeout(resolve, 2000));
     const formatDate = (date) => {
@@ -99,11 +96,9 @@ const SearchDeliveryBar = ({ onSearchComplete }) => {
         idDeliveryRegion: filters.deliveryRegion ? parseInt(filters.deliveryRegion) : null,
         deliveryStatus: filters.status === 'todos' ? null : filters.status,
       };
-      console.log('dataToSend:', dataToSend);
 
       const response = await api.post(`${API_SEARCH_DELIVERIES_DTO}`, dataToSend);
       onSearchComplete(response.data);
-      console.log('response.data:', response.data);
     } catch (error) {
       console.error('Erro na busca:', error);
       dispatch(setNotification({ message: 'Erro ao realizar a pesquisa', severity: 'error' }));

@@ -12,17 +12,19 @@ import SearchDeliveryBar from '../components/lookups/SearchDeliveryBar';
 import DeliveryTable from '../components/tables/DeliveryTable';
 import FormButtons from '../components/FormButtons';
 import NotificationSnackbar from '../components/NotificacaoSnackbar';
+import {API_EDIT_DELIVERY } from '../helper/Constants';
 
 const AprovarEntregas = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const isLoading = useSelector((state) => state.form.isLoading);
+  const isLoading = useSelector((state) => state.form.loading);
   const formData = useSelector((state) => state.form.formData);
   const isUpdating = useSelector((state) => state.form.isUpdating);
   const tableData = useSelector((state) => state.form.tableData);
   const { user, loading: userLoading } = useUser();
 
   const handleDataChange = (updatedData) => {
+    console.log('handleDataChange received:', updatedData); // Debug
     dispatch(setTableData(updatedData));
   };
 
@@ -30,17 +32,25 @@ const AprovarEntregas = () => {
     e.preventDefault();
     dispatch(setLoading(true));
 
-    const updatedTableData = tableData.map(item => ({
-      ...item,
+    // Protege contra tableData undefined ou não-array
+    const safeTableData = Array.isArray(tableData) ? tableData : [];
+
+    // Cria a lista no formato especificado
+    const updatedTableData = safeTableData.map(item => ({
+      idDelivery: item.idDelivery,
+      value: item.value || 0,
+      deliveryStatus: item.deliveryStatus || 'Pendente',
       lastModificationBy: user?.idUser || null,
+      idDeliveryRegion: item.idDeliveryRegion || null,
     }));
 
+    console.log('updatedTableData to API:', updatedTableData); // Debug: verifica o envio
+
     try {
-      const response = await api.post('api/delivery/editDelivery', updatedTableData);
+      const response = await api.post(API_EDIT_DELIVERY, updatedTableData);
 
       if (response.data === false) {
-        const errorData = await response.data;
-        throw new Error(errorData.message || 'Erro ao enviar os dados para a API');
+        throw new Error('Erro ao enviar os dados para a API');
       }
 
       dispatch(setNotification({ message: 'Dados salvos com sucesso!', severity: 'success' }));
@@ -53,13 +63,14 @@ const AprovarEntregas = () => {
   };
 
   const handleSearchComplete = (data) => {
+    console.log('handleSearchComplete received:', data); // Debug
     dispatch(setTableData(data));
   };
 
   useEffect(() => {
     dispatch(setNotification({ message: '', severity: 'info' }));
     dispatch(resetForm());
-  }, [dispatch], [isLoading]);
+  }, [dispatch]);
 
   if (userLoading) {
     return (
