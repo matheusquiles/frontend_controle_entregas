@@ -59,7 +59,7 @@ const AprovarEntregas = () => {
   useEffect(() => {
     dispatch(setNotification({ message: '', severity: 'info' }));
     dispatch(resetForm());
-  }, [dispatch]);
+  }, [dispatch], [isLoading]);
 
   if (userLoading) {
     return (

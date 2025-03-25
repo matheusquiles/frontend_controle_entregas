@@ -13,7 +13,7 @@ import SelectAutoComplete from '../SelectAutoComplete.js';
 const SearchDeliveryBar = ({ onSearchComplete }) => {
   const dispatch = useDispatch();
   const formData = useSelector((state) => state.form.formData);
-  const loading = useSelector((state) => state.form.loading); // Acessa o estado loading do Redux
+  const loading = useSelector((state) => state.form.isLoading);
   const invalidFields = useSelector((state) => state.form.invalidFields) || [];
 
   const hoje = new Date();
@@ -31,8 +31,11 @@ const SearchDeliveryBar = ({ onSearchComplete }) => {
   const todosOption = useMemo(() => [{ id: '', label: 'Todos' }], []);
 
   useEffect(() => {
-    dispatch(setNotification({ message: '', severity: 'info' }));
-    dispatch(resetForm());
+    if (!loading) {
+      dispatch(setNotification({ message: '', severity: 'info' }));
+      dispatch(resetForm());
+    }
+    console.log("Loading state atualizado:", loading);
     const ontemFormatado = ontem.toISOString().split('T')[0];
     const hojeFormatado = hoje.toISOString().split('T')[0];
     dispatch(
@@ -42,7 +45,7 @@ const SearchDeliveryBar = ({ onSearchComplete }) => {
         status: 'todos',
       })
     );
-  }, [dispatch]);
+  }, [dispatch], [loading]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -69,9 +72,11 @@ const SearchDeliveryBar = ({ onSearchComplete }) => {
 
   const handleSearch = async (e) => {
     e.preventDefault();
+    console.log("Buscando...");
     dispatch(setLoading(true));
+    console.log("Loading state:", loading);
     dispatch(resetForm());
-
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     const formatDate = (date) => {
       if (!date) return '';
       return date.toISOString().split('T')[0];
@@ -159,44 +164,39 @@ const SearchDeliveryBar = ({ onSearchComplete }) => {
             label="Data Inicial"
             value={filters.startDate}
             onChange={(date) => handleDateChange('startDate', date)}
-            sx={{ width: '150px', height: '40px' }}
+            sx={{ width: '150px' }}
             renderInput={(params) => (
-              <TextField {...params} size="small" sx={{ width: '200px', height: '40px' }} />
+              <TextField {...params} size="small" sx={{ width: '200px' }} />
             )}
           />
           <DatePicker
             label="Data Final"
             value={filters.endDate}
             onChange={(date) => handleDateChange('endDate', date)}
-            sx={{ width: '150px', height: '40px' }}
+            sx={{ width: '150px' }}
             renderInput={(params) => (
-              <TextField {...params} size="small" sx={{ width: '200px', height: '40px' }} />
+              <TextField {...params} size="small" sx={{ width: '200px' }} />
             )}
           />
 
           <Button
             variant="contained"
             onClick={handleSearch}
-            disabled={loading} // Desativa o botão enquanto carrega
+            disabled={loading}
             sx={{
               bgcolor: MAIN_YELLOW,
               color: MAIN_FONT_COLLOR,
               height: '40px',
-              padding: '0 16px',
-              minWidth: '100px',
+              minWidth: '120px',
               display: 'flex',
               alignItems: 'center',
-              gap: 1, // Espaço entre texto e ícone
+              justifyContent: 'center',
+              '&:disabled': {
+                opacity: 0.6,
+              },
             }}
           >
-            {loading ? (
-              <>
-                <CircularProgress size={20} sx={{ color: MAIN_FONT_COLLOR }} />
-                Carregando...
-              </>
-            ) : (
-              'Pesquisar'
-            )}
+            {loading ? <CircularProgress size={24} sx={{ color: MAIN_FONT_COLLOR }} /> : 'Pesquisar'}
           </Button>
         </Box>
       </Box>

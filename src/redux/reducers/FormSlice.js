@@ -17,6 +17,7 @@ const formSlice = createSlice({
   initialState,
   reducers: {
     setLoading: (state, action) => {
+      console.log("Reducer setLoading chamado com:", action.payload);
       state.isLoading = action.payload;
     },
     startForm: (state) => {
@@ -49,8 +50,14 @@ const formSlice = createSlice({
     setErrorMessage: (state, action) => {
       state.errorMessage = action.payload;
     },
+    // resetForm: (state) => {
+    //   Object.assign(state, initialState);
+    // },
     resetForm: (state) => {
-      Object.assign(state, initialState);
+      return {
+        ...initialState,
+        isLoading: state.isLoading, 
+      };
     },
     setIsValidResponse: (state, action) => {
       state.isValidResponse = action.payload;
