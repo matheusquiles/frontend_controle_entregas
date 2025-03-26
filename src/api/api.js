@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { API_BASE } from '../helper/Constants';
+import { LOGIN } from '../helper/Constants';
 
 const api = axios.create({
-  baseURL: API_BASE, 
+  baseURL: LOGIN, 
 });
 
 api.interceptors.request.use(

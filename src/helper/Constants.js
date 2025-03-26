@@ -3,6 +3,7 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://api-al2a.onr
 
 
 export const API_BASE = `${API_BASE_URL}`;
+export const LOGIN = `https://api-al2a.onrender.com/`;
 export const API_SEARCH_COLLECTS_URL = `${API_BASE_URL}/collects`
 export const API_SAVE_URL = `${API_BASE_URL}/collects/save`
 export const API_LOGIN = `${API_BASE_URL}/login`
