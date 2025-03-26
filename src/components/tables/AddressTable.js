@@ -7,7 +7,7 @@ import SaveIcon from '@mui/icons-material/Save';
 const AddressTable = ({ data = [], onDataChange }) => {
   const [tableData, setTableData] = useState([]);
   const [editRow, setEditRow] = useState(null);
-  const [initialData, setInitialData] = useState(null); 
+  const [initialData, setInitialData] = useState(null);
 
   const flattenData = (apiData) => {
     return apiData.flatMap((address, index) => {
@@ -36,15 +36,13 @@ const AddressTable = ({ data = [], onDataChange }) => {
   };
 
   useEffect(() => {
-    if (!initialData || JSON.stringify(data) !== JSON.stringify(initialData)) {
-      const flattenedData = flattenData(data);
-      setTableData((prevData) => prevData.length > 0 ? prevData : flattenedData);
-      setInitialData(data);
-    }
-  }, [data]);  
+    const flattenedData = flattenData(data);
+    setTableData(flattenedData); // Sempre atualizar com os dados recebidos
+    setInitialData(data);
+  }, [data]);
 
   const groupedData = tableData.reduce((acc, address) => {
-    const key = `${address.idEdress}-${address.description}-${address.edress}-${address.status}`;
+    const key = `${address.idEdress}`;
     if (!acc[key]) {
       acc[key] = {
         idEdress: address.idEdress,
@@ -71,15 +69,24 @@ const AddressTable = ({ data = [], onDataChange }) => {
     setEditRow(null);
     
     const updatedData = [...tableData];
-    setTableData(updatedData); // Atualiza estado local
+    setTableData(updatedData);
     
     if (typeof onDataChange === 'function') {
-      onDataChange(updatedData); // Atualiza Redux
+      onDataChange(updatedData);
     }
   };
 
   const handleChange = (idCollectPreValue, field, value) => {
     const updatedData = tableData.map(address => {
+      const targetAddress = tableData.find(a => a.idCollectPreValue === idCollectPreValue);
+      const targetIdEdress = targetAddress.idEdress;
+
+      if (field === 'description' || field === 'edress') {
+        if (address.idEdress === targetIdEdress) {
+          return { ...address, [field]: value };
+        }
+      }
+
       if (address.idCollectPreValue === idCollectPreValue) {
         if (field === 'preValue') {
           return { ...address, [field]: value === '' ? null : parseFloat(value) };
@@ -88,9 +95,9 @@ const AddressTable = ({ data = [], onDataChange }) => {
       }
       return address;
     });
-  
+
     setTableData(updatedData);
-  
+
     if (typeof onDataChange === 'function') {
       onDataChange(updatedData);
     }
@@ -150,7 +157,10 @@ const AddressTable = ({ data = [], onDataChange }) => {
                           <FormControl size="small">
                             <Select
                               value={address.status ? 'Ativo' : 'Inativo'}
-                              onChange={(e) => handleChange(address.idCollectPreValue, 'status', e.target.value)}
+                              onChange={(e) => {
+                                const newStatus = e.target.value === 'Ativo' ? true : false;
+                                handleChange(address.idCollectPreValue, 'status', newStatus);
+                              }}
                             >
                               <MenuItem value="Ativo">Ativo</MenuItem>
                               <MenuItem value="Inativo">Inativo</MenuItem>
