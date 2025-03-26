@@ -12,10 +12,9 @@ import FormButtons from '../components/FormButtons.js';
 import AppAppBar from '../components/AppAppBar.js';
 import { useUser } from '../hooks/useUser';
 import { API_SEARCH_MOTOBOY, API_SEARCH_DELIVERY_REGION, API_SAVE_DELIVERY } from '../helper/Constants.js';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { ptBR } from 'date-fns/locale';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css'; 
+
 
 const CreateDelivery = () => {
   const dispatch = useDispatch();
@@ -163,23 +162,21 @@ const CreateDelivery = () => {
               />
             </Box>
             <Box mb={2} width={'50%'}>
-              <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
-                <DatePicker
-                  label="Data"
-                  value={formData.date || null}
-                  onChange={handleDateChange}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      fullWidth
-                      size="small"
-                      margin="normal"
-                      error={submitted && !formData.date}
-                      helperText={submitted && !formData.date ? 'Data é obrigatória' : ''}
-                    />
-                  )}
-                />
-              </LocalizationProvider>
+              <DatePicker
+                selected={formData.date || null}
+                onChange={handleDateChange}
+                dateFormat="dd/MM/yyyy"
+                customInput={
+                  <TextField
+                    fullWidth
+                    label="Data"
+                    size="small"
+                    margin="normal"
+                    error={submitted && !formData.date}
+                    helperText={submitted && !formData.date ? 'Data é obrigatória' : ''}
+                  />
+                }
+              />
             </Box>
           </Box>
 

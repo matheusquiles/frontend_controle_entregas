@@ -1,9 +1,8 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, TextField, Button, FormControl, InputLabel, Select, MenuItem, CircularProgress } from '@mui/material';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { ptBR } from 'date-fns/locale';
+import DatePicker from 'react-datepicker'; 
+import 'react-datepicker/dist/react-datepicker.css'; 
 import { setFormData, setLoading, resetForm, setNotification } from '../../redux/reducers/FormSlice.js';
 import api from '../../api/api.js';
 import { MAIN_YELLOW, MAIN_FONT_COLLOR } from '../../styles/Colors.jsx';
@@ -73,7 +72,6 @@ const SearchDeliveryBar = ({ onSearchComplete }) => {
     e.preventDefault();
     dispatch(setLoading(true));
     dispatch(resetForm());
-    await new Promise((resolve) => setTimeout(resolve, 2000));
     const formatDate = (date) => {
       if (!date) return '';
       return date.toISOString().split('T')[0];
@@ -108,7 +106,6 @@ const SearchDeliveryBar = ({ onSearchComplete }) => {
   };
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 2 }}>
         <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
           <FormControl sx={{ width: '258px' }}>
@@ -155,7 +152,7 @@ const SearchDeliveryBar = ({ onSearchComplete }) => {
             </Select>
           </FormControl>
 
-          <DatePicker
+          {/* <DatePicker
             label="Data Inicial"
             value={filters.startDate}
             onChange={(date) => handleDateChange('startDate', date)}
@@ -172,6 +169,19 @@ const SearchDeliveryBar = ({ onSearchComplete }) => {
             renderInput={(params) => (
               <TextField {...params} size="small" sx={{ width: '200px' }} />
             )}
+          /> */}
+
+          <DatePicker
+            selected={filters.startDate}
+            onChange={(date) => handleDateChange('startDate', date)}
+            dateFormat="dd/MM/yyyy"
+            customInput={<TextField label="Data Inicial" size="small" sx={{ width: '200px' }} />}
+          />
+          <DatePicker
+            selected={filters.endDate}
+            onChange={(date) => handleDateChange('endDate', date)}
+            dateFormat="dd/MM/yyyy"
+            customInput={<TextField label="Data Final" size="small" sx={{ width: '200px' }} />}
           />
 
           <Button
@@ -195,7 +205,6 @@ const SearchDeliveryBar = ({ onSearchComplete }) => {
           </Button>
         </Box>
       </Box>
-    </LocalizationProvider>
   );
 };
 
