@@ -1,7 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  formData: {},
+  formData: {
+    motoboy: '',
+    edress: '',
+  },
   options: {},
   invalidFields: [],
   isLoading: false,
@@ -9,7 +12,7 @@ const initialState = {
   isUpdating: false,
   notification: { message: '', severity: 'info' },
   activeComponent: null,
-  tableData: [], 
+  tableData: [],
 };
 
 const formSlice = createSlice({
@@ -49,29 +52,28 @@ const formSlice = createSlice({
     setErrorMessage: (state, action) => {
       state.errorMessage = action.payload;
     },
-    // resetForm: (state) => {
-    //   Object.assign(state, initialState);
-    // },
     resetForm: (state) => {
       return {
         ...initialState,
-        isLoading: state.isLoading, 
+        isLoading: state.isLoading,
+        isEditing: state.isEditing,
+        notification: state.notification,
       };
     },
     setIsValidResponse: (state, action) => {
       state.isValidResponse = action.payload;
     },
     setEditing: (state, action) => {
-      state.isEditing = action.payload; 
+      state.isEditing = action.payload;
     },
     setActiveComponent: (state, action) => {
       state.activeComponent = action.payload;
     },
     setTableData: (state, action) => {
-      state.tableData = action.payload; 
+      state.tableData = action.payload;
     },
     resetTableData: (state) => {
-      state.tableData = []; 
+      state.tableData = [];
     },
   },
 });

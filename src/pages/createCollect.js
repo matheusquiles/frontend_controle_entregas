@@ -5,8 +5,7 @@ import api from '../api/api.js';
 import * as F from '../styles/globalStyles.jsx';
 import { LoadingOverlay } from '../styles/globalStyles.jsx';
 import { FaSpinner } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
-import { CssBaseline, Box, IconButton, Toolbar } from '@mui/material';
+import { CssBaseline, Box, IconButton, Toolbar, Button } from '@mui/material';
 import NotificationSnackbar from '../components/NotificacaoSnackbar.js';
 import SelectRestCollect from '../components/SelectRestCollect.js';
 import Input from '../components/input.js';
@@ -17,16 +16,18 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import FormButtons from '../components/FormButtons.js';
 import AppAppBar from '../components/AppAppBar.js';
 import { useUser } from '../hooks/useUser';
+import { MAIN_YELLOW, MAIN_FONT_COLLOR } from '../styles/Colors.jsx';
 
 const CreateCollect = () => {
   const dispatch = useDispatch();
   const isLoading = useSelector((state) => state.form.isLoading);
-  const formData = useSelector((state) => state.form.formData);
-  const invalidFields = useSelector((state) => state.form.invalidFields);
+  const formData = useSelector((state) => state.form.formData) || { motoboy: '', edress: '' };
+  const invalidFields = useSelector((state) => state.form.invalidFields) || [];
   const isEditing = useSelector((state) => state.form.isEditing);
 
   const [items, setItems] = useState([{ collectType: '', quantity: '' }]);
   const [submitted, setSubmitted] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const { user, loading: userLoading } = useUser();
 
@@ -38,7 +39,7 @@ const CreateCollect = () => {
 
   const handleChange = (e, index) => {
     const { name, value, selectedOption } = e.target;
-  
+
     if (index !== undefined) {
       const newItems = [...items];
       if (name === 'description') {
@@ -62,23 +63,32 @@ const CreateCollect = () => {
     setItems(newItems);
   };
 
+  const handleResetForm = () => {
+    setItems([{ collectType: '', quantity: '' }]);
+    setSubmitted(false);
+    setIsSuccess(false);
+    dispatch(resetForm());
+    dispatch(setEditing(true));
+    dispatch(setNotification({ message: '', severity: 'info' }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitted(true);
-  
+
     if (!formData?.edress) {
       dispatch(setNotification({ message: 'Preencha todos os campos obrigatórios!', severity: 'error' }));
       return;
     }
-  
+
     if (!user) {
       dispatch(setNotification({ message: 'Nenhum usuário logado encontrado!', severity: 'error' }));
       return;
     }
-  
+
     dispatch(setEditing(false));
     dispatch(setLoading(true));
-  
+
     try {
       const dataToSend = {
         date: new Date().toISOString().split('T')[0],
@@ -92,17 +102,27 @@ const CreateCollect = () => {
           deliveryStatus: false,
         })),
       };
-  
+
       const response = await api.post(`${API_SAVE_URL}`, dataToSend);
-  
-      if (response.data === true) {
+
+      console.log('Resposta da API:', response);
+      console.log('Status:', response.status);
+      console.log('Data:', response.data);
+
+      if (response.status === 200) {
         dispatch(setNotification({ message: 'Coleta criada com sucesso!', severity: 'success' }));
+        dispatch(setEditing(false));
+        setIsSuccess(true);
       } else {
-        dispatch(setNotification({ message: 'Erro ao criar coleta', severity: 'error' }));
+        dispatch(setNotification({ message: 'Erro ao criar coleta: resposta inesperada da API', severity: 'error' }));
         dispatch(setEditing(true));
+        setIsSuccess(false);
       }
     } catch (error) {
-      dispatch(setNotification({ message: 'Erro ao criar coleta', severity: 'error' }));
+      console.error('Erro na requisição:', error);
+      dispatch(setNotification({ message: 'Erro ao criar coleta: ' + error.message, severity: 'error' }));
+      dispatch(setEditing(true));
+      setIsSuccess(false);
     } finally {
       dispatch(setLoading(false));
     }
@@ -116,7 +136,7 @@ const CreateCollect = () => {
       <Box
         component="main"
         sx={{
-          height: 'calc(100vh - 64px)', // Subtrai a altura do AppBar/Toolbar (ajuste se necessário)
+          height: 'calc(100vh - 64px)',
           display: 'flex',
           flexDirection: 'column',
           color: 'black',
@@ -133,12 +153,12 @@ const CreateCollect = () => {
           )}
           <Box
             sx={{
-              flexGrow: 1, // Faz o conteúdo principal crescer para ocupar o espaço disponível
+              flexGrow: 1,
               display: 'flex',
               flexDirection: 'column',
               px: { xs: 2, md: 6 },
               py: 2,
-              overflow: 'auto', // Rolagem interna se o conteúdo exceder
+              overflow: 'auto',
             }}
           >
             <F.InputLine column>
@@ -150,7 +170,7 @@ const CreateCollect = () => {
                     idField="idUser"
                     labelField="name"
                     name="motoboy"
-                    value={formData.motoboy}
+                    value={formData.motoboy || ''}
                     onChange={handleChange}
                     required
                     submitted={submitted}
@@ -164,7 +184,7 @@ const CreateCollect = () => {
                     idField="idEdress"
                     labelField="edress"
                     name="edress"
-                    value={formData.edress}
+                    value={formData.edress || ''}
                     onChange={handleChange}
                     required
                     submitted={submitted}
@@ -186,7 +206,7 @@ const CreateCollect = () => {
                         name="description"
                         onChange={(e) => handleChange(e, index)}
                         form={item}
-                        defaultValue=""
+                        defaultValue={item.collectType || ''}
                         invalidFields={invalidFields}
                         loading={isLoading}
                         disabled={!isEditing}
@@ -235,12 +255,23 @@ const CreateCollect = () => {
               borderTop: '1px solid #e0e0e0',
               backgroundColor: '#fff',
               justifyContent: 'flex-end',
-              flexShrink: 0, // Impede que o rodapé encolha
-              position: 'sticky', // Fixa o rodapé no fundo
+              flexShrink: 0,
+              position: 'sticky',
               bottom: 0,
             }}
           >
             <FormButtons handleSubmit={handleSubmit} isLoading={isLoading} />
+            {isSuccess && !isEditing && (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleResetForm}
+                sx={{ bgcolor: MAIN_YELLOW, color: MAIN_FONT_COLLOR }}
+                startIcon={<AddIcon />}
+              >
+                Nova Coleta
+              </Button>
+            )}
           </Box>
         </form>
       </Box>
