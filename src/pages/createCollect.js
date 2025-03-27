@@ -175,6 +175,7 @@ const CreateCollect = () => {
                     required
                     submitted={submitted}
                     invalidFields={invalidFields}
+                    filterCoordinator={true}
                   />
                 </F.InputLine>
                 <F.InputLine>
