@@ -7,7 +7,7 @@ export const useUser = () => {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [role, setRole] = useState(null); // Armazena a role
+  const [role, setRole] = useState(null); 
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -19,7 +19,6 @@ export const useUser = () => {
         }
 
         const decodedToken = jwtDecode(storedToken);
-        console.log("Token Decodificado:", decodedToken); // Verifica o que está vindo
 
         if (!decodedToken.exp || decodedToken.exp < Date.now() / 1000) {
           localStorage.removeItem('token');
@@ -27,7 +26,7 @@ export const useUser = () => {
         }
 
         const userKey = decodedToken.userKey || decodedToken.sub;
-        const userRole = decodedToken.role || null; // Pegando a role do token
+        const userRole = decodedToken.role || null; 
 
         if (!userKey) {
           throw new Error('userKey não encontrada no token.');
@@ -36,7 +35,7 @@ export const useUser = () => {
         const response = await api.get(`api/users/searchUser/${userKey}`);
         const userData = response.data;
 
-        setUser({ ...userData, userType: userRole }); // Adiciona a role ao usuário
+        setUser({ ...userData, userType: userRole }); 
         setRole(userRole);
         setToken(storedToken);
       } catch (error) {

@@ -93,7 +93,6 @@ export default function SignIn(props) {
     try {
       const response = await api.post('auth/login', loginData);
       localStorage.setItem('token', response.data.token);
-      console.log('Login bem-sucedido:', response.data);
       navigate('/home');
     } catch (error) {
       console.error('Erro no login:', error);
