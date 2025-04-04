@@ -1,8 +1,6 @@
-/* Delivery.css */
 .delivery-table-container {
   width: 100%;
   overflow-x: auto;
-  /* Mantém a rolagem horizontal se necessário */
 }
 
 .delivery-table {
@@ -10,76 +8,72 @@
   border-collapse: collapse;
   margin: 20px 0;
   table-layout: fixed;
-  /* Força as colunas a respeitarem as larguras definidas */
 }
 
 .delivery-table th,
 .delivery-table td {
-  padding: 8px;
+  padding: 6px; 
   text-align: left;
   border: 1px solid #ddd;
   font-size: 14px;
   overflow: hidden;
-  /* Evita que o conteúdo transborde */
   text-overflow: ellipsis;
-  /* Adiciona "..." se o texto for muito longo */
   white-space: nowrap;
-  /* Impede que o texto quebre em várias linhas */
-}
-
-/* Definindo larguras fixas para cada coluna */
-.delivery-table th.col-motoboy,
-.delivery-table td.col-motoboy {
-  width: 150px;
-  /* Ajuste conforme necessário */
 }
 
 .delivery-table th.col-date,
 .delivery-table td.col-date {
-  width: 100px;
-  /* Ajuste conforme necessário */
+  width: 80px; 
+}
+
+.delivery-table th.col-motoboy,
+.delivery-table td.col-motoboy {
+  width: 120px; 
+}
+
+.delivery-table th.col-coordinator,
+.delivery-table td.col-coordinator {
+  width: 120px; 
 }
 
 .delivery-table th.col-client,
 .delivery-table td.col-client {
-  width: 200px;
-  /* Ajuste conforme necessário */
+  width: 80px; 
 }
 
 .delivery-table th.col-type,
 .delivery-table td.col-type {
-  width: 150px;
-  /* Ajuste conforme necessário */
+  width: 140px; 
 }
 
 .delivery-table th.col-quantity,
 .delivery-table td.col-quantity {
-  width: 100px;
-  /* Ajuste conforme necessário */
+  width: 80px; 
 }
 
 .delivery-table th.col-unit-value,
 .delivery-table td.col-unit-value {
-  width: 120px;
-  /* Ajuste conforme necessário */
+  width: 90px; 
 }
 
-.delivery-table th.col-total-receive,
-.delivery-table td.col-total-receive {
-  width: 130px;
-  /* Ajuste conforme necessário */
+.delivery-table th.col-total-to-pay,
+.delivery-table td.col-total-to-pay {
+  width: 90px;
 }
 
 .delivery-table th.col-status,
 .delivery-table td.col-status {
-  width: 100px;
-  /* Ajuste conforme necessário */
+  width: 80px; 
+}
+
+.delivery-table th.col-total-value,
+.delivery-table td.col-total-value {
+  width: 90px; 
 }
 
 .delivery-table th.col-actions,
 .delivery-table td.col-actions {
-  width: 150px;
-  /* Ajuste conforme necessário */
+  width: 120px; 
 }
 
 .delivery-table th {
@@ -99,22 +93,23 @@
   background-color: #f5f5f5;
 }
 
-/* Ajuste para os TextField dentro das células */
 .delivery-table td .MuiTextField-root {
   width: 100%;
-  /* Faz o TextField ocupar toda a largura da célula */
   margin: 0;
-  /* Remove margens extras */
 }
 
-.collect-table th.col-region,
-.collect-table td.col-region {
-  width: 200px;
-  text-align: left;
+.delivery-table th.col-quantity,
+.delivery-table td.col-quantity,
+.delivery-table th.col-unit-value,
+.delivery-table td.col-unit-value,
+.delivery-table th.col-total-to-pay,
+.delivery-table td.col-total-to-pay,
+.delivery-table th.col-total-value,
+.delivery-table td.col-total-value {
+  text-align: center;
 }
 
-.collect-table th.col-value,
-.collect-table td.col-value {
-  width: 120px;
-  text-align: right;
+.delivery-table th.col-status,
+.delivery-table td.col-status {
+  text-align: center;
 }
