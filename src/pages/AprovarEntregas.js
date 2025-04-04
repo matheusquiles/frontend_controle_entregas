@@ -31,28 +31,33 @@ const AprovarEntregas = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch(setLoading(true));
-
-    // Protege contra tableData undefined ou não-array
+  
     const safeTableData = Array.isArray(tableData) ? tableData : [];
-
-    // Cria a lista no formato especificado
+  
     const updatedTableData = safeTableData.map(item => ({
       idDelivery: item.idDelivery,
       value: item.value || 0,
       deliveryStatus: item.deliveryStatus || 'Pendente',
       lastModificationBy: user?.idUser || null,
       idDeliveryRegion: item.idDeliveryRegion || null,
+      deliveryItemsDTO: item.deliveryItemDTO.map(dto => ({
+        idDeliveryItems: dto.idDeliveryItems,
+        idDeliveryType: dto.idDeliveryType,
+        quantity: parseInt(dto.quantity),
+        deliveryStatus: dto.deliveryStatus || 'Pendente',
+        valuePerUnitDelivery: parseFloat(dto.valuePerUnitDelivery),
+      })),
     }));
-
-    console.log('updatedTableData to API:', updatedTableData); // Debug: verifica o envio
-
+  
+    console.log('updatedTableData to API:', updatedTableData);
+  
     try {
       const response = await api.post(API_EDIT_DELIVERY, updatedTableData);
-
+  
       if (response.data === false) {
         throw new Error('Erro ao enviar os dados para a API');
       }
-
+  
       dispatch(setNotification({ message: 'Dados salvos com sucesso!', severity: 'success' }));
     } catch (error) {
       dispatch(setNotification({ message: error.message || 'Erro ao salvar os dados', severity: 'error' }));

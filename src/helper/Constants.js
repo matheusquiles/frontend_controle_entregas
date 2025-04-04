@@ -1,11 +1,11 @@
 //apiConstants.js
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://api-al2a.onrender.com/api';
-// const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api';
+// const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://api-al2a.onrender.com/api';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api';
 
 
 export const API_BASE = `${API_BASE_URL}`;
-export const LOGIN = `https://api-al2a.onrender.com/`;
-// export const LOGIN = `http://localhost:8080/`;
+// export const LOGIN = `https://api-al2a.onrender.com/`;
+export const LOGIN = `http://localhost:8080/`;
 export const API_SEARCH_COLLECTS_URL = `${API_BASE_URL}/collects`
 export const API_SAVE_URL = `${API_BASE_URL}/collects/save`
 export const API_LOGIN = `${API_BASE_URL}/login`
@@ -20,3 +20,4 @@ export const API_SEARCH_DELIVERY_REGION = `${API_BASE_URL}/deliveryRegion`
 export const API_SAVE_DELIVERY = `${API_BASE_URL}/deliveries/save`
 export const API_EDIT_ADDRESS = `${API_BASE_URL}/edress/editAddress`
 export const API_EDIT_DELIVERY = `${API_BASE_URL}/deliveries/editDelivery`
+export const API_DELIVERY_TYPE = `${API_BASE_URL}/deliveryType`

@@ -4,6 +4,7 @@ const initialState = {
   formData: {
     motoboy: '',
     edress: '',
+    deliveryItems: [{ deliveryType: '', quantity: '', valuePerUnitDelivery: '' }]
   },
   options: {},
   invalidFields: [],
