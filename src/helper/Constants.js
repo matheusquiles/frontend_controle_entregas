@@ -1,10 +1,10 @@
 //apiConstants.js
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://api-al2a.onrender.com/api';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://backend-controle-entregas.onrender.com/api';
 // const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api';
 
 
 export const API_BASE = `${API_BASE_URL}`;
-export const LOGIN = `https://api-al2a.onrender.com/`;
+export const LOGIN = `https://backend-controle-entregas.onrender.com/`;
 // export const LOGIN = `http://localhost:8080/`;
 export const API_SEARCH_COLLECTS_URL = `${API_BASE_URL}/collects`
 export const API_SAVE_URL = `${API_BASE_URL}/collects/save`
