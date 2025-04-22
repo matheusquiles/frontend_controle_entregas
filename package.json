@@ -18,6 +18,8 @@
     "ajv-keywords": "^5.1.0",
     "axios": "^1.7.9",
     "bootstrap": "^5.3.3",
+    "date-fns": "^4.1.0",
+    "dayjs": "^1.11.13",
     "framer-motion": "^12.4.7",
     "jwt-decode": "^4.0.0",
     "react": "^18.2.0",

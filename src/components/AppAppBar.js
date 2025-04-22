@@ -39,8 +39,8 @@ export default function AppAppBar() {
   const [coletasAnchorEl, setColetasAnchorEl] = React.useState(null);
   const [entregasAnchorEl, setEntregasAnchorEl] = React.useState(null);
   const [configAnchorEl, setConfigAnchorEl] = React.useState(null);
-  const [usuariosAnchorEl, setUsuariosAnchorEl] = React.useState(null); 
-  const [enderecosAnchorEl, setEnderecosAnchorEl] = React.useState(null); 
+  const [usuariosAnchorEl, setUsuariosAnchorEl] = React.useState(null);
+  const [enderecosAnchorEl, setEnderecosAnchorEl] = React.useState(null);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -90,8 +90,8 @@ export default function AppAppBar() {
 
   const handleConfigMenuClose = () => {
     setConfigAnchorEl(null);
-    setUsuariosAnchorEl(null); 
-    setEnderecosAnchorEl(null); 
+    setUsuariosAnchorEl(null);
+    setEnderecosAnchorEl(null);
   };
 
   return (
@@ -110,6 +110,9 @@ export default function AppAppBar() {
           <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', px: 0, gap: 2 }}>
             <SiteIcon />
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+              <Button variant="text" sx={{ color: MAIN_FONT_COLLOR }} size="small" onClick={() => navigate('/home')}>
+                Início
+              </Button>
               <Button variant="text" sx={{ color: MAIN_FONT_COLLOR }} size="small" onClick={handleColetasMenuClick}>
                 Coletas
               </Button>
@@ -149,7 +152,7 @@ export default function AppAppBar() {
                   anchorEl={usuariosAnchorEl}
                   open={Boolean(usuariosAnchorEl)}
                   onClose={handleUsuariosMenuClose}
-                  anchorOrigin={{ vertical: 'top', horizontal: 'right' }} 
+                  anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
                   transformOrigin={{ vertical: 'top', horizontal: 'left' }}
                 >
                   <MenuItem onClick={() => { handleUsuariosMenuClose(); handleConfigMenuClose(); navigate('/usuarios/novo'); }}>
@@ -167,7 +170,7 @@ export default function AppAppBar() {
                   anchorEl={enderecosAnchorEl}
                   open={Boolean(enderecosAnchorEl)}
                   onClose={handleEnderecosMenuClose}
-                  anchorOrigin={{ vertical: 'top', horizontal: 'right' }} 
+                  anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
                   transformOrigin={{ vertical: 'top', horizontal: 'left' }}
                 >
                   <MenuItem onClick={() => { handleEnderecosMenuClose(); handleConfigMenuClose(); navigate('/enderecos/novo'); }}>

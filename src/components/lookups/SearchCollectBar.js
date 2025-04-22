@@ -1,16 +1,14 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, TextField, Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
-import DatePicker from 'react-datepicker'; // Import do react-datepicker
-import 'react-datepicker/dist/react-datepicker.css'; // Estilo padrão
+import DatePicker from 'react-datepicker';
+import { ptBR } from 'date-fns/locale';
+import 'react-datepicker/dist/react-datepicker.css';
 import { setFormData, setLoading, resetForm, setNotification } from '../../redux/reducers/FormSlice.js';
 import api from '../../api/api.js';
 import { MAIN_YELLOW, MAIN_FONT_COLLOR } from '../../styles/Colors.jsx';
 import { API_ADDRESS, API_SEARCH_MOTOBOY, API_SEARCH_COLLECTS_DTO } from '../../helper/Constants.js';
 import SelectAutoComplete from '../SelectAutoComplete.js';
-
-// Opcional: se quiser localização em português, instale date-fns e importe
-// import { ptBR } from 'date-fns/locale';
 
 const SearchCollectBar = ({ onSearchComplete }) => {
   const dispatch = useDispatch();
@@ -156,12 +154,15 @@ const SearchCollectBar = ({ onSearchComplete }) => {
           selected={filters.startDate}
           onChange={(date) => handleDateChange('startDate', date)}
           dateFormat="dd/MM/yyyy"
+          locale={ptBR}
           customInput={<TextField label="Data Inicial" size="small" sx={{ width: '200px' }} />}
         />
+
         <DatePicker
           selected={filters.endDate}
           onChange={(date) => handleDateChange('endDate', date)}
           dateFormat="dd/MM/yyyy"
+          locale={ptBR}
           customInput={<TextField label="Data Final" size="small" sx={{ width: '200px' }} />}
         />
 
