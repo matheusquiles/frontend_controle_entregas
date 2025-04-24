@@ -46,7 +46,7 @@ const SearchAddress = () => {
         };
       }
 
-      if (idCollectPreValue) {
+      if (idCollectPreValue && collectType !== '-') {
         acc[idEdress].collectPreValue.push({
           idCollectPreValue,
           idEdress,
@@ -87,12 +87,55 @@ const SearchAddress = () => {
     }
   };
 
-  const handleSearchComplete = (data) => {
-    dispatch(setTableData(data));
+  const flattenAddressData = (data) => {
+    return data.flatMap((item) => {
+      if (!item.collectPreValue && item.idCollectType) {
+        return [{
+          idEdress: item.idEdress,
+          description: item.description,
+          edress: item.edress,
+          status: item.status,
+          idCollectPreValue: item.idCollectPreValue || `empty-${item.idEdress}`,
+          idCollectType: item.idCollectType,
+          collectType: item.collectType || '-',
+          preValue: item.preValue || null,
+        }];
+      }
+
+      if (!item.collectPreValue || item.collectPreValue.length === 0) {
+        return [{
+          idEdress: item.idEdress,
+          description: item.description,
+          edress: item.edress,
+          status: item.status,
+          idCollectPreValue: `empty-${item.idEdress}`,
+          collectType: '-',
+          preValue: null,
+        }];
+      }
+
+      return item.collectPreValue.map((collect) => ({
+        idEdress: item.idEdress,
+        description: item.description,
+        edress: item.edress,
+        status: item.status,
+        idCollectPreValue: collect.idCollectPreValue,
+        idCollectType: collect.idCollectType,
+        collectType: collect.collectType || '-',
+        preValue: collect.preValue || null,
+      }));
+    });
+  };
+
+  const handleSearchComplete = (apiData) => {
+    const formatted = flattenAddressData(apiData);
+    dispatch(setTableData(formatted));
   };
 
   const handleDataChange = (updatedData) => {
-    dispatch(setTableData(updatedData));
+    console.log("Dados atualizados recebidos da tabela:", updatedData);
+    const formattedData = flattenAddressData(updatedData);
+    dispatch(setTableData(formattedData));
   };
 
   useEffect(() => {

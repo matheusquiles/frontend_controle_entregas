@@ -7,38 +7,9 @@ import SaveIcon from '@mui/icons-material/Save';
 const AddressTable = ({ data = [], onDataChange }) => {
   const [tableData, setTableData] = useState([]);
   const [editRow, setEditRow] = useState(null);
-  const [initialData, setInitialData] = useState(null);
-
-  const flattenData = (apiData) => {
-    return apiData.flatMap((address, index) => {
-      if (!address.collectPreValue || address.collectPreValue.length === 0) {
-        return [{
-          idEdress: address.idEdress,
-          description: address.description,
-          edress: address.edress,
-          status: address.status,
-          collectType: '-',
-          preValue: null,
-          idCollectPreValue: `empty-${address.idEdress}-${index}`,
-        }];
-      }
-      return address.collectPreValue.map(cpv => ({
-        idEdress: address.idEdress,
-        description: address.description,
-        edress: address.edress,
-        status: address.status,
-        idCollectType: cpv.idCollectType,
-        collectType: cpv.collectType,
-        preValue: cpv.preValue,
-        idCollectPreValue: cpv.idCollectPreValue,
-      }));
-    });
-  };
 
   useEffect(() => {
-    const flattenedData = flattenData(data);
-    setTableData(flattenedData); // Sempre atualizar com os dados recebidos
-    setInitialData(data);
+    setTableData(data); 
   }, [data]);
 
   const groupedData = tableData.reduce((acc, address) => {
@@ -67,12 +38,36 @@ const AddressTable = ({ data = [], onDataChange }) => {
 
   const handleSave = (idCollectPreValue) => {
     setEditRow(null);
-    
+
     const updatedData = [...tableData];
     setTableData(updatedData);
-    
+
     if (typeof onDataChange === 'function') {
-      onDataChange(updatedData);
+      const grouped = {};
+
+      updatedData.forEach(item => {
+        if (!grouped[item.idEdress]) {
+          grouped[item.idEdress] = {
+            idEdress: item.idEdress,
+            description: item.description,
+            edress: item.edress,
+            status: item.status,
+            collectPreValue: [],
+          };
+        }
+
+        if (item.collectType !== '-') {
+          grouped[item.idEdress].collectPreValue.push({
+            idCollectPreValue: item.idCollectPreValue,
+            idCollectType: item.idCollectType,
+            collectType: item.collectType,
+            preValue: item.preValue,
+          });
+        }
+      });
+
+      const restoredData = Object.values(grouped);
+      onDataChange(restoredData);
     }
   };
 
